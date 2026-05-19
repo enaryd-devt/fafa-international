@@ -139,10 +139,10 @@
 
         <td colspan="2" style="padding-top:10px; font-weight:600;" class="text-primary">
             <t t-if="is_machine">
-                Garantie 03 mois
+                O3 MOIS DE GARANTIE
             </t>
             <t t-else="">
-                Garantie 06 mois
+               
             </t>
         </td>
     </tr>
