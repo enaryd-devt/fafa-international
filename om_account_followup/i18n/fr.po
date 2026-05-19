@@ -4,16 +4,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20251125\n"
-"POT-Creation-Date: 2026-04-15 14:03+0000\n"
-"PO-Revision-Date: 2026-04-15 14:03+0000\n"
-"Language: fr\n"
+"Project-Id-Version: Odoo Server 18.0-20250218\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-14 15:02+0000\n"
+"PO-Revision-Date: 2025-03-14 15:02+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: \n"
 
 #. module: om_account_followup
+#: model:followup.line,description:om_account_followup.demo_followup_line3
 msgid ""
 "\n"
 "                Dear %(partner_name)s,\n"
@@ -34,22 +37,25 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                Cher/Chère %(partner_name)s,\n"
+"                Cher %(partner_name)s,\n"
 "\n"
-"                Malgré plusieurs relances, votre compte n’est toujours pas soldé.\n"
+"                Malgré plusieurs rappels, votre compte reste non réglé.\n"
 "\n"
-"                À défaut de règlement intégral dans un délai de 8 jours, une procédure\n"
-"                judiciaire de recouvrement sera engagée sans autre préavis.\n"
+"                À moins que le paiement intégral ne soit effectué dans les 8 prochains jours,\n"
+"                une action en justice pour le recouvrement de la dette sera engagée sans\n"
+"                préavis supplémentaire.\n"
 "\n"
-"                Nous espérons que cette action sera inutile et vous trouverez ci-dessous\n"
-"                le détail des paiements dus.\n"
+"                J’espère que cette action se révélera inutile et les détails des\n"
+"                paiements dus sont imprimés ci-dessous.\n"
 "\n"
-"                Pour toute question, n’hésitez pas à contacter notre service comptable.\n"
+"                En cas de questions concernant cette affaire, n’hésitez pas\n"
+"                à contacter notre service comptable.\n"
 "\n"
 "                Cordialement,\n"
 "            "
 
 #. module: om_account_followup
+#: model:followup.line,description:om_account_followup.demo_followup_line1
 msgid ""
 "\n"
 "                Dear %(partner_name)s,\n"
@@ -66,19 +72,21 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                Cher/Chère %(partner_name)s,\n"
+"                Cher %(partner_name)s,\n"
 "\n"
-"                Sauf erreur de notre part, il semble que le montant suivant reste impayé.\n"
-"                Merci de prendre les dispositions nécessaires pour effectuer ce paiement\n"
-"                dans les 8 prochains jours.\n"
+"                Sauf erreur de notre part, il semble que le montant suivant\n"
+"                reste impayé. Veuillez prendre les mesures nécessaires pour\n"
+"                effectuer ce paiement dans les 8 prochains jours.\n"
 "\n"
-"                Si votre règlement a été effectué entre-temps, merci d’ignorer ce message.\n"
-"                N’hésitez pas à contacter notre service comptable.\n"
+"                Si votre paiement a été effectué après l’envoi de ce courriel,\n"
+"                veuillez ignorer ce message. N’hésitez pas à contacter\n"
+"                notre service comptable.\n"
 "\n"
 "                Cordialement,\n"
 "            "
 
 #. module: om_account_followup
+#: model:followup.line,description:om_account_followup.demo_followup_line2
 msgid ""
 "\n"
 "                Dear %(partner_name)s,\n"
@@ -103,159 +111,357 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"                Cher/Chère %(partner_name)s,\n"
+"                Cher %(partner_name)s,\n"
 "\n"
-"                Nous sommes au regret de constater que malgré nos relances,\n"
-"                votre compte est désormais fortement en retard.\n"
+"                Nous sommes déçus de constater que, malgré l’envoi d’un rappel,\n"
+"                votre compte est maintenant sérieusement en retard.\n"
 "\n"
-"                Un règlement immédiat est indispensable, faute de quoi nous\n"
-"                serons contraints de suspendre votre compte, ce qui impliquera\n"
-"                l’arrêt de la fourniture de nos (biens/services).\n"
-"                Merci de prendre les mesures nécessaires pour effectuer ce paiement\n"
-"                dans les 8 prochains jours.\n"
+"                Il est essentiel que le paiement soit effectué immédiatement,\n"
+"                sinon nous devrons envisager de suspendre votre compte, ce qui\n"
+"                signifie que nous ne pourrons plus fournir votre entreprise\n"
+"                en (biens/services).\n"
+"                Veuillez prendre les mesures nécessaires pour effectuer ce\n"
+"                paiement dans les 8 prochains jours.\n"
 "\n"
-"                Si un problème empêche le paiement de cette facture et que nous\n"
-"                n’en avons pas connaissance, merci de contacter notre service comptable\n"
-"                afin de résoudre rapidement la situation.\n"
+"                S’il y a un problème avec le paiement de la facture dont nous\n"
+"                ne sommes pas informés, n’hésitez pas à contacter notre service\n"
+"                comptable afin que nous puissions résoudre la question rapidement.\n"
 "\n"
-"                Le détail des paiements dus figure ci-dessous.\n"
+"                Les détails des paiements dus sont imprimés ci-dessous.\n"
 "\n"
 "                Cordialement,\n"
 "            "
 
 #. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " email(s) sent"
-msgstr " e-mail(s) envoyé(s)"
+msgstr " courriel(s) envoyé(s)"
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " email(s) should have been sent, but "
-msgstr " e-mail(s) auraient dû être envoyés, mais "
+msgstr " courriel(s) auraient dû être envoyé(s), mais "
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " had unknown email address(es)"
-msgstr " avaient des adresses e-mail inconnues"
+msgstr " avait une ou des adresse(s) courriel inconnue(s)"
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " letter(s) in report"
 msgstr " lettre(s) dans le rapport"
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " manual action(s) assigned:"
-msgstr " action(s) manuelle(s) assignée(s) :"
+msgstr " action(s) manuelle(s) attribuée(s) :"
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid " will be sent"
-msgstr " seront envoyés"
+msgstr " sera(ont) envoyé(s)"
 
+#. module: om_account_followup
+#. odoo-python
+#: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid "%s partners have no credits and as such the action is cleared"
-msgstr "%s partenaires n'ont aucun crédit, l'action est donc annulée"
+msgstr "%s partenaires n’ont pas de crédits et donc l’action est annulée"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid ", the latest payment follow-up was:"
-msgstr ", la dernière relance de paiement était :"
+msgstr ", le dernier suivi de paiement était :"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid ": Current Date"
-msgstr " : Date actuelle"
+msgstr ": Date actuelle"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid ": Partner Name"
-msgstr " : Nom du partenaire"
+msgstr ": Nom du partenaire"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid ": User Name"
-msgstr " : Nom de l'utilisateur"
+msgstr ": Nom de l’utilisateur"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid ": User's Company Name"
-msgstr " : Nom de la société de l'utilisateur"
+msgstr ": Nom de l’entreprise de l’utilisateur"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.report_followup
 msgid ""
 "<br/>\n"
 "                                Customer ref:"
 msgstr ""
 "<br/>\n"
-"                                Référence client :"
+"                                Réf. client :"
 
-#. EMAIL TEMPLATE LEVEL 0
+#. module: om_account_followup
+#: model:mail.template,body_html:om_account_followup.email_template_om_account_followup_level0
 msgid ""
-"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;\">\n"
-"<p>Dear <t t-out=\"object.name\"/>,</p>\n"
-"<p>\n"
-"Exception made if there was a mistake of ours, it seems that the following amount stays unpaid.\n"
-"Please take appropriate measures to carry out this payment within 8 days.\n"
-"If your payment crossed this email, please ignore it.\n"
-"Contact our accounting department if needed.\n"
-"</p>\n"
-"<br/>Best Regards,<br/>\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"\n"
+"    <p>Dear <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Exception made if there was a mistake of ours, it seems that the following amount stays unpaid. Please, take\n"
+"appropriate measures in order to carry out this payment in the next 8 days.\n"
+"\n"
+"Would your payment have been carried out after this mail was sent, please ignore this message. Do not hesitate to\n"
+"contact our accounting department.  \n"
+"\n"
+"    </p>\n"
+"<br/>\n"
+"Best Regards,\n"
+"<br/>\n"
+"   <br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"\n"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
 msgstr ""
-"<div style=\"font-family: 'Lucida Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px;\">\n"
-"<p>Cher/Chère <t t-out=\"object.name\"/>,</p>\n"
-"<p>\n"
-"Sauf erreur de notre part, le montant suivant reste impayé.\n"
-"Merci d’effectuer ce paiement dans un délai de 8 jours.\n"
-"Si votre règlement a été effectué entre-temps, veuillez ignorer ce message.\n"
-"Contactez notre service comptable si nécessaire.\n"
-"</p>\n"
-"<br/>Cordialement,<br/>\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"\n"
+"    <p>Cher <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Sauf erreur de notre part, il semble que le montant suivant reste impayé. Veuillez prendre\n"
+"    les mesures nécessaires pour effectuer ce paiement dans les 8 prochains jours.\n"
+"\n"
+"    Si votre paiement a été effectué après l’envoi de ce courriel, veuillez ignorer ce message.\n"
+"    N’hésitez pas à contacter notre service comptable.\n"
+"    </p>\n"
+"<br/>\n"
+"Cordialement,\n"
+"<br/>\n"
+"   <br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"\n"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
 
-#. EMAIL TEMPLATE LEVEL 1
+#. module: om_account_followup
+#: model:mail.template,body_html:om_account_followup.email_template_om_account_followup_level2
 msgid ""
-"<div>\n"
-"<p>Dear <t t-out=\"object.name\"/>,</p>\n"
-"<p>Your account is overdue despite previous reminders.\n"
-"Immediate payment is required to avoid account suspension.\n"
-"Please pay within 8 days.\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Dear <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Despite several reminders, your account is still not settled.\n"
+"Unless full payment is made in next 8 days, legal action for the recovery of the debt will be taken without\n"
+"further notice.\n"
+"I trust that this action will prove unnecessary and details of due payments is printed below.\n"
+"In case of any queries concerning this matter, do not hesitate to contact our accounting department.\n"
 "</p>\n"
-"<br/>Best Regards,<br/>\n"
+"<br/>\n"
+"Best Regards,\n"
+"<br/>\n"
+"<br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
 msgstr ""
-"<div>\n"
-"<p>Cher/Chère <t t-out=\"object.name\"/>,</p>\n"
-"<p>Malgré nos précédentes relances, votre compte est en retard.\n"
-"Un règlement immédiat est requis afin d’éviter la suspension du compte.\n"
-"Merci d’effectuer le paiement sous 8 jours.\n"
-"</p>\n"
-"<br/>Cordialement,<br/>\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Cher <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Malgré plusieurs rappels, votre compte reste non réglé.\n"
+"    À moins que le paiement intégral ne soit effectué dans les 8 prochains jours, une action\n"
+"    en justice pour le recouvrement de la dette sera engagée sans préavis supplémentaire.\n"
+"    J’espère que cette action se révélera inutile et les détails des paiements dus sont\n"
+"    imprimés ci-dessous.\n"
+"    En cas de questions concernant cette affaire, n’hésitez pas à contacter notre service\n"
+"    comptable.\n"
+"    </p>\n"
+"<br/>\n"
+"Cordialement,\n"
+"<br/>\n"
+"<br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
 
-#. EMAIL TEMPLATE LEVEL 2
+#. module: om_account_followup
+#: model:mail.template,body_html:om_account_followup.email_template_om_account_followup_default
 msgid ""
-"<div>\n"
-"<p>Dear <t t-out=\"object.name\"/>,</p>\n"
-"<p>Your account remains unpaid despite several reminders.\n"
-"Legal action may be taken if payment is not received within 8 days.\n"
-"</p>\n"
-"<br/>Best Regards,<br/>\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Dear <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Exception made if there was a mistake of ours, it seems that the following amount stays unpaid. Please, take\n"
+"appropriate measures in order to carry out this payment in the next 8 days.\n"
+"Would your payment have been carried out after this mail was sent, please ignore this message. Do not hesitate to\n"
+"contact our accounting department.\n"
+"    </p>\n"
+"<br/>\n"
+"Best Regards,\n"
+"<br/>\n"
+"<br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"<br/>\n"
+"</div>\n"
+"            "
 msgstr ""
-"<div>\n"
-"<p>Cher/Chère <t t-out=\"object.name\"/>,</p>\n"
-"<p>Malgré plusieurs relances, votre compte reste impayé.\n"
-"Une action en justice pourra être engagée sans règlement sous 8 jours.\n"
-"</p>\n"
-"<br/>Cordialement,<br/>\n"
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Cher <t t-out=\"object.name\"/>,</p>\n"
+"    <p>\n"
+"    Sauf erreur de notre part, il semble que le montant suivant reste impayé. Veuillez prendre\n"
+"    les mesures nécessaires pour effectuer ce paiement dans les 8 prochains jours.\n"
+"    Si votre paiement a été effectué après l’envoi de ce courriel, veuillez ignorer ce message.\n"
+"    N’hésitez pas à contacter notre service comptable.\n"
+"    </p>\n"
+"<br/>\n"
+"Cordialement,\n"
+"<br/>\n"
+"<br/>\n"
 "<t t-out=\"user.name\"/>\n"
-"<br/><t t-out=\"object.get_followup_table_html()\"/>\n"
-"</div>"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"<br/>\n"
+"</div>\n"
+"            "
 
+#. module: om_account_followup
+#: model:mail.template,body_html:om_account_followup.email_template_om_account_followup_level1
+msgid ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Dear <t t-out=\"object.name\"/>,</p>\n"
+"   <p>\n"
+"    We are disappointed to see that despite sending a reminder, that your account is now seriously overdue.\n"
+"It is essential that immediate payment is made, otherwise we will have to consider placing a stop on your account\n"
+"which means that we will no longer be able to supply your company with (goods/services).\n"
+"Please, take appropriate measures in order to carry out this payment in the next 8 days.\n"
+"If there is a problem with paying invoice that we are not aware of, do not hesitate to contact our accounting\n"
+"department. so that we can resolve the matter quickly.\n"
+"Details of due payments is printed below.\n"
+" </p>\n"
+"<br/>\n"
+"Best Regards,\n"
+"    \n"
+"<br/>\n"
+"<br/>\n"
+"<t t-out=\"user.name\"/>\n"
+"    \n"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
+msgstr ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"    \n"
+"    <p>Cher <t t-out=\"object.name\"/>,</p>\n"
+"   <p>\n"
+"    Nous sommes déçus de constater que, malgré l’envoi d’un rappel, votre compte est maintenant\n"
+"    sérieusement en retard. Il est essentiel que le paiement soit effectué immédiatement,\n"
+"    sinon nous devrons envisager de suspendre votre compte, ce qui signifie que nous ne pourrons\n"
+"    plus fournir votre entreprise en (biens/services).\n"
+"    Veuillez prendre les mesures nécessaires pour effectuer ce paiement dans les 8 prochains jours.\n"
+"    S’il y a un problème avec le paiement de la facture dont nous ne sommes pas informés,\n"
+"    n’hésitez pas à contacter notre service comptable afin que nous puissions résoudre la question\n"
+"    rapidement.\n"
+"    Les détails des paiements dus sont imprimés ci-dessous.\n"
+" </p>\n"
+"<br/>\n"
+"Cordialement,\n"
+"    \n"
+"<br/>\n"
+"<br/>\n"
+"<t t-out=\"user.name\"/>\n"
+"    \n"
+"<br/>\n"
+"<br/>\n"
+"\n"
+"<t t-out=\"object.get_followup_table_html()\"/>\n"
+"\n"
+"    <br/>\n"
+"\n"
+"</div>\n"
+"            "
+
+#. module: om_account_followup
+#: model:mail.template,name:om_account_followup.email_template_om_account_followup_level1
 msgid "A bit urging second payment follow-up reminder email"
-msgstr "Relance de paiement (niveau 2)"
+msgstr "Un courriel de rappel de suivi de paiement un peu pressant"
 
+#. module: om_account_followup
+#: model:ir.model,name:om_account_followup.model_followup_followup
 msgid "Account Follow-up"
-msgstr "Relance client"
+msgstr "Suivi de compte"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Account Move line"
-msgstr "Ligne d'écriture comptable"
+msgstr "Ligne de mouvement de compte"
 
+#. module: om_account_followup
+#: model:ir.model.fields,field_description:om_account_followup.field_followup_line__manual_action_note
 msgid "Action To Do"
-msgstr "Action à effectuer"
+msgstr "Action à faire"
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Action to be taken e.g. Give a phonecall, Check if it's paid, ..."
-msgstr "Action à effectuer (ex : appel, vérification du paiement...)"
+msgstr "Action à entreprendre, par ex. Passer un coup de téléphone, Vérifier si c’est payé, ..."
 
+#. module: om_account_followup
+#: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid "After"
 msgstr "Après"
 
@@ -288,7 +494,7 @@ msgstr "Montant dû"
 #. odoo-python
 #: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid "Anybody"
-msgstr "N'importe qui"
+msgstr "N’importe qui"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__manual_action_responsible_id
@@ -320,8 +526,8 @@ msgid ""
 "                            actions."
 msgstr ""
 "Ci-dessous se trouve l’historique des transactions de ce\n"
-"client. Vous pouvez cocher « Pas de relance » afin de\n"
-"l’exclure des prochaines actions de relance."
+"                            client. Vous pouvez cocher « Pas de suivi » afin\n"
+"                            de l’exclure des prochaines actions de suivi."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_print
@@ -333,17 +539,17 @@ msgstr "Annuler"
 msgid ""
 "Check if you want to print follow-ups without changing follow-up level."
 msgstr ""
-"Cochez si vous souhaitez imprimer les relances sans modifier le niveau de relance."
+"Cochez si vous souhaitez imprimer les suivis sans modifier le niveau de suivi."
 
 #. module: om_account_followup
 #: model_terms:ir.actions.act_window,help:om_account_followup.action_om_account_followup_definition_form
 msgid "Click to define follow-up levels and their related actions."
-msgstr "Cliquez pour définir les niveaux de relance et les actions associées."
+msgstr "Cliquez pour définir les niveaux de suivi et leurs actions associées."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Click to mark the action as done."
-msgstr "Cliquez pour marquer l'action comme effectuée."
+msgstr "Cliquez pour marquer l’action comme terminée."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_sending_results
@@ -357,7 +563,7 @@ msgstr "Fermer"
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__company_id
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Company"
-msgstr "Société"
+msgstr "Entreprise"
 
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_res_partner
@@ -388,18 +594,18 @@ msgstr "Crédit"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_tree
 msgid "Customer Followup"
-msgstr "Relance client"
+msgstr "Suivi client"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__payment_note
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__payment_note
 msgid "Customer Payment Promise"
-msgstr "Promesse de paiement client"
+msgstr "Promesse de paiement du client"
 
 #. module: om_account_followup
 #: model:ir.model.constraint,message:om_account_followup.constraint_followup_line_days_uniq
 msgid "Days of the follow-up levels must be different"
-msgstr "Les jours des niveaux de relance doivent être différents"
+msgstr "Les jours des niveaux de suivi doivent être différents"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__debit
@@ -409,7 +615,7 @@ msgstr "Débit"
 #. module: om_account_followup
 #: model:mail.template,name:om_account_followup.email_template_om_account_followup_default
 msgid "Default payment follow-up reminder e-mail"
-msgstr "Email de relance de paiement par défaut"
+msgstr "Courriel de rappel de suivi de paiement par défaut"
 
 #. module: om_account_followup
 #. odoo-python
@@ -432,7 +638,7 @@ msgstr "Nom affiché"
 #. module: om_account_followup
 #: model:ir.ui.menu,name:om_account_followup.om_account_followup_s
 msgid "Do Manual Follow-Ups"
-msgstr "Effectuer des relances manuelles"
+msgstr "Effectuer des suivis manuels"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_print__partner_lang
@@ -440,8 +646,8 @@ msgid ""
 "Do not change message text, if you want to send email in partner language, "
 "or configure from company"
 msgstr ""
-"Ne pas modifier le texte du message si vous souhaitez envoyer l’e-mail dans "
-"la langue du partenaire ou configurer depuis la société"
+"Ne modifiez pas le texte du message si vous souhaitez envoyer un courriel dans la langue du partenaire, "
+"ou configurez-le depuis l’entreprise"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.report_followup
@@ -462,13 +668,13 @@ msgstr "Télécharger les lettres"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.report_followup
 msgid "Due"
-msgstr "Échéance"
+msgstr "Dû"
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid "Due Date"
-msgstr "Date d'échéance"
+msgstr "Date d’échéance"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__delay
@@ -478,55 +684,55 @@ msgstr "Jours d’échéance"
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__email_body
 msgid "Email Body"
-msgstr "Corps de l'e-mail"
+msgstr "Corps du courriel"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__email_subject
 msgid "Email Subject"
-msgstr "Objet de l'e-mail"
+msgstr "Objet du courriel"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__email_template_id
 msgid "Email Template"
-msgstr "Modèle d'e-mail"
+msgstr "Modèle de courriel"
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid "Email not sent because of email address of partner not filled in"
-msgstr "E-mail non envoyé car l'adresse e-mail du partenaire n'est pas renseignée"
+msgstr "Courriel non envoyé car l’adresse courriel du partenaire n’est pas renseignée"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__date_move
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__date_move
 msgid "First move"
-msgstr "Première écriture"
+msgstr "Premier mouvement"
 
 #. module: om_account_followup
 #: model:mail.template,name:om_account_followup.email_template_om_account_followup_level0
 msgid "First polite payment follow-up reminder email"
-msgstr "Premier e-mail de relance de paiement (courtois)"
+msgstr "Premier courriel de rappel de suivi de paiement poli"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__followup_id
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__followup_id
 msgid "Follow Ups"
-msgstr "Relances"
+msgstr "Suivis"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__followup_id
 msgid "Follow-Up"
-msgstr "Relance"
+msgstr "Suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__name
 msgid "Follow-Up Action"
-msgstr "Action de relance"
+msgstr "Action de suivi"
 
 #. module: om_account_followup
 #: model:ir.ui.menu,name:om_account_followup.menu_finance_followup
 msgid "Follow-Ups"
-msgstr "Relances"
+msgstr "Suivis"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_followup__followup_line
@@ -535,89 +741,89 @@ msgstr "Relances"
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_form
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_tree
 msgid "Follow-up"
-msgstr "Relance"
+msgstr "Suivi"
 
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_followup_line
 msgid "Follow-up Criteria"
-msgstr "Critères de relance"
+msgstr "Critères de suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_account_move_line__followup_line_id
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Follow-up Level"
-msgstr "Niveau de relance"
+msgstr "Niveau de suivi"
 
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.action_om_account_followup_definition_form
 #: model:ir.ui.menu,name:om_account_followup.om_account_followup_menu
 msgid "Follow-up Levels"
-msgstr "Niveaux de relance"
+msgstr "Niveaux de suivi"
 
 #. module: om_account_followup
 #: model:ir.actions.report,name:om_account_followup.action_report_followup
 msgid "Follow-up Report"
-msgstr "Rapport de relance"
+msgstr "Rapport de suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__payment_responsible_id
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__payment_responsible_id
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "Follow-up Responsible"
-msgstr "Responsable de relance"
+msgstr "Responsable du suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__date
 msgid "Follow-up Sending Date"
-msgstr "Date d'envoi de la relance"
+msgstr "Date d’envoi du suivi"
 
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_followup_stat
 msgid "Follow-up Statistics"
-msgstr "Statistiques de relance"
+msgstr "Statistiques de suivi"
 
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_followup_stat_by_partner
 msgid "Follow-up Statistics by Partner"
-msgstr "Statistiques de relance par partenaire"
+msgstr "Statistiques de suivi par partenaire"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_tree
 msgid "Follow-up Steps"
-msgstr "Étapes de relance"
+msgstr "Étapes de suivi"
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid "Follow-up letter of "
-msgstr "Lettre de relance de "
+msgstr "Lettre de suivi de "
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_graph
 msgid "Follow-up lines"
-msgstr "Lignes de relance"
+msgstr "Lignes de suivi"
 
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.action_followup_stat
 #: model:ir.ui.menu,name:om_account_followup.menu_action_followup_stat_follow
 msgid "Follow-ups Analysis"
-msgstr "Analyse des relances"
+msgstr "Analyse des suivis"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Follow-ups Sent"
-msgstr "Relances envoyées"
+msgstr "Suivis envoyés"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "Follow-ups To Do"
-msgstr "Relances à effectuer"
+msgstr "Suivis à faire"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "Followup Level"
-msgstr "Niveau de relance"
+msgstr "Niveau de suivi"
 
 #. module: om_account_followup
 #: model_terms:ir.actions.act_window,help:om_account_followup.action_om_account_followup_definition_form
@@ -628,21 +834,23 @@ msgid ""
 "                    messages to\n"
 "                    the customer."
 msgstr ""
-"Pour chaque étape, spécifiez les actions à entreprendre ainsi que le délai en\n"
-"jours. Il est possible d’utiliser des modèles d’impression et d’e-mail pour\n"
-"envoyer des messages spécifiques au client."
+"Pour chaque étape, précisez les actions à entreprendre et le délai en\n"
+"                    jours. Il est\n"
+"                    possible d’utiliser des modèles d’impression et de courriel pour envoyer des messages\n"
+"                    spécifiques au\n"
+"                    client."
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_line__sequence
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__latest_followup_sequence
 #: model:ir.model.fields,help:om_account_followup.field_res_users__latest_followup_sequence
 msgid "Gives the sequence order when displaying a list of follow-up lines."
-msgstr "Définit l'ordre d'affichage des lignes de relance."
+msgstr "Indique l’ordre de séquence lors de l’affichage d’une liste de lignes de suivi."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Group By"
-msgstr "Grouper par"
+msgstr "Regrouper par"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
@@ -650,8 +858,8 @@ msgid ""
 "He said the problem was temporary and promised to pay 50% before 15th of "
 "May, balance before 1st of July."
 msgstr ""
-"Il a indiqué que le problème était temporaire et a promis de payer 50 % avant "
-"le 15 mai, le solde avant le 1er juillet."
+"Il a dit que le problème était temporaire et a promis de payer 50 % avant le 15 mai, "
+"le solde avant le 1er juillet."
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_followup__id
@@ -669,13 +877,13 @@ msgid ""
 "If not specified by the latest follow-up level, it will send from the "
 "default email template"
 msgstr ""
-"Si non spécifié par le dernier niveau de relance, l’envoi se fera à partir du "
-"modèle d’e-mail par défaut"
+"S’il n’est pas spécifié par le dernier niveau de suivi, il sera envoyé à partir du "
+"modèle de courriel par défaut"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Including journal entries marked as a litigation"
-msgstr "Inclure les écritures comptables marquées comme litige"
+msgstr "Y compris les écritures de journal marquées comme litigieuses"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__invoice_partner_id
@@ -693,13 +901,18 @@ msgstr "Date de facture"
 #. odoo-python
 #: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid "Invoices Reminder"
-msgstr "Relance des factures"
+msgstr "Rappel des factures"
+
+#. module: om_account_followup
+#: model:ir.model,name:om_account_followup.model_account_move_line
+msgid "Journal Item"
+msgstr "Élément de journal"
 
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.account_manual_reconcile_action
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_move_line_reconcile_tree
 msgid "Journal Items to Reconcile"
-msgstr "Écritures à rapprocher"
+msgstr "Éléments de journal à rapprocher"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_followup__write_uid
@@ -707,7 +920,7 @@ msgstr "Écritures à rapprocher"
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__write_uid
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_sending_results__write_uid
 msgid "Last Updated by"
-msgstr "Dernière modification par"
+msgstr "Dernière mise à jour par"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_followup__write_date
@@ -715,57 +928,57 @@ msgstr "Dernière modification par"
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__write_date
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_sending_results__write_date
 msgid "Last Updated on"
-msgstr "Dernière modification le"
+msgstr "Dernière mise à jour le"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__date_move_last
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__date_move_last
 msgid "Last move"
-msgstr "Dernière écriture"
+msgstr "Dernier mouvement"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_account_move_line__followup_date
 msgid "Latest Follow-up"
-msgstr "Dernière relance"
+msgstr "Dernier suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__latest_followup_date
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__latest_followup_date
 msgid "Latest Follow-up Date"
-msgstr "Date de la dernière relance"
+msgstr "Date du dernier suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__latest_followup_level_id
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__latest_followup_level_id
 msgid "Latest Follow-up Level"
-msgstr "Dernier niveau de relance"
+msgstr "Dernier niveau de suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__latest_followup_level_id_without_lit
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__latest_followup_level_id_without_lit
 msgid "Latest Follow-up Level without litigation"
-msgstr "Dernier niveau de relance sans litige"
+msgstr "Dernier niveau de suivi sans litige"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Latest Follow-up Month"
-msgstr "Dernier mois de relance"
+msgstr "Mois du dernier suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__latest_followup_date
 #: model:ir.model.fields,help:om_account_followup.field_res_users__latest_followup_date
 msgid "Latest date that the follow-up level of the partner was changed"
-msgstr "Dernière date à laquelle le niveau de relance du partenaire a été modifié"
+msgstr "Dernière date à laquelle le niveau de suivi du partenaire a été modifié"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__date_followup
 msgid "Latest follow-up"
-msgstr "Dernière relance"
+msgstr "Dernier suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__date_followup
 msgid "Latest followup"
-msgstr "Dernière relance"
+msgstr "Dernier suivi"
 
 #. module: om_account_followup
 #. odoo-python
@@ -782,28 +995,28 @@ msgstr "Action manuelle"
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.action_customer_followup
 msgid "Manual Follow-Ups"
-msgstr "Relances manuelles"
+msgstr "Suivis manuels"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.report_followup
 msgid "Maturity Date"
-msgstr "Date d'échéance"
+msgstr "Date d’échéance"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat_by_partner__max_followup_id
 msgid "Max Follow Up Level"
-msgstr "Niveau maximal de relance"
+msgstr "Niveau de suivi maximal"
 
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.action_customer_my_followup
 #: model:ir.ui.menu,name:om_account_followup.menu_sale_followup
 msgid "My Follow-Ups"
-msgstr "Mes relances"
+msgstr "Mes suivis"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "My Follow-ups"
-msgstr "Mes relances"
+msgstr "Mes suivis"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_followup__name
@@ -830,22 +1043,22 @@ msgstr "Date de la prochaine action"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "No Responsible"
-msgstr "Aucun responsable"
+msgstr "Pas de responsable"
 
 #. module: om_account_followup
 #: model_terms:ir.actions.act_window,help:om_account_followup.account_manual_reconcile_action
 msgid "No journal items found."
-msgstr "Aucune écriture comptable trouvée."
+msgstr "Aucun élément de journal trouvé."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_stat_search
 msgid "Not Litigation"
-msgstr "Pas en litige"
+msgstr "Non litigieux"
 
 #. module: om_account_followup
 #: model:ir.model.constraint,message:om_account_followup.constraint_followup_followup_company_uniq
 msgid "Only one follow-up per company is allowed"
-msgstr "Une seule relance par entreprise est autorisée"
+msgstr "Un seul suivi par entreprise est autorisé"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__payment_responsible_id
@@ -853,13 +1066,15 @@ msgstr "Une seule relance par entreprise est autorisée"
 msgid ""
 "Optionally you can assign a user to this field, which will make him "
 "responsible for the action."
-msgstr "Vous pouvez facultativement assigner un utilisateur à ce champ, qui sera responsable de l'action."
+msgstr ""
+"Vous pouvez éventuellement assigner un utilisateur à ce champ, ce qui le rendra "
+"responsable de l’action."
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid "Overdue email sent to %s, "
-msgstr "E-mail de relance envoyé à %s, "
+msgstr "Courriel de retard envoyé à %s, "
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_stat__partner_id
@@ -887,12 +1102,12 @@ msgstr "Partenaires"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.customer_followup_search_view
 msgid "Partners with Overdue Credits"
-msgstr "Partenaires avec des crédits échus"
+msgstr "Partenaires avec des crédits en retard"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Payment Follow-up"
-msgstr "Relance de paiement"
+msgstr "Suivi des paiements"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__payment_note
@@ -903,7 +1118,7 @@ msgstr "Note de paiement"
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_followup_print
 msgid "Print Follow-up & Send Mail to Customers"
-msgstr "Imprimer les relances et envoyer des e-mails aux clients"
+msgstr "Imprimer le suivi et envoyer un courriel aux clients"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
@@ -913,7 +1128,7 @@ msgstr "Imprimer les paiements en retard"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Print overdue payments report independent of follow-up line"
-msgstr "Imprimer le rapport des paiements en retard indépendamment de la ligne de relance"
+msgstr "Imprimer le rapport des paiements en retard indépendamment de la ligne de suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__description
@@ -940,52 +1155,53 @@ msgstr "Référence"
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_report_om_account_followup_report_followup
 msgid "Report Followup"
-msgstr "Rapport de relance"
+msgstr "Rapport de suivi"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Responsible of credit collection"
-msgstr "Responsable du recouvrement"
+msgstr "Responsable du recouvrement de crédit"
 
 #. module: om_account_followup
 #: model:ir.model,name:om_account_followup.model_followup_sending_results
 msgid "Results from the sending of the different letters and emails"
-msgstr "Résultats de l'envoi des différentes lettres et e-mails"
+msgstr "Résultats de l’envoi des différentes lettres et courriels"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_filter
 msgid "Search Follow-up"
-msgstr "Rechercher une relance"
+msgstr "Rechercher un suivi"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__email_conf
 msgid "Send Email Confirmation"
-msgstr "Envoyer une confirmation par e-mail"
+msgstr "Envoyer une confirmation par courriel"
+
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_print__partner_lang
 msgid "Send Email in Partner Language"
-msgstr "Envoyer l'e-mail dans la langue du partenaire"
+msgstr "Envoyer un courriel dans la langue du partenaire"
 
 #. module: om_account_followup
 #: model:ir.actions.act_window,name:om_account_followup.action_om_account_followup_print
 msgid "Send Follow-Ups"
-msgstr "Envoyer les relances"
+msgstr "Envoyer des suivis"
 
 #. module: om_account_followup
 #: model:ir.ui.menu,name:om_account_followup.om_account_followup_print_menu
 msgid "Send Letters and Emails"
-msgstr "Envoyer des lettres et des e-mails"
+msgstr "Envoyer des lettres et des courriels"
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/wizard/followup_print.py:0
 msgid "Send Letters and Emails: Actions Summary"
-msgstr "Envoi des lettres et e-mails : résumé des actions"
+msgstr "Envoyer des lettres et des courriels : Résumé des actions"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
 msgid "Send Overdue Email"
-msgstr "Envoyer un e-mail de relance"
+msgstr "Envoyer un courriel de retard"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__send_letter
@@ -995,23 +1211,23 @@ msgstr "Envoyer une lettre"
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid "Send a Letter or Email"
-msgstr "Envoyer une lettre ou un e-mail"
+msgstr "Envoyer une lettre ou un courriel"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__send_email
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid "Send an Email"
-msgstr "Envoyer un e-mail"
+msgstr "Envoyer un courriel"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_print
 msgid "Send emails and generate letters"
-msgstr "Envoyer des e-mails et générer des lettres"
+msgstr "Envoyer des courriels et générer des lettres"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_print
 msgid "Send follow-ups"
-msgstr "Envoyer les relances"
+msgstr "Envoyer des suivis"
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_followup_line__sequence
@@ -1044,104 +1260,128 @@ msgstr "Le"
 #. odoo-python
 #: code:addons/om_account_followup/report/followup_print.py:0
 msgid ""
-"The followup plan defined for the current company does not have any followup action."
-msgstr "Le plan de relance défini pour l'entreprise actuelle ne comporte aucune action de relance."
+"The followup plan defined for the current company does not have any followup"
+" action."
+msgstr ""
+"Le plan de suivi défini pour l’entreprise actuelle n’a aucune action de suivi."
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__latest_followup_level_id
 #: model:ir.model.fields,help:om_account_followup.field_res_users__latest_followup_level_id
 msgid "The maximum follow-up level"
-msgstr "Le niveau maximal de relance"
+msgstr "Le niveau de suivi maximal"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__latest_followup_level_id_without_lit
 #: model:ir.model.fields,help:om_account_followup.field_res_users__latest_followup_level_id_without_lit
 msgid ""
-"The maximum follow-up level without taking into account the account move lines with litigation"
-msgstr "Le niveau maximal de relance sans tenir compte des écritures comptables en litige"
+"The maximum follow-up level without taking into account the account move "
+"lines with litigation"
+msgstr ""
+"Le niveau de suivi maximal sans prendre en compte les lignes de mouvement de compte "
+"avec litige"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_line__delay
 msgid ""
-The number of days after the due date of the invoice to wait before sending the reminder. Could be negative if you want to send a polite alert beforehand.
-msgstr "Le nombre de jours après la date d'échéance de la facture avant d'envoyer la relance. Peut être négatif si vous souhaitez envoyer un rappel préventif."
+"The number of days after the due date of the invoice to wait before sending "
+"the reminder. Could be negative if you want to send a polite alert "
+"beforehand."
+msgstr ""
+"Le nombre de jours après la date d’échéance de la facture à attendre avant d’envoyer "
+"le rappel. Peut être négatif si vous souhaitez envoyer une alerte polie à l’avance."
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid ""
-The partner does not have any accounting entries to print in the overdue report for the current company."
-msgstr "Le partenaire n'a aucune écriture comptable à imprimer dans le rapport des retards pour l'entreprise actuelle."
+"The partner does not have any accounting entries to print in the overdue "
+"report for the current company."
+msgstr ""
+"Le partenaire n’a aucune écriture comptable à imprimer dans le rapport des paiements "
+"en retard pour l’entreprise actuelle."
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid "There is no followup plan defined for the current company."
-msgstr "Aucun plan de relance n'est défini pour l'entreprise actuelle."
+msgstr "Aucun plan de suivi n’est défini pour l’entreprise actuelle."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_print
 msgid ""
-This action will send follow-up emails, print the
-letters and
-set the manual actions per customer, according to the
-follow-up levels defined."
+"This action will send follow-up emails, print the\n"
+"                        letters and\n"
+"                        set the manual actions per customer, according to the\n"
+"                        follow-up levels defined."
 msgstr ""
-Cette action enverra les e-mails de relance, imprimera les lettres
-et définira les actions manuelles par client, selon les
-niveaux de relance définis."
+"Cette action enverra des courriels de suivi, imprimera les\n"
+"                        lettres et\n"
+"                        définira les actions manuelles par client, selon les\n"
+"                        niveaux de suivi définis."
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_print__date
 msgid "This field allow you to select a forecast date to plan your follow-ups"
-msgstr "Ce champ vous permet de sélectionner une date prévisionnelle pour planifier vos relances"
+msgstr "Ce champ vous permet de sélectionner une date prévisionnelle pour planifier vos suivis"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__payment_next_action
 #: model:ir.model.fields,help:om_account_followup.field_res_users__payment_next_action
 msgid ""
-This is the next action to be taken.  It will automatically be set when the partner gets a follow-up level that requires a manual action. "
-msgstr "Il s'agit de la prochaine action à effectuer. Elle sera automatiquement définie lorsque le partenaire atteint un niveau de relance nécessitant une action manuelle."
+"This is the next action to be taken.  It will automatically be set when the "
+"partner gets a follow-up level that requires a manual action. "
+msgstr ""
+"C’est la prochaine action à entreprendre. Elle sera automatiquement définie lorsque le "
+"partenaire atteint un niveau de suivi qui nécessite une action manuelle."
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_res_partner__payment_next_action_date
 #: model:ir.model.fields,help:om_account_followup.field_res_users__payment_next_action_date
 msgid ""
-This is when the manual follow-up is needed. The date will be set to the current date when the partner gets a follow-up level that requires a manual action. Can be practical to set manually e.g. to see if he keeps his promises."
-msgstr "Indique quand la relance manuelle est nécessaire. La date sera définie automatiquement à la date du jour lorsque le partenaire atteint un niveau nécessitant une action manuelle. Peut être modifiée manuellement, par exemple pour vérifier le respect d'un engagement."
+"This is when the manual follow-up is needed. The date will be set to the "
+"current date when the partner gets a follow-up level that requires a manual "
+"action. Can be practical to set manually e.g. to see if he keeps his "
+"promises."
+msgstr ""
+"C’est le moment où le suivi manuel est nécessaire. La date sera fixée à la date actuelle "
+"lorsque le partenaire atteint un niveau de suivi qui nécessite une action manuelle. Peut "
+"être pratique à définir manuellement, par exemple pour vérifier s’il tient ses promesses."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_form
 msgid ""
-To remind customers of paying their invoices, you can
-define different actions depending on how severely
-overdue the customer is. These actions are bundled
-into follow-up levels that are triggered when the due
-date of an invoice has passed a certain
-number of days. If there are other overdue invoices for
-the
-same customer, the actions of the most
-overdue invoice will be executed."
+"To remind customers of paying their invoices, you can\n"
+"                        define different actions depending on how severely\n"
+"                        overdue the customer is. These actions are bundled\n"
+"                        into follow-up levels that are triggered when the due\n"
+"                        date of an invoice has passed a certain\n"
+"                        number of days. If there are other overdue invoices for\n"
+"                        the\n"
+"                        same customer, the actions of the most\n"
+"                        overdue invoice will be executed."
 msgstr ""
-Pour rappeler aux clients de payer leurs factures, vous pouvez
-définir différentes actions selon le niveau de retard.
-Ces actions sont regroupées en niveaux de relance
-qui se déclenchent lorsque la date d'échéance d'une facture
-est dépassée d'un certain nombre de jours.
-S'il existe d'autres factures en retard pour le même client,
-les actions de la facture la plus en retard seront exécutées."
+"Pour rappeler aux clients de payer leurs factures, vous pouvez\n"
+"                        définir différentes actions en fonction de la gravité\n"
+"                        du retard du client. Ces actions sont regroupées\n"
+"                        en niveaux de suivi qui sont déclenchés lorsque la date\n"
+"                        d’échéance d’une facture a dépassé un certain\n"
+"                        nombre de jours. S’il existe d’autres factures en retard pour\n"
+"                        le\n"
+"                        même client, les actions de la facture la plus\n"
+"                        en retard seront exécutées."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.account_move_line_partner_tree
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_move_line_reconcile_tree
 msgid "Total credit"
-msgstr "Total crédit"
+msgstr "Crédit total"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.account_move_line_partner_tree
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_move_line_reconcile_tree
 msgid "Total debit"
-msgstr "Total débit"
+msgstr "Débit total"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.report_followup
@@ -1152,12 +1392,12 @@ msgstr "Total :"
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__unreconciled_aml_ids
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__unreconciled_aml_ids
 msgid "Unreconciled Aml"
-msgstr "Écritures non lettrées"
+msgstr "Lignes non rapprochées"
 
 #. module: om_account_followup
 #: model:mail.template,name:om_account_followup.email_template_om_account_followup_level2
 msgid "Urging payment follow-up reminder email"
-msgstr "E-mail de relance de paiement urgent"
+msgstr "Courriel de rappel de suivi de paiement pressant"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_line__send_letter
@@ -1167,53 +1407,60 @@ msgstr "Lors du traitement, une lettre sera imprimée"
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_line__send_email
 msgid "When processing, it will send an email"
-msgstr "Lors du traitement, un e-mail sera envoyé"
+msgstr "Lors du traitement, un courriel sera envoyé"
 
 #. module: om_account_followup
 #: model:ir.model.fields,help:om_account_followup.field_followup_line__manual_action
 msgid ""
-When processing, it will set the manual action to be taken for that customer. "
-msgstr "Lors du traitement, l'action manuelle à effectuer pour ce client sera définie."
+"When processing, it will set the manual action to be taken for that "
+"customer. "
+msgstr ""
+"Lors du traitement, cela définira l’action manuelle à entreprendre pour ce "
+"client."
 
 #. module: om_account_followup
 #: model:ir.model.fields,field_description:om_account_followup.field_res_partner__payment_earliest_due_date
 #: model:ir.model.fields,field_description:om_account_followup.field_res_users__payment_earliest_due_date
 msgid "Worst Due Date"
-msgstr "Date d'échéance la plus critique"
+msgstr "Pire date d’échéance"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid ""
-Write here the introduction in the letter,
-according to the level of the follow-up. You can
-use the following keywords in the text. Don't
-forget to translate in all languages you installed
-using to top right icon."
+"Write here the introduction in the letter,\n"
+"                            according to the level of the follow-up. You can\n"
+"                            use the following keywords in the text. Don't\n"
+"                            forget to translate in all languages you installed\n"
+"                            using to top right icon."
 msgstr ""
-Rédigez ici l'introduction de la lettre,
-en fonction du niveau de relance. Vous pouvez
-utiliser les mots-clés suivants dans le texte.
-N'oubliez pas de traduire dans toutes les langues installées
-en utilisant l'icône en haut à droite."
+"Écrivez ici l’introduction de la lettre,\n"
+"                            selon le niveau de suivi. Vous pouvez\n"
+"                            utiliser les mots-clés suivants dans le texte. N’oubliez\n"
+"                            pas de traduire dans toutes les langues que vous avez installées\n"
+"                            en utilisant l’icône en haut à droite."
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/partner.py:0
 msgid ""
-You became responsible to do the next action for the payment follow-up of"
-msgstr "Vous êtes désormais responsable de la prochaine action de relance de paiement pour"
+"You became responsible to do the next action for the payment follow-up of"
+msgstr ""
+"Vous êtes devenu responsable de la prochaine action pour le suivi de paiement de"
 
 #. module: om_account_followup
 #. odoo-python
 #: code:addons/om_account_followup/models/followup.py:0
 msgid ""
-Your description is invalid, use the right legend or %% if you want to use the percent character."
-msgstr "Votre description est invalide, utilisez la bonne légende ou %% si vous souhaitez utiliser le caractère pourcentage."
+"Your description is invalid, use the right legend or %% if you want to use "
+"the percent character."
+msgstr ""
+"Votre description est invalide, utilisez la légende correcte ou %% si vous voulez utiliser "
+"le caractère pourcentage."
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_followup_line_form
 msgid "days overdue, do the following actions:"
-msgstr "jours de retard, effectuer les actions suivantes :"
+msgstr "jours de retard, effectuez les actions suivantes :"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_om_account_followup_print
@@ -1226,7 +1473,7 @@ msgstr "ou"
 #: model:mail.template,subject:om_account_followup.email_template_om_account_followup_level1
 #: model:mail.template,subject:om_account_followup.email_template_om_account_followup_level2
 msgid "{{ user.company_id.name }} Payment Reminder"
-msgstr "Rappel de paiement - {{ user.company_id.name }}"
+msgstr "Rappel de paiement {{ user.company_id.name }}"
 
 #. module: om_account_followup
 #: model_terms:ir.ui.view,arch_db:om_account_followup.view_partner_inherit_followup_form
