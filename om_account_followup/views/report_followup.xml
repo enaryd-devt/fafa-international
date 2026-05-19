@@ -211,7 +211,7 @@
                                     <tr>
                                         <th>Date Facture</th>
                                         <th>Numéro</th>
-                                        <th>Description</th>
+                                        <th>Extrait du contenu de la facture</th>
                                         <th>Échéance</th>
                                         <th class="text-right">Montant Total</th>
                                         <th class="text-right">Montant Dû</th>
