@@ -1,0 +1,24 @@
+<odoo>
+
+    <!-- ACTION : mouvements de stock -->
+    <record id="action_print_stock_moves_wizard" model="ir.actions.act_window">
+        <field name="name">Imprimer les mouvements</field>
+        <field name="res_model">product.stock.move.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- MENU PARENT -->
+    <menuitem id="menu_stock_moves_root"
+              name="Rapports"
+              parent="stock.menu_warehouse_report"
+              sequence="300"/>
+
+    <!-- MENU 1 : mouvements -->
+    <menuitem id="menu_print_stock_moves"
+              name="Imprimer les mouvements de stock"
+              parent="menu_stock_moves_root"
+              action="action_print_stock_moves_wizard"
+              sequence="1"/>
+
+</odoo>

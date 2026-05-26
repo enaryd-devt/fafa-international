@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <!-- DANS LA FICHE DE L'HISTORIQUE DES MOUVEMENTS DE STOCK -->
+        <record id="action_stock_move_line_report" model="ir.actions.report">
+
+            <field name="name">📦Imprimer mouvements</field>
+
+            <field name="model">stock.move.line</field>
+
+            <field name="report_type">qweb-pdf</field>
+
+            <field name="report_name">primetech_stock_custom_report.report_stock_move_line</field>
+
+            <field name="report_file">
+                primetech_stock_custom_report.report_stock_move_line
+            </field>
+    
+            <field name="binding_model_id" ref="stock.model_stock_move_line"/>
+            <field name="binding_type">report</field>
+
+        </record>
+
+     
+
+        <!-- DANS LE TEMPLATE DE L'ARTICLE -->
+        <record id="action_product_stock_move_wizard" model="ir.actions.server">
+
+            <field name="name"> 📦Imprimer les mouvements</field>
+
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="binding_model_id" ref="product.model_product_template"/>
+
+            <field name="state">code</field>
+
+            <field name="code"><![CDATA[
+                action = {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Imprimer mouvements',
+                    'res_model': 'product.stock.move.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_product_tmpl_id': record.id,
+                    }
+                }
+            ]]>
+            </field>
+
+        </record>
+        
+
+</odoo>

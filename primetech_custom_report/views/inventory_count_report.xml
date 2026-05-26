@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+<template id="custom_inventory_count_sheet"
+          inherit_id="stock.report_inventory">
+
+    <!-- ====================== -->
+    <!-- TITRE -->
+    <!-- ====================== -->
+
+    <xpath expr="//h2" position="replace">
+        <h2 style="
+            text-align:center;
+            font-size:24px;
+            color:#2F4F6F;
+            margin-bottom:10px;
+            font-weight:800;
+        ">
+            FEUILLE DE COMPTAGE D'INVENTAIRE
+        </h2>
+    </xpath>
+
+    <!-- ====================== -->
+    <!-- HEADER TABLE -->
+    <!-- ====================== -->
+
+    <xpath expr="//table/thead/tr" position="replace">
+
+        <tr style="
+            background-color:#EEF5FA;
+            font-size:12px;
+            font-weight:600;
+        ">
+
+            <th style="padding:5px; width:40px; text-align:center;">N°</th>
+            <th style="padding:5px;">Produit</th>
+            <th style="padding:5px;">Reférence</th>
+            <th style="padding:5px;text-align:center;">Qté théorique</th>
+            <th style="padding:5px;text-align:center;">Stock réservé</th>
+            <th style="padding:5px;text-align:center;">Qté comptée</th>
+
+        </tr>
+
+    </xpath>
+
+    <!-- ====================== -->
+    <!-- BODY -->
+    <!-- ====================== -->
+
+    <xpath expr="//table/tbody" position="replace">
+
+        <tbody style="font-size:10px; color:#333;">
+
+            <!-- TRI -->
+            <t t-set="sorted_lines"
+            t-value="docs.sorted(key=lambda l: (
+                    l.location_id.complete_name or '',
+                    l.product_id.categ_id.name or ''
+            ))"/>
+
+            <!-- Variables -->
+            <t t-set="last_location" t-value="False"/>
+            <t t-set="last_category" t-value="False"/>
+
+            <!-- compteur -->
+            <t t-set="counter" t-value="0"/>
+
+            <!-- LOOP -->
+            <t t-foreach="sorted_lines" t-as="line">
+
+                <!-- ====================== -->
+                <!-- HEADER EMPLACEMENT -->
+                <!-- ====================== -->
+
+                <t t-if="line.location_id.id != last_location">
+
+                    <tr style="
+                        background:linear-gradient(to right,#EAF2FA,#F7FAFD);
+                        border-top:1px solid #D0DCE8;
+                        border-bottom:1px solid #D0DCE8;
+                    ">
+
+                        <td colspan="6" style="
+                            padding:7px;
+                            font-weight:600;
+                            font-size:16px;
+                            color:#1F4E79;
+                        ">
+
+                            EMPLACEMENT :
+
+                            <t t-if="line.location_id.warehouse_id">
+                                <t t-esc="line.location_id.warehouse_id.name"/>
+                            </t>
+
+                            <t t-else="">
+                                <t t-esc="line.location_id.complete_name"/>
+                            </t>
+
+                        </td>
+
+                    </tr>
+
+                    <t t-set="last_location"
+                    t-value="line.location_id.id"/>
+
+                    <!-- RESET catégorie -->
+                    <t t-set="last_category"
+                    t-value="False"/>
+
+                </t>
+
+                <!-- ====================== -->
+                <!-- HEADER CATEGORIE -->
+                <!-- ====================== -->
+
+                <t t-if="line.product_id.categ_id.id != last_category">
+
+                    <tr style="
+                        background:#F5F8FC;
+                        border-bottom:1px solid #E1E7EE;
+                    ">
+
+                        <td colspan="6" style="
+                            padding:6px 10px;
+                            font-weight:600;
+                            font-size:14px;
+                            color:#355C7D;
+                        ">
+
+                            
+                            <t t-esc="line.product_id.categ_id.name"/>
+
+                        </td>
+
+                    </tr>
+
+                    <t t-set="last_category"
+                    t-value="line.product_id.categ_id.id"/>
+
+                </t>
+
+                <!-- ====================== -->
+                <!-- LIGNE PRODUIT -->
+                <!-- ====================== -->
+
+                <tr style="border-bottom:1px solid #F0F0F0;">
+
+                    <!-- NUMERO -->
+                    <td style="
+                        padding:4px;
+                        text-align:center;
+                        color:#444;
+                        font-size:13px;
+                        width:40px;
+                    ">
+                        <t t-set="counter" t-value="counter + 1"/>
+                        <t t-esc="counter"/>
+                    </td>
+
+                    <!-- PRODUIT -->
+                    <td style="
+                        padding:4px 4px 4px 20px;
+                        color:#666;
+                        font-size:14px;
+                    ">
+                        <span t-field="line.product_id.display_name"/>
+                    </td>
+
+                    <!-- REFERENCE -->
+                    <td style="
+                        padding:4px;
+                        color:#666;
+                        font-size:14px;
+                    ">
+                        <span t-field="line.product_id.default_code"/>
+                    </td>
+
+                    <!-- QTE THEORIQUE -->
+                    <td style="
+                        padding:4px;
+                        text-align:center;
+                        color:#666;
+                        font-size:14px;
+                    ">
+                        <span t-esc="line.quantity or 0"/>
+                    </td>
+
+                    <!-- STOCK RESERVE -->
+                    <td style="
+                        padding:4px;
+                        text-align:center;
+                        color:#666;
+                        font-size:14px;
+                    ">
+                        <span t-esc="(line.quantity or 0) - (line.available_quantity or 0)"/>
+                    </td>
+
+                    <!-- QTE COMPTEE -->
+                    <td style="
+                        padding:4px;
+                        text-align:center;
+                        border-bottom:1px solid #DDD;
+                    ">
+                    </td>
+
+                </tr>
+
+            </t>
+
+        </tbody>
+
+    </xpath>
+
+    <!-- ====================== -->
+    <!-- SIGNATURES -->
+    <!-- ====================== -->
+
+    <xpath expr="//div[@class='page']" position="inside">
+
+        <div style="margin-top:25px;font-size:14px;">
+
+            <table style="width:100%;">
+
+                <tr>
+
+                    <td style="text-align:center;">
+                        <strong>Magasinier</strong><br/><br/><br/><br/>
+                        ____________
+                    </td>
+
+                    <td style="text-align:center;">
+                        <strong>Contrôleur</strong><br/><br/><br/><br/>
+                        ____________
+                    </td>
+
+                    <td style="text-align:center;">
+                        <strong>Validation</strong><br/><br/><br/><br/>
+                        ____________
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
+
+    </xpath>
+
+</template>
+
+</odoo>

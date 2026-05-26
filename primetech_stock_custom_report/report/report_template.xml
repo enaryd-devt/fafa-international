@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_stock_move_line">
+
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+
+                <div class="page">
+
+                    <!-- VARIABLES GLOBALES -->
+                    <t t-set="global_total_value" t-value="0"/>
+
+                    <!-- TITRE -->
+                    <div class="main-title">
+                        FICHE DE MOUVEMENTS DE STOCK
+                    </div>
+
+                    <div class="sub-title">
+                        Rapport détaillé des mouvements et valorisation
+                    </div>
+
+                    <!-- ENTETE -->
+                    <div class="info-box">
+
+                        <table style="width:100%;">
+
+                            <tr>
+
+                                <td>
+                                    <strong>Société :</strong>
+                                    <t t-esc="env.company.name"/>
+                                </td>
+
+                                <td class="text-right">
+                                    <strong>Date impression :</strong>
+                                    <t t-esc="time.strftime('%d/%m/%Y %H:%M')"/>
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                    <!-- PRODUITS -->
+                    <t t-set="products" t-value="docs.mapped('product_id')"/>
+
+                    <t t-foreach="products" t-as="product">
+
+                        <!-- LIGNES TRIÉES -->
+                        <t t-set="lines"
+                           t-value="sorted(
+                                docs.filtered(lambda l: l.product_id.id == product.id),
+                                key=lambda l: l.date or ''
+                           )"/>
+
+                        <!-- TITRE PRODUIT -->
+                        <div class="product-title">
+
+                            <table style="width:100%;">
+
+                                <tr>
+
+                                    <td style="color:#000000; font-weight:bold;">
+                                        <t t-esc="product.display_name"/>
+                                    </td>
+
+                                    <td class="text-right"
+                                        style="color:#000000; font-weight:bold;">
+
+                                        Référence :
+                                        <t t-esc="product.default_code or '-'"/>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </div>
+
+                        <!-- TABLE -->
+                        <table class="table-stock">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Document</th>
+                                    <th>Origine</th>
+                                    <th>Destination</th>
+                                    <th>Lot</th>
+                                    <th>Entrée</th>
+                                    <th>Sortie</th>
+                                    <th>Solde</th>
+                                    <th>Coût</th>
+                                    <th>Valorisation</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <t t-set="balance" t-value="0"/>
+                                <t t-set="total_in" t-value="0"/>
+                                <t t-set="total_out" t-value="0"/>
+
+                                <t t-foreach="lines" t-as="l">
+
+                                    <!-- ENTREES -->
+                                    <t t-set="in_qty"
+                                       t-value="l.quantity if l.location_dest_id.usage == 'internal' else 0"/>
+
+                                    <!-- SORTIES -->
+                                    <t t-set="out_qty"
+                                       t-value="l.quantity if l.location_id.usage == 'internal' else 0"/>
+
+                                    <!-- TOTAUX -->
+                                    <t t-set="total_in"
+                                       t-value="total_in + in_qty"/>
+
+                                    <t t-set="total_out"
+                                       t-value="total_out + out_qty"/>
+
+                                    <!-- SOLDE -->
+                                    <t t-set="balance"
+                                       t-value="balance + in_qty - out_qty"/>
+
+                                    <!-- PU -->
+                                    <t t-set="unit_price"
+                                       t-value="product.standard_price or 0"/>
+
+                                    <!-- VALORISATION -->
+                                    <t t-set="value"
+                                       t-value="balance * unit_price"/>
+
+                                    <tr t-att-class="'row-in' if in_qty > 0 else 'row-out'">
+
+                                        <td>
+                                            <t t-esc="l.date.strftime('%d/%m/%Y %H:%M') if l.date else ''"/>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <t t-esc="l.picking_id.picking_type_id.name or ''"/>
+                                        </td>
+
+                                        <td>
+                                            <t t-esc="l.reference or l.picking_id.name or ''"/>
+                                        </td>
+
+                                        <td>
+                                            <t t-esc="l.location_id.display_name"/>
+                                        </td>
+
+                                        <td>
+                                            <t t-esc="l.location_dest_id.display_name"/>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <t t-esc="l.lot_id.name or '-'"/>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <t t-esc="'{:,.2f}'.format(in_qty).replace(',', ' ')"/>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <t t-esc="'{:,.2f}'.format(out_qty).replace(',', ' ')"/>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <strong>
+                                                <t t-esc="'{:,.2f}'.format(balance).replace(',', ' ')"/>
+                                            </strong>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <span style="white-space:nowrap;">
+                                                <t t-esc="'{:,.0f}'.format(unit_price).replace(',', ' ')"/> FCFA
+                                            </span>
+                                        </td>
+                                        <td class="text-right">
+                                            <strong style="white-space:nowrap;">
+                                                <t t-esc="'{:,.0f}'.format(value).replace(',', ' ')"/> FCFA
+                                            </strong>
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                                <!-- TOTAL PRODUIT -->
+                                <tr class="total-row">
+
+                                    <td colspan="6">
+                                        TOTAL
+                                    </td>
+
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.2f}'.format(total_in).replace(',', ' ')"/>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.2f}'.format(total_out).replace(',', ' ')"/>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.2f}'.format(balance).replace(',', ' ')"/>
+                                    </td>
+
+                                    <td></td>
+
+                                    <td class="text-right">
+                                        <t t-esc="'{:,.0f}'.format(balance * product.standard_price).replace(',', ' ')"/>
+                                        FCFA
+                                    </td>
+
+                                </tr>
+
+                                <!-- CUMUL VALORISATION GLOBALE -->
+                                <t t-set="global_total_value"
+                                   t-value="global_total_value + (balance * product.standard_price)"/>
+
+                            </tbody>
+
+                        </table>
+
+                        <br/>
+
+                    </t>
+
+                    <!-- VALORISATION GLOBALE -->
+                    <div style="margin-top:30px; width:100%;">
+
+                        <table style="width:40%; float:right; border-collapse:collapse;">
+
+                            <tr style="background:#1f4e78; color:white;">
+
+                                <td style="padding:10px; font-size:16px;">
+                                    <strong>VALORISATION TOTALE</strong>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+
+                                <td style="padding:12px; border:1px solid #000; text-align:right; font-size:18px;">
+
+                                    <strong>
+                                        <t t-esc="'{:,.0f}'.format(global_total_value).replace(',', ' ')"/>
+                                        FCFA
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                    <div style="clear:both;"></div>
+
+                    <!-- ZONE SIGNATURE -->
+                    <div style="margin-top:80px;">
+
+                        <table style="width:100%; text-align:center;">
+
+                            <tr>
+
+                                <td style="width:50%;">
+                                    <strong>Responsable Stock</strong>
+                                </td>
+
+                                <td style="width:50%;">
+                                    <strong>Direction</strong>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+
+                                <td style="padding-top:80px;">
+                                    ________________________
+                                </td>
+
+                                <td style="padding-top:80px;">
+                                    ________________________
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </t>
+        </t>
+
+    </template>
+
+</odoo>

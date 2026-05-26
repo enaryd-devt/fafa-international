@@ -1,0 +1,385 @@
+
+
+    /* =========================
+       GLOBAL
+    ========================== */
+
+    .page{
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 11px;
+        color: #2b2b2b;
+        padding: 20px 25px;
+        background: #ffffff;
+    }
+
+    strong{
+        font-weight: 700;
+    }
+
+    .text-right{
+        text-align: right;
+    }
+
+    .text-center{
+        text-align: center;
+    }
+
+    /* =========================
+       TITRES
+    ========================== */
+
+    .main-title{
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #16324f;
+        letter-spacing: 1px;
+        margin-top: 5px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }
+
+    .sub-title{
+        text-align: center;
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 25px;
+        font-style: italic;
+    }
+
+    /* =========================
+       INFO BOX
+    ========================== */
+
+    .info-box{
+        background: linear-gradient(135deg, #f8fafc, #eef3f8);
+        border: 1px solid #d8e2ec;
+        border-left: 5px solid #1f4e78;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .info-box table{
+        width: 100%;
+    }
+
+    .info-box td{
+        padding: 3px 0;
+        font-size: 11px;
+    }
+
+    /* =========================
+       TITRE PRODUIT
+    ========================== */
+
+    .product-title{
+        background: #6c8095;
+        color: #000000;
+        border: 1px solid #6c8095;
+        border-left: 5px solid #1f4e78;
+        border-radius: 10px 10px 0 0;
+        padding: 10px 14px;
+        margin-top: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 3px 10px rgba(31,78,120,0.08);
+    }
+
+    .product-title table{
+        width: 100%;
+    }
+
+    /* =========================
+       TABLE STOCK
+    ========================== */
+
+    .table-stock{
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 10px;
+        border: 1px solid #dfe6ee;
+        border-top: none;
+        overflow: hidden;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .table-stock thead th{
+        background: #16324f;
+        color: white;
+        padding: 10px 8px;
+        font-size: 10px;
+        text-transform: uppercase;
+        border: 1px solid #274766;
+        letter-spacing: 0.4px;
+    }
+
+    .table-stock tbody td{
+        padding: 8px 7px;
+        border: 1px solid #e5e7eb;
+        vertical-align: middle;
+    }
+
+    /* =========================
+       LIGNES
+    ========================== */
+
+    .table-stock tbody tr:nth-child(even){
+        background: #f9fbfd;
+    }
+
+    .table-stock tbody tr:hover{
+        background: #eef5fb;
+    }
+
+    .row-in{
+        background: #edf9f0 !important;
+    }
+
+    .row-out{
+        background: #fff4f4 !important;
+    }
+
+    .row-in td{
+        border-color: #d5f0db;
+    }
+
+    .row-out td{
+        border-color: #f4d6d6;
+    }
+
+    /* =========================
+       TOTAL
+    ========================== */
+
+    .total-row{
+        background: #16324f !important;
+        color: white;
+        font-weight: bold;
+    }
+
+    .total-row td{
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border: 1px solid #284b6a;
+        font-size: 11px;
+    }
+
+    /* =========================
+       BADGES / MONTANTS
+    ========================== */
+
+    .amount-positive{
+        color: #0f8a43;
+        font-weight: bold;
+    }
+
+    .amount-negative{
+        color: #c0392b;
+        font-weight: bold;
+    }
+
+    /* =========================
+       VALORISATION GLOBALE
+    ========================== */
+
+    .summary-box{
+        width: 42%;
+        float: right;
+        margin-top: 25px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #d8e2ec;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .summary-header{
+        background: linear-gradient(135deg, #1f4e78, #2f6fa8);
+        color: rgb(33, 25, 25);
+        padding: 14px;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    .summary-body{
+        background: #ffffff;
+        padding: 18px;
+        text-align: right;
+        font-size: 22px;
+        font-weight: bold;
+        color: #16324f;
+    }
+
+    /* =========================
+       SIGNATURE
+    ========================== */
+
+    .signature-section{
+        margin-top: 90px;
+    }
+
+    .signature-table{
+        width: 100%;
+        text-align: center;
+    }
+
+    .signature-title{
+        font-size: 12px;
+        font-weight: bold;
+        color: #16324f;
+    }
+
+    .signature-line{
+        padding-top: 70px;
+        font-size: 13px;
+        color: #4b5563;
+    }
+
+    /* =========================
+       PETITS DETAILS
+    ========================== */
+
+    .fcfa{
+        color: #1f4e78;
+        font-weight: bold;
+    }
+
+    .muted{
+        color: #6b7280;
+    }
+
+    /* =========================
+       IMPRESSION PDF ODOO
+    ========================== */
+
+    table{
+        page-break-inside: auto;
+    }
+
+    tr{
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    thead{
+        display: table-header-group;
+    }
+
+    tfoot{
+        display: table-footer-group;
+    }
+
+    /* =========================
+   TABLE STOCK
+========================= */
+
+.table-stock{
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* IMPORTANT */
+    border: 1px solid #dfe6ee;
+}
+
+/* LARGEURS DES COLONNES */
+
+.table-stock th:nth-child(1),
+.table-stock td:nth-child(1){
+    width: 9%;
+}
+
+.table-stock th:nth-child(2),
+.table-stock td:nth-child(2){
+    width: 9%;
+}
+
+.table-stock th:nth-child(3),
+.table-stock td:nth-child(3){
+    width: 11%;
+}
+
+.table-stock th:nth-child(4),
+.table-stock td:nth-child(4){
+    width: 13%;
+}
+
+.table-stock th:nth-child(5),
+.table-stock td:nth-child(5){
+    width: 13%;
+}
+
+.table-stock th:nth-child(6),
+.table-stock td:nth-child(6){
+    width: 7%;
+}
+
+.table-stock th:nth-child(7),
+.table-stock td:nth-child(7){
+    width: 7%;
+}
+
+.table-stock th:nth-child(8),
+.table-stock td:nth-child(8){
+    width: 7%;
+}
+
+.table-stock th:nth-child(9),
+.table-stock td:nth-child(9){
+    width: 7%;
+}
+
+/* COLONNE COUT */
+.table-stock th:nth-child(10),
+.table-stock td:nth-child(10){
+    width: 9%;
+    white-space: nowrap; /* FORCE UNE SEULE LIGNE */
+}
+
+/* COLONNE VALORISATION */
+.table-stock th:nth-child(11),
+.table-stock td:nth-child(11){
+    width: 11%;
+    white-space: nowrap;
+}
+
+/* STYLE GENERAL */
+
+.table-stock thead th{
+    background: #16324f;
+    color: white;
+    padding: 10px 6px;
+    font-size: 9px;
+    text-transform: uppercase;
+    border: 1px solid #274766;
+}
+
+.table-stock tbody td{
+    padding: 7px 6px;
+    border: 1px solid #e5e7eb;
+    vertical-align: middle;
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ALIGNEMENT NUMERIQUE */
+
+.table-stock td:nth-child(7),
+.table-stock td:nth-child(8),
+.table-stock td:nth-child(9),
+.table-stock td:nth-child(10),
+.table-stock td:nth-child(11){
+    text-align: right;
+    font-weight: 600;
+}
+
+/* EVITER RETOUR LIGNE FCFA */
+
+.table-stock td:nth-child(10),
+.table-stock td:nth-child(11){
+    white-space: nowrap;
+    word-break: keep-all;
+}
