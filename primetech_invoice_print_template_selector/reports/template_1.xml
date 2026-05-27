@@ -1,0 +1,630 @@
+<odoo>
+
+<template id="template_1">
+
+        <t t-call="web.external_layout">
+
+            <t t-foreach="docs" t-as="o">
+
+                <main>
+
+                        <div class="page" style="font-family:Arial;">
+ 
+                            <!-- HEADER -->
+                            <div style="width:100%; overflow:hidden; margin-bottom:35px;">
+
+                                <!-- BLOC GAUCHE -->
+                                <div style="
+                                    float:left;
+                                    width:55%;
+                                    margin-top:70px;
+                                   
+                                ">
+
+                                    <div style="
+                                        font-size:34px;
+                                        font-weight:800;
+                                        color:#0d4f9b;
+                                        letter-spacing:0.3px;
+                                    ">
+                                        FACTURE <span t-field="o.name"/>
+                                    </div>
+
+                                </div>
+
+                                <!-- BLOC DROIT -->
+                                <div style="
+                                    float:right;
+                                    width:38%;
+                                    
+                                ">
+
+                                    <!-- DATE -->
+                                    <div style="
+                                        text-align:right;
+                                        font-size:19px;
+                                        font-weight:800;
+                                        color:#0d4f9b;
+                                        margin-bottom:85px;
+                                    ">
+                                        Date de facturation :
+                                        <span t-field="o.invoice_date"/>
+                                    </div>
+
+                                    <!-- CLIENT -->
+                                    <div style="
+                                        width:100%;
+                                        text-align:left;
+                                        word-wrap:break-word;
+                                        overflow-wrap:anywhere;
+                                        white-space:normal;
+                                        font-size:15px;
+                                        line-height:1.7;
+                                        margin-left:-20px;
+                                    ">
+
+                                        <!-- LABEL -->
+                                        <div style="
+                                            font-size:15px;
+                                            font-weight:900;
+                                            color:#7a8693;
+                                            margin-bottom:12px;
+                                            letter-spacing:0.6px;
+                                        ">
+                                            DOIT
+                                        </div>
+
+                                        <!-- NOM -->
+                                        <t t-if="o.partner_id.name">
+                                            <div style="margin-bottom:7px; font-size:16px;">
+                                                <span style="color:#163a5c; font-weight:700;">
+                                                    <t t-esc="o.partner_id.name"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                       <!-- TELEPHONE -->
+                                        <t t-if="o.partner_id.phone">
+                                            <div style="margin-bottom:7px; font-size:15px;">
+                                                <strong style="color:#111827; font-weight:800;">Tel:</strong>
+                                                <span style="color:#163a5c; font-weight:600;">
+                                                    <t t-esc="o.partner_id.phone"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <!-- ADRESSE COMPLETE -->
+                                        <t t-if="o.partner_id.contact_address">
+                                            <div style="margin-bottom:7px; font-size:15px; line-height:1.6;">
+                                                <strong style="color:#111827; font-weight:800;">Adresse:</strong>
+                                                <span style="color:#163a5c; font-weight:500;">
+                                                    <t t-esc="o.partner_id.contact_address.replace(o.partner_id.name, '')"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                        <!-- NIU -->
+                                        <t t-if="o.partner_id.vat">
+                                            <div style="margin-bottom:7px; font-size:15px;">
+                                                <strong style="color:#111827; font-weight:800;">NIU:</strong>
+                                                <span style="color:#163a5c; font-weight:600;">
+                                                    <t t-esc="o.partner_id.vat"/>
+                                                </span>
+                                            </div>
+                                        </t>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div style="clear:both;"></div>
+
+
+
+                            <!-- INFOS -->
+                            <div style="margin-top:10px; font-size:12px; color:#111827;">
+
+                                <!-- DATE ÉCHÉANCE -->
+                                <span>
+                                    <span style="color:#000; font-weight:600;">Date d’échéance :</span>
+                                    <span style="color:#0d6efd; font-weight:600;">
+                                        <span t-field="o.invoice_date_due"/>
+                                    </span>
+                                </span>
+
+                                <span style="margin:0 6px; color:#111827;">|</span>
+
+                                <!-- AUTEUR -->
+                                <span>
+                                    <span style="color:#000; font-weight:600;">Auteur :</span>
+                                    <span style="color:#0d6efd; font-weight:600;">
+                                        <span t-field="o.create_uid"/>
+                                    </span>
+                                </span>
+
+                                <span style="margin:0 6px; color:#111827;">|</span>
+
+                                <!-- SOURCE -->
+                                <span>
+                                    <span style="color:#000; font-weight:600;">Source :</span>
+                                    <span style="color:#0d6efd; font-weight:600;">
+                                        <t t-if="o.invoice_origin">
+                                            <span t-field="o.invoice_origin"/>
+                                        </t>
+                                        <t t-else="">
+                                            -
+                                        </t>
+                                    </span>
+                                </span>
+
+                            </div>
+
+                            <!-- TABLE -->
+
+                            <table style="
+                                width:100%;
+                                margin-top:20px;
+                                border-collapse:collapse;
+                                font-size:13px;
+                                border:1px solid #dce3ea;
+                                ">
+
+                                <!-- HEADER -->
+                                <thead>
+                                    <tr style="
+                                        background:#1f4e78;
+                                        color:white;
+                                        border-bottom:2px solid #163a5c;
+                                    ">
+                                        <th style="padding:10px; text-align:left;">
+                                            Désignation
+                                        </th>
+
+                                        <th style="padding:10px; text-align:right;">
+                                            Quantité
+                                        </th>
+
+                                        <th style="padding:10px; text-align:right;">
+                                            Prix Unitaire
+                                        </th>
+
+                                        <th style="padding:10px; text-align:right;">
+                                            Taxes
+                                        </th>
+
+                                        <th style="padding:10px; text-align:right;">
+                                            Montant
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <!-- BODY -->
+                                <tbody>
+
+                                    <t t-foreach="o.invoice_line_ids" t-as="l">
+
+                                        <tr style="
+                                            border-bottom:1px solid #e9eef3;
+                                        ">
+
+                                            <!-- DESCRIPTION -->
+                                            <td style="
+                                                padding:10px;
+                                                color:#1f2937;
+                                            ">
+                                                <span t-field="l.name"/>
+                                            </td>
+
+                                            <!-- QTY -->
+                                            <td style="
+                                                padding:10px;
+                                                text-align:right;
+                                                color:#374151;
+                                            ">
+                                                <span t-field="l.quantity"/>
+                                            </td>
+
+                                            <!-- UNIT PRICE -->
+                                            <td style="
+                                                padding:10px;
+                                                text-align:right;
+                                                color:#374151;
+                                            ">
+                                                <span t-field="l.price_unit"/>
+                                            </td>
+
+                                            <!-- TAX -->
+                                            <td style="
+                                                padding:10px;
+                                                text-align:right;
+                                                color:#374151;
+                                            ">
+                                                <span t-esc="', '.join(l.tax_ids.mapped('name'))"/>
+                                            </td>
+
+                                            <!-- SUBTOTAL -->
+                                            <td style="
+                                                padding:10px;
+                                                text-align:right;
+                                                font-weight:600;
+                                                color:#111827;
+                                            ">
+                                                <span t-field="l.price_subtotal"/>
+                                            </td>
+
+                                        </tr>
+
+                                    </t>
+
+                                </tbody>
+
+                                </table>
+                                <!-- TOTAL + REGLEMENT -->
+                                <div style="
+                                    margin-top:10px;
+                                    width:100%;
+                                    overflow:hidden;
+                                    ">
+
+                                    <div style="
+                                        width:340px;
+                                        float:right;
+                                        border:1px solid #dce3ea;
+                                        padding:12px 15px;
+                                        background:#f8fafc;
+                                        border-radius:4px;
+                                        line-height:1.3;
+                                    ">
+
+                                        <!-- TOTAL HT -->
+                                        <div style="
+                                            display:flex;
+                                            justify-content:space-between;
+                                            margin-bottom:6px;
+                                            font-size:13px;
+                                            color:#374151;
+                                         ">
+                                            <strong>Total HT :</strong>
+                                            <span t-field="o.amount_untaxed"/>
+                                        </div>
+
+                                        <!-- TAXES (seulement si > 0) -->
+                                        <t t-if="o.amount_tax != 0">
+                                            <div style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                margin-bottom:6px;
+                                                font-size:13px;
+                                                color:#374151;
+                                            ">
+                                                <strong>Taxes :</strong>
+
+                                                <span t-esc="o.amount_tax"
+                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </div>
+                                        </t>
+
+                                        <!-- TOTAL TTC -->
+                                        <div style="
+                                            display:flex;
+                                            justify-content:space-between;
+                                            padding-top:6px;
+                                            padding-bottom:6px;
+                                            border-top:1px solid #dce3ea;
+                                            font-size:16px;
+                                            font-weight:700;
+                                            color:#1f4e78;
+                                            ">
+                                            <span>Total TTC :</span>
+                                            <span t-field="o.amount_total"/>
+                                        </div>
+
+                                        <!-- MONTANT REGLE (seulement si paiement existant) -->
+                                        <t t-if="o.amount_total - o.amount_residual > 0">
+                                            <div style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                margin-top:8px;
+                                                margin-bottom:5px;
+                                                font-size:13px;
+                                                color:#374151;
+                                            ">
+                                                <strong>Réglé :</strong>
+
+                                                <span t-esc="o.amount_total - o.amount_residual"
+                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </div>
+                                        </t>
+
+                                        <!-- RESTE -->
+                                        <div style="
+                                            display:flex;
+                                            justify-content:space-between;
+                                            padding-top:6px;
+                                            border-top:1px dashed #cbd5e1;
+                                            font-size:14px;
+                                            font-weight:700;
+                                            color:#dc2626;
+                                            ">
+                                            <span>Reste à payer :</span>
+                                            <span t-field="o.amount_residual"/>
+                                        </div>
+
+                                        <!-- ETAT -->
+                                        <t t-if="o.payment_state">
+                                            <div style="
+                                                margin-top:8px;
+                                                text-align:right;
+                                                font-size:12px;
+                                            ">
+
+                                                <t t-if="o.payment_state == 'paid'">
+                                                    <span style="color:#15803d; font-weight:bold;">
+                                                        PAYÉE
+                                                    </span>
+                                                </t>
+
+                                                <t t-if="o.payment_state == 'partial'">
+                                                    <span style="color:#d97706; font-weight:bold;">
+                                                        PARTIELLE
+                                                    </span>
+                                                </t>
+
+                                                <t t-if="o.payment_state == 'not_paid'">
+                                                    <span style="color:#dc2626; font-weight:bold;">
+                                                        NON PAYÉE
+                                                    </span>
+                                                </t>
+
+                                            </div>
+                                        </t>
+
+                                    </div>
+
+                                </div>
+                                <!-- TEXT AMOUNT -->
+                                <div style="
+                                    margin-top:18px;
+                                    padding:10px 0;
+                                    font-size:16px;
+                                    line-height:26px;
+                                    color:#111827;
+                                    ">
+
+                                    La présente FACTURE
+                                    <strong t-field="o.name"/>
+
+                                    est arrêtée à la somme de :
+
+                                    <strong style="
+                                        font-size:18px;
+                                        font-weight:700;
+                                        color:#1f4e78;
+                                    ">
+                                        <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
+                                    </strong>
+
+                                </div>
+
+                                <!-- PRINT INFO -->
+                                <div style="margin-top:12px; font-size:10px; color:#777;">
+                                    Imprimé par <span t-esc="o.env.user.name"/>
+                                    le
+                                    <span t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')"/>
+                                </div>
+
+                                <!-- GARANTIE -->
+                                <div style="
+                                    margin-top:10px;
+                                    width:100%;
+                                    display:flex;
+                                    justify-content:flex-end;
+                                    ">
+
+                                    <div style="
+                                        width:240px;
+                                        padding:8px 12px;
+                                        border-left:4px solid #1f4e78;
+                                        background:#f8fafc;
+                                        border-radius:4px;
+                                        font-size:20px;
+                                        color:#1f4e78;
+                                        font-weight:600;
+                                    ">
+
+                                        <span style="color:#374151; font-weight:700;">
+                                            GARANTIE :
+                                        </span>
+
+                                        <span style="font-size:18px; font-weight:800; color:#1f4e78;">
+                                            15 mois
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- SIGNATURE -->
+                                <div style="
+                                    margin-top:50px;
+                                    width:100%;
+                                    overflow:hidden;
+                                    ">
+
+                                    <!-- DIRECTION -->
+                                    <div style="
+                                        float:left;
+                                        width:45%;
+                                        text-align:center;
+                                    ">
+                                        <strong style="color:#000; font-size:16px;">
+                                            LA DIRECTION
+                                        </strong>
+                                    </div>
+
+                                    <!-- CLIENT -->
+                                    <div style="
+                                        float:right;
+                                        width:45%;
+                                        text-align:center;
+                                    ">
+                                        <strong style="color:#000; font-size:16px;">
+                                            LE CLIENT
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            <!-- ========================= -->
+                            <!-- PAGE CONTRAT SAV -->
+                            <!-- ========================= -->
+
+                            <div style="page-break-before: always;"></div>
+
+                            
+                            <div style="
+                                font-size:14.5px;
+                                line-height:1.22;
+                                color:#111827;
+                                ">
+                                <h2 style="
+                                    text-align:center;
+                                    font-size:22px;
+                                    font-weight:900;
+                                    color:#163a5c;
+                                    margin-bottom:10px;
+                                    letter-spacing:0.5px;
+                                ">
+                                    SERVICE APRÈS VENTE (SAV)
+                                </h2>
+
+                                <p style="margin:0 0 3px 0;">
+                                    ENTRE LES SOUSSIGNÉS :
+                                </p>
+
+                                <p style="margin:0 0 3px 0;">
+                                    - ETS FAFFA INTERNATIONAL ; BP : 8627 DOUALA ; TEL : 691555812 - 233419048<br/>
+                                    Désigné dans tout ce qui suit, le <strong>VENDEUR</strong>
+                                </p>
+
+                                <p style="margin:0 0 3px 0;">
+                                    ET :
+                                </p>
+
+                                <p style="margin:0 0 3px 0;">
+                                    - Mr/Mme : <strong><t t-esc="o.partner_id.name"/></strong><br/>
+
+                                    <t t-if="o.partner_id.function">
+                                        - PROFESSION : <strong><t t-esc="o.partner_id.function"/></strong><br/>
+                                    </t>
+
+                                    <t t-if="o.partner_id.vat">
+                                        - N° CNI / NIU : <strong><t t-esc="o.partner_id.vat"/></strong><br/>
+                                    </t>
+
+                                    <t t-if="o.partner_id.phone">
+                                        - TEL : <strong><t t-esc="o.partner_id.phone"/></strong><br/>
+                                    </t>
+
+                                    Désigné dans tout ce qui suit, l’<strong>ACHETEUR</strong><br/><br/>
+                                </p>
+
+                                <p style="margin:4px 0 3px 0; font-weight:700;">
+                                    IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :
+                                </p>
+
+                                <p style="font-size:15px; line-height:1.8; color:#111827; align-content: justify;">
+                                    <strong>Article 1 <t t-esc="idx"/></strong> :
+                                        le vendeur désigné vend 
+                                        <t t-set="idx" t-value="0"/>
+                                        <t t-foreach="o.invoice_line_ids" t-as="l">
+                                            <t t-set="idx" t-value="idx + 1"/>
+                                               <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
+                                        </t> en bon état de fonctionnement moyennant un montant de :<strong> <span t-field="o.amount_total"/> (<span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>)</strong><br/>
+
+                                    <strong>Article 2</strong> : l’acheteur désigné ci-dessus prend connaissance du présent contrat avant tout achat ou avance faite au vendeur.<br/>
+
+                                    <strong>Article 3</strong> : la réservation de la machine ne peut être définitive qu’après un versement représentant les 1/3 du montant consenti entre les parties.<br/>
+
+                                    <strong>Article 4</strong> : en cas d’une avance faite, les modalités de versement seront définies de commun accord pour une durée maximum de (06) mois.<br/>
+
+                                    <strong>Article 5</strong> : le paiement de solde tout compte annule les Article 3 et 4 du présent contrat et l’acquéreur est tenu d’emporter immédiatement sa machine sans autre forme de procédure.<br/>
+
+                                    <strong>Article 6</strong> : en cas de désistement unilatéral de la part du client(e), le vendeur retient les 10% pour dommage et intérêt du montant préalablement fait et le premier est tenu d’attendre la vente du dit appareil sur une période de (06) mois à compter de la date de sa déclaration.<br/>
+
+                                    <strong>Article 7</strong> : le choix de la machine est fait par le client(e) en toute conscience, il (elle) peut se faire assister par l’un de nos hôtesses de vente. Toute fois le choix définitif revient au client(e).<br/>
+
+                                    <strong>Article 8</strong> : le vendeur ne saurait être responsable des dommages causés directement et/ou indirectement par le (la) client(e) à l’usage (manutention, foudre, mauvais usage etc.…). Le (la) client (e) devrait avoir un régulateur de tension de 5000W.<br/>
+
+                                    <strong>Article 9</strong> : la garantie fixée pour une durée de <strong>QUINZE (15) mois </strong> au profit du (de la) client(e) et la maintenance un (01) an. Les pièces de rechange incombent au propriétaire de la machine durant ce délai d’un (01) an. Durant la période de garantie, le vendeur ne prend pas en charge la carte mère, les malaxeurs, les vices, les couvercles, les roues, les roulements, le bloc et les joints.<br/>
+
+                                    <strong>Article 10</strong> : la machine demeure la propriété du vendeur jusqu’au paiement définitif des sommes dues à l’Article 1 du présent contrat.<br/>
+
+                                    <strong>Article 11</strong> : l’acheteur déclare et rassure le bon fonctionnement de la machine avant la sortie de la boutique pour son entrée en jouissance.<br/>
+
+                                    <strong>Article 12</strong> : en cas de litige, seuls les tribunaux de DOUALA seront compétents.<br/>
+
+                                    <strong>Article 13</strong> : les modalités définies à l’Article 4 impartissent aux parties en cas de résiliation et, l’un ou l’autre ne peut être notifié que par voie d’huissier.<br/>
+
+                                    <strong>signé pour servir et valoir ce que de droit.</strong>
+
+                                </p>
+                            </div>
+                            <!-- SIGNATURE -->
+                            <div style="
+                                margin-top:20px;
+                                width:100%;
+                                overflow:hidden;
+                                ">
+
+                                <!-- LE VENDEUR -->
+                                <div style="
+                                    float:left;
+                                    width:45%;
+                                    text-align:center;
+                                    ">
+                                    <strong style="color:#000; font-size:16px;">
+                                        LE VENDEUR
+                                    </strong>
+                                </div>
+
+                                <!-- L'ACHETEUR -->
+                                <div style="
+                                    float:right;
+                                    width:45%;
+                                    text-align:center;
+                                    ">
+                                    <strong style="color:#000; font-size:16px;">
+                                        L'ACHETEUR
+                                    </strong>
+                                </div>
+
+                            </div>
+                            <!-- DATE -->
+                            <div style="
+                                        text-align:letf;
+                                        font-size:13px;
+                                        font-weight:600;
+                                        color:#0d4f9b;
+                                     
+                                    ">
+                                        <br/><br/><br/>
+                                        DOUALA LE :
+                                        <span t-field="o.invoice_date"/>
+                            </div>
+
+                           
+                        </div>
+
+                </main>
+
+            </t>
+
+        </t>
+
+
+</template>
+
+</odoo>

@@ -1,9 +1,8 @@
 <odoo>
 
-    <template id="primetech_invoice_report"
+    <template id="template_1" 
               inherit_id="account.report_invoice_document">
-	<xpath expr="//div[@name='address_same_as_shipping']/ancestor::div[hasclass('row')]" position="replace">
-	</xpath>              
+             
        <!-- Bloc Date et partenaire -->
     <xpath expr="//span[@t-field='o.name']/.." position="replace">
         <!-- Date du jour -->
@@ -486,3 +485,4 @@
     </template>
 
 </odoo>
+

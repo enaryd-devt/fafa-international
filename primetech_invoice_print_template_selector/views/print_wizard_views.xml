@@ -1,0 +1,37 @@
+<odoo>
+
+    <record id="view_print_wizard_form" model="ir.ui.view">
+        <field name="name">print.wizard.form</field>
+        <field name="model">primetech.invoice.print.wizard</field>
+        <field name="arch" type="xml">
+
+            <form string="Choisir un modèle de facture">
+
+                <group>
+                    <field name="template" widget="radio"/>
+                </group>
+
+                <footer>
+                    <button name="action_print"
+                            type="object"
+                            string="Imprimer"
+                            class="btn-primary"/>
+
+                    <button string="Annuler"
+                            special="cancel"/>
+                </footer>
+
+            </form>
+
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_print_invoice_wizard" model="ir.actions.act_window">
+        <field name="name">Impression facture</field>
+        <field name="res_model">primetech.invoice.print.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

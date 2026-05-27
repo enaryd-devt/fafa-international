@@ -1,0 +1,12 @@
+<odoo>
+
+    <!-- REPORT ACTION -->
+    <record id="action_report_invoice_custom" model="ir.actions.report">
+        <field name="name">Facture personnalisée</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">primetech_invoice_print_template_selector.main_report</field>
+        <field name="report_file"> primetech_invoice_print_template_selector.main_report</field>
+        <field name="print_report_name">(object.partner_id.name or '') + '_' + (object.name or '')</field>    </record>
+
+</odoo>
