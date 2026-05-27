@@ -541,7 +541,7 @@
                                         <t t-set="idx" t-value="0"/>
                                         <t t-foreach="o.invoice_line_ids" t-as="l">
                                             <t t-set="idx" t-value="idx + 1"/>
-                                               <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
+                                               <span t-esc="'%02d' % int(l.quantity)"/>  <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
                                         </t> en bon état de fonctionnement moyennant un montant de :<strong> <span t-field="o.amount_total"/> (<span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>)</strong><br/>
 
                                     <strong>Article 2</strong> : l’acheteur désigné ci-dessus prend connaissance du présent contrat avant tout achat ou avance faite au vendeur.<br/>
