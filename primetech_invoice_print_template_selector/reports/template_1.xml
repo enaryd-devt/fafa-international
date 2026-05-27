@@ -42,7 +42,7 @@
                                     <!-- DATE -->
                                     <div style="
                                         text-align:right;
-                                        font-size:19px;
+                                        font-size:17px;
                                         font-weight:800;
                                         color:#0d4f9b;
                                         margin-bottom:85px;
@@ -58,14 +58,14 @@
                                         word-wrap:break-word;
                                         overflow-wrap:anywhere;
                                         white-space:normal;
-                                        font-size:15px;
+                                        font-size:12px;
                                         line-height:1.7;
                                         margin-left:-20px;
                                     ">
 
                                         <!-- LABEL -->
                                         <div style="
-                                            font-size:15px;
+                                            font-size:13px;
                                             font-weight:900;
                                             color:#7a8693;
                                             margin-bottom:12px;
@@ -386,9 +386,9 @@
                                 </div>
                                 <!-- TEXT AMOUNT -->
                                 <div style="
-                                    margin-top:18px;
+                                    margin-top:14px;
                                     padding:10px 0;
-                                    font-size:16px;
+                                    font-size:13px;
                                     line-height:26px;
                                     color:#111827;
                                     ">
@@ -399,8 +399,8 @@
                                     est arrêtée à la somme de :
 
                                     <strong style="
-                                        font-size:18px;
-                                        font-weight:700;
+                                        font-size:15px;
+                                        font-weight:600;
                                         color:#1f4e78;
                                     ">
                                         <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
@@ -409,7 +409,7 @@
                                 </div>
 
                                 <!-- PRINT INFO -->
-                                <div style="margin-top:12px; font-size:10px; color:#777;">
+                                <div style="margin-top:10px; font-size:10px; color:#777;">
                                     Imprimé par <span t-esc="o.env.user.name"/>
                                     le
                                     <span t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')"/>
@@ -429,7 +429,7 @@
                                         border-left:4px solid #1f4e78;
                                         background:#f8fafc;
                                         border-radius:4px;
-                                        font-size:20px;
+                                        font-size:18px;
                                         color:#1f4e78;
                                         font-weight:600;
                                     ">
@@ -438,7 +438,7 @@
                                             GARANTIE :
                                         </span>
 
-                                        <span style="font-size:18px; font-weight:800; color:#1f4e78;">
+                                        <span style="font-size:16px; font-weight:800; color:#1f4e78;">
                                             15 mois
                                         </span>
 
@@ -459,7 +459,7 @@
                                         width:45%;
                                         text-align:center;
                                     ">
-                                        <strong style="color:#000; font-size:16px;">
+                                        <strong style="color:#000; font-size:18px;">
                                             LA DIRECTION
                                         </strong>
                                     </div>
@@ -470,7 +470,7 @@
                                         width:45%;
                                         text-align:center;
                                     ">
-                                        <strong style="color:#000; font-size:16px;">
+                                        <strong style="color:#000; font-size:18px;">
                                             LE CLIENT
                                         </strong>
                                     </div>
@@ -485,7 +485,7 @@
 
                             
                             <div style="
-                                font-size:14.5px;
+                                font-size:12.5px;
                                 line-height:1.22;
                                 color:#111827;
                                 ">
@@ -574,7 +574,7 @@
                             </div>
                             <!-- SIGNATURE -->
                             <div style="
-                                margin-top:20px;
+                                margin-top:10px;
                                 width:100%;
                                 overflow:hidden;
                                 ">
