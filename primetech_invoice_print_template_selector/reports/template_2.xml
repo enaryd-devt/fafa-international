@@ -2,14 +2,13 @@
 
 <template id="template_2">
 
-
         <t t-call="web.external_layout">
 
             <t t-foreach="docs" t-as="o">
 
                 <main>
 
-                    <div class="page" style="font-family:Arial;">
+                        <div class="page" style="font-family:Arial;">
  
                             <!-- HEADER -->
                             <div style="width:100%; overflow:hidden; margin-bottom:35px;">
@@ -18,13 +17,13 @@
                                 <div style="
                                     float:left;
                                     width:55%;
-                                    margin-top:70px;
+                                    margin-top:50px;
                                    
                                 ">
 
                                     <div style="
-                                        font-size:34px;
-                                        font-weight:800;
+                                        font-size:20px;
+                                        font-weight:700;
                                         color:#0d4f9b;
                                         letter-spacing:0.3px;
                                     ">
@@ -43,10 +42,10 @@
                                     <!-- DATE -->
                                     <div style="
                                         text-align:right;
-                                        font-size:19px;
-                                        font-weight:800;
+                                        font-size:14px;
+                                        font-weight:500;
                                         color:#0d4f9b;
-                                        margin-bottom:85px;
+                                        margin-bottom:60px;
                                     ">
                                         Date de facturation :
                                         <span t-field="o.invoice_date"/>
@@ -59,14 +58,14 @@
                                         word-wrap:break-word;
                                         overflow-wrap:anywhere;
                                         white-space:normal;
-                                        font-size:15px;
+                                        font-size:12px;
                                         line-height:1.7;
                                         margin-left:-20px;
                                     ">
 
                                         <!-- LABEL -->
                                         <div style="
-                                            font-size:15px;
+                                            font-size:13px;
                                             font-weight:900;
                                             color:#7a8693;
                                             margin-bottom:12px;
@@ -387,9 +386,9 @@
                                 </div>
                                 <!-- TEXT AMOUNT -->
                                 <div style="
-                                    margin-top:18px;
+                                    margin-top:14px;
                                     padding:10px 0;
-                                    font-size:16px;
+                                    font-size:13px;
                                     line-height:26px;
                                     color:#111827;
                                     ">
@@ -400,8 +399,8 @@
                                     est arrêtée à la somme de :
 
                                     <strong style="
-                                        font-size:18px;
-                                        font-weight:700;
+                                        font-size:15px;
+                                        font-weight:600;
                                         color:#1f4e78;
                                     ">
                                         <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
@@ -410,7 +409,7 @@
                                 </div>
 
                                 <!-- PRINT INFO -->
-                                <div style="margin-top:12px; font-size:10px; color:#777;">
+                                <div style="margin-top:10px; font-size:10px; color:#777;">
                                     Imprimé par <span t-esc="o.env.user.name"/>
                                     le
                                     <span t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')"/>
@@ -430,7 +429,7 @@
                                         border-left:4px solid #1f4e78;
                                         background:#f8fafc;
                                         border-radius:4px;
-                                        font-size:20px;
+                                        font-size:18px;
                                         color:#1f4e78;
                                         font-weight:600;
                                     ">
@@ -439,7 +438,7 @@
                                             GARANTIE :
                                         </span>
 
-                                        <span style="font-size:18px; font-weight:800; color:#1f4e78;">
+                                        <span style="font-size:16px; font-weight:800; color:#1f4e78;">
                                             12 mois
                                         </span>
 
@@ -460,7 +459,7 @@
                                         width:45%;
                                         text-align:center;
                                     ">
-                                        <strong style="color:#000; font-size:16px;">
+                                        <strong style="color:#000; font-size:18px;">
                                             LA DIRECTION
                                         </strong>
                                     </div>
@@ -471,7 +470,7 @@
                                         width:45%;
                                         text-align:center;
                                     ">
-                                        <strong style="color:#000; font-size:16px;">
+                                        <strong style="color:#000; font-size:18px;">
                                             LE CLIENT
                                         </strong>
                                     </div>
@@ -536,13 +535,13 @@
                                     IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :
                                 </p>
 
-                                <p style="font-size:15px; line-height:1.8; color:#111827; align-content: justify;">
+                                <p style="font-size:12px; line-height:1.8; color:#111827; align-content: justify;">
                                     <strong>Article 1 <t t-esc="idx"/></strong> :
                                         le vendeur désigné vend 
                                         <t t-set="idx" t-value="0"/>
                                         <t t-foreach="o.invoice_line_ids" t-as="l">
                                             <t t-set="idx" t-value="idx + 1"/>
-                                              <span t-esc="'%02d' % int(l.quantity)"/>  <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
+                                               <span t-esc="'%02d' % int(l.quantity)"/>  <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
                                         </t> en bon état de fonctionnement moyennant un montant de :<strong> <span t-field="o.amount_total"/> (<span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>)</strong><br/>
 
                                     <strong>Article 2</strong> : l’acheteur désigné ci-dessus prend connaissance du présent contrat avant tout achat ou avance faite au vendeur.<br/>
@@ -559,7 +558,7 @@
 
                                     <strong>Article 8</strong> : le vendeur ne saurait être responsable des dommages causés directement et/ou indirectement par le (la) client(e) à l’usage (manutention, foudre, mauvais usage etc.…). Le (la) client (e) devrait avoir un régulateur de tension de 5000W.<br/>
 
-                                    <strong>Article 9</strong> : la garantie fixée pour une durée de <strong>DOUZE (12) mois </strong> au profit du (de la) client(e) et la maintenance un (01) an. Les pièces de rechange incombent au propriétaire de la machine durant ce délai d’un (01) an. Durant la période de garantie, le vendeur ne prend pas en charge la carte mère, les malaxeurs, les vices, les couvercles, les roues, les roulements, le bloc et les joints.<br/>
+                                    <strong>Article 9</strong> : la garantie fixée pour une durée de <strong>DOUZE (12) mois </strong> au profit du (de la) client(e) et la maintenance douze (12) mois. Les pièces de rechange incombent au propriétaire de la machine durant ce délai de douze (12) mois. Durant la période de garantie, le vendeur ne prend pas en charge la carte mère, les malaxeurs, les vices, les couvercles, les roues, les roulements, le bloc et les joints.<br/>
 
                                     <strong>Article 10</strong> : la machine demeure la propriété du vendeur jusqu’au paiement définitif des sommes dues à l’Article 1 du présent contrat.<br/>
 
@@ -575,7 +574,7 @@
                             </div>
                             <!-- SIGNATURE -->
                             <div style="
-                                margin-top:20px;
+                                margin-top:10px;
                                 width:100%;
                                 overflow:hidden;
                                 ">
@@ -624,6 +623,7 @@
             </t>
 
         </t>
+
 
 </template>
 
