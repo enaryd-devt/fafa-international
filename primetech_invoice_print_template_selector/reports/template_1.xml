@@ -22,7 +22,7 @@
                                 ">
 
                                     <div style="
-                                        font-size:30px;
+                                        font-size:20px;
                                         font-weight:700;
                                         color:#0d4f9b;
                                         letter-spacing:0.3px;
@@ -42,10 +42,10 @@
                                     <!-- DATE -->
                                     <div style="
                                         text-align:right;
-                                        font-size:17px;
-                                        font-weight:800;
+                                        font-size:14px;
+                                        font-weight:500;
                                         color:#0d4f9b;
-                                        margin-bottom:85px;
+                                        margin-bottom:60px;
                                     ">
                                         Date de facturation :
                                         <span t-field="o.invoice_date"/>
