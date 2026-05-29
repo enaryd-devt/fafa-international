@@ -87,7 +87,7 @@
 
                                 <tr>
                                     <th>Date</th>
-                                    <th>Type</th>
+                                    <th>Partenaire</th>
                                     <th>Document</th>
                                     <th>Origine</th>
                                     <th>Destination</th>
@@ -143,7 +143,59 @@
                                         </td>
 
                                         <td class="text-center">
-                                            <t t-esc="l.picking_id.picking_type_id.name or ''"/>
+
+                                            <!-- PARTENAIRE -->
+
+                                            <t t-if="l.picking_id and l.picking_id.partner_id">
+
+                                                <t t-esc="l.picking_id.partner_id.display_name"/>
+
+                                            </t>
+                                            <!-- INVENTAIRE -->
+
+                                            <t t-elif="
+                                                l.location_id.usage == 'inventory'
+                                                or l.location_dest_id.usage == 'inventory'
+                                            ">
+
+                                                <t t-if="l.location_dest_id.usage == 'internal'">
+                                                    Ajustement inventaire (+)
+                                                </t>
+
+                                                <t t-elif="l.location_id.usage == 'internal'">
+                                                    Ajustement inventaire (-)
+                                                </t>
+
+                                                <t t-else="">
+                                                    Ajustement inventaire
+                                                </t>
+
+                                            </t>
+
+                                            <!-- PRODUCTION -->
+
+                                            <t t-elif="l.location_id.usage == 'production'">
+
+                                                Production
+
+                                            </t>
+
+                                            <!-- TRANSIT -->
+
+                                            <t t-elif="l.location_id.usage == 'transit'">
+
+                                                Transit
+
+                                            </t>
+
+                                            <!-- FALLBACK -->
+
+                                            <t t-else="">
+
+                                                -
+
+                                            </t>
+
                                         </td>
 
                                         <td>

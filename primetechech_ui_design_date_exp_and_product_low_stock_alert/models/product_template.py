@@ -121,7 +121,6 @@ class ProductTemplate(models.Model):
             # garder uniquement les lots avec quantité > 0
             lots = lots.filtered(lambda l: l.product_qty > 0)
 
-            print("LOTS FOUND =", lots)
 
             # =====================================================
             # boucle lots
