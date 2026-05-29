@@ -485,7 +485,7 @@
 
                             
                             <div style="
-                                font-size:14.5px;
+                                font-size:16.5px;
                                 line-height:1.22;
                                 color:#111827;
                                 ">
@@ -610,7 +610,7 @@
                                         color:#0d4f9b;
                                      
                                     ">
-                                        <br/><br/><br/>
+                                        <br/><br/><br/><br/>
                                         DOUALA LE :
                                         <span t-field="o.invoice_date"/>
                             </div>
