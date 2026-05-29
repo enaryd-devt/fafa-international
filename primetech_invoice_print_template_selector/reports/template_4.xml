@@ -535,7 +535,7 @@
                                     IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :
                                 </p>
 
-                                <p style="font-size:12px; line-height:1.8; color:#111827; align-content: justify;">
+                                <p style="font-size:13px; line-height:1.8; color:#111827; align-content: justify;">
                                     <strong>Article 1 <t t-esc="idx"/></strong> :
                                         le vendeur désigné vend 
                                         <t t-set="idx" t-value="0"/>
