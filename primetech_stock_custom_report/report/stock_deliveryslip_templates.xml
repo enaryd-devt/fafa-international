@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="primetech_report_delivery_document"
+          inherit_id="stock.report_delivery_document">
+
+    <xpath expr="//t[@t-call='web.external_layout']" position="replace">
+
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=o._get_report_lang())"/>
+
+            <!-- ========================= -->
+            <!-- TYPE DOCUMENT DYNAMIQUE -->
+            <!-- ========================= -->
+          <t t-set="doc_title" t-value="'BORDEREAU DE LIVRAISON'"/>
+        <t t-set="doc_color" t-value="'#0d6efd'"/>
+
+        <t t-if="o.picking_type_id.code == 'internal'">
+            <t t-set="doc_title" t-value="'BORDEREAU DE TRANSFERT'"/>
+            <t t-set="doc_color" t-value="'#fd7e14'"/>
+        </t>
+
+        <t t-if="o.picking_type_id.code == 'incoming'">
+            <t t-set="doc_title" t-value="'BON DE RÉCEPTION'"/>
+            <t t-set="doc_color" t-value="'#198754'"/>
+        </t>
+
+        <t t-if="o.origin and 'return' in (o.origin or '').lower()">
+            <t t-set="doc_title" t-value="'BON DE RETOUR'"/>
+            <t t-set="doc_color" t-value="'#dc3545'"/>
+        </t>
+            <div class="page" style="font-family: 'Roboto', Arial, sans-serif !important; font-size: 14px;">
+
+                <!-- ========================= -->
+                <!-- HEADER -->
+                <!-- ========================= -->
+                <div class="row mb-4">
+
+                    <div class="col-6">
+                        <h2 class="text-primary fw-bold">
+                            <span t-field="o.company_id.name"/>
+                        </h2>
+
+                        <div t-if="o.company_id.street">
+                            <span t-field="o.company_id.street"/>
+                        </div>
+
+                        <div>
+                            <span t-field="o.company_id.city"/>
+                            <t t-if="o.company_id.city and o.company_id.country_id"> - </t>
+                            <span t-field="o.company_id.country_id"/>
+                        </div>
+
+                        <div t-if="o.company_id.phone">
+                            <strong>Tél :</strong>
+                            <span t-field="o.company_id.phone"/>
+                        </div>
+
+                        <div t-if="o.company_id.email">
+                            <strong>Email :</strong>
+                            <span t-field="o.company_id.email"/>
+                        </div>
+
+                        <div t-if="o.company_id.website">
+                            <strong>Web :</strong>
+                            <span t-field="o.company_id.website"/>
+                        </div>
+                    </div>
+
+                    <div class="col-6 text-end">
+
+                        <div class="p-2 rounded text-center"
+                            t-att-style="'background-color:' + doc_color + '; color:white !important;'">
+
+                            <h3 class="m-0" style="color:white !important;">
+                                <span t-esc="doc_title"/>
+                            </h3>
+
+                        </div>
+
+                        <div class="mt-3">
+                            <strong>N° :</strong>
+                            <span t-field="o.name"/>
+                        </div>
+
+                        <div>
+                            <strong>Date :</strong>
+                            <span t-field="o.date_done"/>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- ENTREPÔTS (DYNAMIQUE) -->
+                <!-- ========================= -->
+                <div class="row mb-3">
+                <div class="col-6">
+
+                    <strong>
+                        <t t-if="o.picking_type_id.code == 'incoming'">
+                            Entrepôt source :
+                        </t>
+                        <t t-else="">
+                            Entrepôt source :
+                        </t>
+                    </strong>
+
+                    <div>
+                        <t t-if="o.picking_type_id.code == 'incoming'">
+                            <span t-field="o.partner_id.name"/>
+                            <t t-if="o.partner_id.city"> - <span t-field="o.partner_id.city"/></t>
+                            <t t-if="o.partner_id.country_id"> - <span t-field="o.partner_id.country_id"/></t>
+                        </t>
+
+                        <t t-else="">
+                            <span t-field="o.location_id.name"/>
+                        </t>
+                    </div>
+
+                </div>
+
+                    <div class="col-6">
+                        <strong>
+                            <t t-if="o.picking_type_id.code == 'outgoing'">
+                                Entrepôt de livraison :
+                            </t>
+                            <t t-else="">
+                                Entrepôt destination :
+                            </t>
+                        </strong>
+
+                        <div>
+                            <t t-if="o.picking_type_id.code == 'outgoing'">
+                                Client
+                                :
+                                <span t-field="o.partner_id.name"/>
+                            </t>
+
+                            <t t-else="">
+                                <span t-field="o.location_dest_id.display_name"/>
+                            </t>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- CLIENT -->
+                <!-- ========================= -->
+                <t t-set="type" t-value="o.picking_type_id.code"/>
+
+                <t t-if="type != 'internal'">
+
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="border rounded p-3">
+
+                                <!-- TITRE -->
+                                <h5 class="text-primary">
+
+                                    <t t-if="type == 'incoming'">
+                                        FOURNISSEUR
+                                    </t>
+
+                                    <t t-elif="type == 'outgoing'">
+                                        CLIENT
+                                    </t>
+
+                                    <t t-elif="'return' in (o.origin or '').lower()">
+                                        CLIENT
+                                    </t>
+
+                                </h5>
+
+                                <!-- NOM -->
+                                <div>
+                                    <strong>
+                                        <span t-field="o.partner_id.name"/>
+                                    </strong>
+                                </div>
+
+                                <!-- ADRESSE -->
+                                <div t-field="o.partner_id"
+                                    t-options="{
+                                        'widget':'contact',
+                                        'fields':['address'],
+                                        'no_marker':True
+                                    }"/>
+
+                                <!-- INFOS SUPPLÉMENTAIRES -->
+                                <div class="mt-2">
+
+                                    <div t-if="o.partner_id.phone">
+                                        <strong>Téléphone :</strong>
+                                        <span t-field="o.partner_id.phone"/>
+                                    </div>
+
+                                    <div t-if="o.partner_id.mobile">
+                                        <strong>Mobile :</strong>
+                                        <span t-field="o.partner_id.mobile"/>
+                                    </div>
+
+                                    <div t-if="o.partner_id.email">
+                                        <strong>Email :</strong>
+                                        <span t-field="o.partner_id.email"/>
+                                    </div>
+
+                                    <div t-if="o.partner_id.city">
+                                        <strong>Ville :</strong>
+                                        <span t-field="o.partner_id.city"/>
+                                    </div>
+
+                                    <div t-if="o.partner_id.country_id">
+                                        <strong>Pays :</strong>
+                                        <span t-field="o.partner_id.country_id"/>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+
+                <!-- ========================= -->
+                <!-- INFOS -->
+                <!-- ========================= -->
+                <div class="row mb-4">
+
+                    <div class="col-4">
+                        <strong>Référence :</strong>
+                        <div t-field="o.origin"/>
+                    </div>
+
+                    <div class="col-4">
+                        <strong>Statut :</strong>
+                        <div t-field="o.state"/>
+                    </div>
+
+                    <div class="col-4">
+                        <strong>Type :</strong>
+                        <div t-field="o.picking_type_id.name"/>
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- PRODUITS -->
+                <!-- ========================= -->
+                <table class="table table-bordered">
+
+                    <thead class="bg-primary">
+                        <tr style="color:white !important;">
+
+                            <th style="color:white !important;">Produit</th>
+
+                            <th class="text-center" style="color:white !important;">
+                                Qté Cmd
+                            </th>
+
+                            <th class="text-center" style="color:white !important;">
+                                Qté Livrée
+                            </th>
+
+                            <!-- LOT -->
+                            <th t-if="any(o.move_line_ids.mapped('lot_id'))"
+                                class="text-center"
+                                style="color:white !important;">
+                                Lot / Série
+                            </th>
+
+                            <!-- EXP -->
+                            <th t-if="any(o.move_line_ids.mapped('lot_id'))"
+                                class="text-center"
+                                style="color:white !important;">
+                                Date Exp.
+                            </th>
+
+                            <th class="text-center" style="color:white !important;">
+                                Unité
+                            </th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr t-foreach="o.move_ids" t-as="line">
+
+                            <td>
+                                <span t-field="line.product_id"/>
+                            </td>
+
+                            <td class="text-center">
+                                <span t-field="line.product_uom_qty"/>
+                            </td>
+
+                            <td class="text-center">
+                                <span t-field="line.quantity"/>
+                            </td>
+
+                            <!-- LOT -->
+                            <td class="text-center"
+                                t-if="line.move_line_ids and line.move_line_ids[0].lot_id">
+                                <span t-field="line.move_line_ids[0].lot_id.name"/>
+                            </td>
+
+                            <!-- EXPIRATION -->
+                            <t t-set="ml" t-value="line.move_line_ids and line.move_line_ids[0]"/>
+
+                            <td class="text-center" t-if="ml and ml.lot_id">
+                                <span t-field="ml.lot_id.name"/>
+                            </td>
+
+                            <td class="text-center" t-if="ml and ml.lot_id and ml.lot_id.use_date">
+                                <span t-field="ml.lot_id.use_date"/>
+                            </td>
+
+                            <td class="text-center">
+                                <span t-field="line.product_uom"/>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <!-- ========================= -->
+                <!-- OBSERVATIONS -->
+                <!-- ========================= -->
+                <div class="mt-4">
+                    <strong>Observations :</strong>
+                    <div class="border rounded p-3" style="min-height:60px;"></div>
+                </div>
+
+                <!-- ========================= -->
+                <!-- SIGNATURES -->
+                <!-- ========================= -->
+                <div class="row mt-5" style="font-size:18px;">
+
+                    <div class="col-6 text-center">
+                        <div style="height:80px;"></div>
+                        <strong style="font-size:22px;">Le Magasinier</strong>
+                    </div>
+
+                    <div class="col-6 text-center">
+                        <div style="height:80px;"></div>
+
+                        <strong style="font-size:22px;">
+
+                            <t t-if="o.picking_type_id.code == 'incoming'">
+                                Fournisseur / Représentant
+                            </t>
+
+                            <t t-elif="o.picking_type_id.code == 'outgoing'">
+                                Le Client
+                            </t>
+
+                            <!-- internal = transfert => rien -->
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </xpath>
+
+</template>
+
+</odoo>

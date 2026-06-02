@@ -17,9 +17,14 @@
 
     "data": [
         "security/ir.model.access.csv",
+
         "report/report_template.xml",
         "report/report_action.xml",
+        "report/stock_deliveryslip_templates.xml",
+
+
         "wizard/product_stock_move_wizard_view.xml",
+
         "views/menu_analysis.xml",
     
 
