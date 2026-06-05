@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem name="Chiffre d'Affaires"
+              id="menu_sales_turnover"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Ventes par Client"
+              id="menu_sales_customer"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Ventes par Produit"
+              id="menu_sales_product"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Ventes par Commercial"
+              id="menu_sales_person"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Commandes Confirmées"
+              id="menu_sales_orders_confirmed"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Commandes en Attente"
+              id="menu_sales_orders_pending"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Factures Clients"
+              id="menu_sales_invoices"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+    <menuitem name="Marges Commerciales"
+              id="menu_sales_margin"
+              parent="menu_primetech_reporting_sales"
+              action="action_reporting_placeholder"/>
+
+</odoo>

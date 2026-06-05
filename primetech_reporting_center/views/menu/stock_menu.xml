@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_stock_state"
+              name="État du Stock"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_inventory"
+              name="Inventaire"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_movements"
+              name="Mouvements de Stock"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_entries"
+              name="Entrées de Stock"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_outputs"
+              name="Sorties de Stock"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_valuation"
+              name="Valorisation du Stock"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_shortage"
+              name="Produits en Rupture"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_stock_dormant"
+              name="Produits Dormants"
+              parent="menu_primetech_reporting_stock"
+              action="action_reporting_placeholder"/>
+
+</odoo>

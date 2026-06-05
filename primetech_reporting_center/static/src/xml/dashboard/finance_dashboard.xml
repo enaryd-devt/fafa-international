@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t
+    t-name="primetech_reporting_center.FinanceDashboard"
+    owl="1">
+
+    <div class="pt-finance-dashboard">
+
+        <div class="pt-page-header">
+
+            <h1>
+                Comptabilité
+            </h1>
+
+            <span>
+                Pilotage financier
+            </span>
+
+        </div>
+
+        <FinanceKpis/>
+
+    </div>
+
+</t>
+
+</templates>

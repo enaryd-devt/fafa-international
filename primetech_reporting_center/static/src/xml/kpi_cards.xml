@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t t-name="primetech_reporting_center.KPICards"
+   owl="1">
+
+    <div class="pt-kpi-grid">
+
+        <!-- CA -->
+
+        <div
+            class="pt-kpi-card revenue pt-clickable"
+            t-on-click="openRevenue">
+
+            <div class="pt-kpi-icon">
+
+                <img
+                    src="/primetech_reporting_center/static/src/img/icons/revenue.svg"
+                    class="pt-kpi-svg"/>
+
+            </div>
+
+            <div class="pt-kpi-content">
+
+                <div class="pt-kpi-title">
+                    Chiffre d'affaire du Mois
+                </div>
+
+                <div
+                    class="pt-kpi-value"
+                    t-att-style="
+                        'font-size:' +
+                        getFontSize(
+                            formatCurrency(
+                                state.revenue
+                            )
+                        )
+                    ">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.revenue
+                        )
+                    "/>
+
+                </div>
+
+                <div
+                    t-att-class="
+                        'pt-kpi-trend ' +
+                        getTrendClass(
+                            state.revenue_trend
+                        )
+                    ">
+
+                    <span>
+
+                        <t t-esc="
+                            getTrendIcon(
+                                state.revenue_trend
+                            )
+                        "/>
+
+                        <t t-esc="
+                            formatTrend(
+                                state.revenue_trend
+                            )
+                        "/>
+
+                    </span>
+
+                    <small>
+                        vs mois précédent
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ACHAT -->
+
+        <div
+            class="pt-kpi-card purchase pt-clickable"
+            t-on-click="openPurchases">
+
+            <div class="pt-kpi-icon">
+
+                <img
+                    src="/primetech_reporting_center/static/src/img/icons/purchase.svg"
+                    class="pt-kpi-svg"/>
+
+            </div>
+
+            <div class="pt-kpi-content">
+
+                <div class="pt-kpi-title">
+                    Achats du Mois
+                </div>
+
+                <div
+                    class="pt-kpi-value"
+                    t-att-style="
+                        'font-size:' +
+                        getFontSize(
+                            formatCurrency(
+                                state.purchases
+                            )
+                        )
+                    ">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.purchases
+                        )
+                    "/>
+
+                </div>
+
+                <div
+                    t-att-class="
+                        'pt-kpi-trend ' +
+                        getTrendClass(
+                            state.purchases_trend
+                        )
+                    ">
+
+                    <span>
+
+                        <t t-esc="
+                            getTrendIcon(
+                                state.purchases_trend
+                            )
+                        "/>
+
+                        <t t-esc="
+                            formatTrend(
+                                state.purchases_trend
+                            )
+                        "/>
+
+                    </span>
+
+                    <small>
+                        vs mois précédent
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CREANCES -->
+
+        <div
+            class="pt-kpi-card stock pt-clickable"
+            t-on-click="openReceivables">
+
+            <div class="pt-kpi-icon">
+
+                <img
+                    src="/primetech_reporting_center/static/src/img/icons/creance.svg"
+                    class="pt-kpi-svg"/>
+
+            </div>
+
+            <div class="pt-kpi-content">
+
+                <div class="pt-kpi-title">
+                    Créances Clients
+                </div>
+
+                <div
+                    class="pt-kpi-value"
+                    t-att-style="
+                        'font-size:' +
+                        getFontSize(
+                            state.stock
+                        )
+                    ">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.receivables
+                        )
+                    "/>
+
+                </div>
+
+                <div
+                    t-att-class="
+                        'pt-kpi-trend ' +
+                        getTrendClass(
+                            state.receivables_trend
+                        )
+                    ">
+
+                    <span>
+
+                        <t t-esc="
+                            getTrendIcon(
+                                state.receivables_trend
+                            )
+                        "/>
+
+                        <t t-esc="
+                            formatTrend(
+                                state.receivables_trend
+                            )
+                        "/>
+
+                    </span>
+
+                    <small>
+                        vs mois précédent
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LIVRAISON -->
+
+        <div
+            class="pt-kpi-card hr pt-clickable"
+            t-on-click="openDeliveries">
+
+            <div class="pt-kpi-icon">
+
+                <img
+                    src="/primetech_reporting_center/static/src/img/icons/order.svg"
+                    class="pt-kpi-svg"/>
+
+            </div>
+
+            <div class="pt-kpi-content">
+
+                <div class="pt-kpi-title">
+                    Commandes à Livrer
+                </div>
+
+                <div
+                    class="pt-kpi-value"
+                    t-att-style="
+                        'font-size:' +
+                        getFontSize(
+                            state.employees
+                        )
+                    ">
+
+                 <t t-esc="state.deliveries"/>
+
+                </div>
+
+                <div
+                    t-att-class="
+                        'pt-kpi-trend ' +
+                        getTrendClass(
+                            state.deliveries_trend
+                        )
+                    ">
+
+                    <span>
+
+                        <t t-esc="
+                            getTrendIcon(
+                                state.deliveries_trend
+                            )
+                        "/>
+
+                        <t t-esc="
+                            formatTrend(
+                                state.deliveries_trend
+                            )
+                        "/>
+
+                    </span>
+
+                    <small>
+                        vs mois précédent
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</t>
+
+
+</templates>

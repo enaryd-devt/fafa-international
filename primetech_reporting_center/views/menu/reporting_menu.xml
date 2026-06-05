@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu racine -->
+
+    <menuitem
+        id="menu_primetech_reporting_root"
+        name="Reporting"
+        web_icon="primetech_reporting_center,static/description/icon.png"
+        sequence="10"/>
+
+    <!-- Dashboard -->
+
+    <menuitem
+        id="menu_primetech_reporting_dashboard"
+        name="Dashboard"
+        parent="menu_primetech_reporting_root"
+        action="action_primetech_reporting_dashboard"
+        sequence="1"/>
+
+    <!-- Comptabilité -->
+
+    <menuitem
+        id="menu_primetech_reporting_accounting"
+        name="Comptabilité"
+        parent="menu_primetech_reporting_root"
+        sequence="10"/>
+
+    <!-- Vente -->
+
+    <menuitem
+        id="menu_primetech_reporting_sales"
+        name="Vente"
+        parent="menu_primetech_reporting_root"
+        sequence="20"/>
+
+    <!-- Achat -->
+
+    <menuitem
+        id="menu_primetech_reporting_purchase"
+        name="Achat"
+        parent="menu_primetech_reporting_root"
+        sequence="30"/>
+
+    <!-- Stock -->
+
+    <menuitem
+        id="menu_primetech_reporting_stock"
+        name="Stock"
+        parent="menu_primetech_reporting_root"
+        sequence="40"/>
+
+    <!-- RH -->
+
+    <menuitem
+        id="menu_primetech_reporting_hr"
+        name="RH"
+        parent="menu_primetech_reporting_root"
+        sequence="50"/>
+
+    <!-- Impression -->
+
+    <menuitem
+        id="menu_primetech_reporting_printing"
+        name="Centre d'Impression"
+        parent="menu_primetech_reporting_root"
+        sequence="60"/>
+
+    <!-- Configuration -->
+
+    <menuitem
+        id="menu_primetech_reporting_configuration"
+        name="Configuration"
+        parent="menu_primetech_reporting_root"
+        sequence="70"/>
+
+</odoo>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t
+    t-name="primetech_reporting_center.FinanceKpis"
+    owl="1">
+
+    <div class="pt-finance-kpis">
+
+        <div class="pt-finance-kpi">
+
+            <span class="title">
+                Chiffre d'Affaires
+            </span>
+
+            <span class="value">
+
+                <t t-esc="
+                    formatCurrency(
+                        state.data.revenue?.value
+                    )
+                "/>
+
+            </span>
+
+            <span
+                t-att-class="
+                state.data.revenue?.variation >= 0
+                ? 'trend up'
+                : 'trend down'
+                ">
+
+                <t t-esc="
+                    state.data.revenue?.variation
+                "/>%
+
+            </span>
+
+        </div>
+
+        <div class="pt-finance-kpi">
+
+            <span class="title">
+                Créances
+            </span>
+
+            <span class="value">
+
+                <t t-esc="
+                    formatCurrency(
+                        state.data.receivables?.value
+                    )
+                "/>
+
+            </span>
+
+        </div>
+
+        <div class="pt-finance-kpi">
+
+            <span class="title">
+                Dettes
+            </span>
+
+            <span class="value">
+
+                <t t-esc="
+                    formatCurrency(
+                        state.data.payables?.value
+                    )
+                "/>
+
+            </span>
+
+        </div>
+
+        <div class="pt-finance-kpi">
+
+            <span class="title">
+                Trésorerie
+            </span>
+
+            <span class="value">
+
+                <t t-esc="
+                    formatCurrency(
+                        state.data.cash?.value
+                    )
+                "/>
+
+            </span>
+
+        </div>
+
+    </div>
+
+</t>
+
+</templates>

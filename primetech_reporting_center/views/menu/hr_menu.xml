@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_hr_headcount"
+              name="Effectif"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_attendance"
+              name="Présences"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_leave"
+              name="Congés"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_late_absence"
+              name="Retards et Absences"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_payroll_mass"
+              name="Masse Salariale"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_payslip"
+              name="Bulletins de Paie"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+    <menuitem id="menu_hr_performance"
+              name="Performance du Personnel"
+              parent="menu_primetech_reporting_hr"
+              action="action_reporting_placeholder"/>
+
+</odoo>
