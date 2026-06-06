@@ -8,13 +8,13 @@
 
     <div class="pt-finance-kpis">
 
-        <div class="pt-finance-kpi">
+        <div class="pt-finance-card">
 
-            <span class="title">
+            <span class="pt-label">
                 Chiffre d'Affaires
             </span>
 
-            <span class="value">
+            <div class="pt-value">
 
                 <t t-esc="
                     formatCurrency(
@@ -22,74 +22,74 @@
                     )
                 "/>
 
-            </span>
+            </div>
 
-            <span
+            <div
                 t-att-class="
-                state.data.revenue?.variation >= 0
-                ? 'trend up'
-                : 'trend down'
+                    state.data.revenue?.variation >= 0
+                    ? 'pt-trend positive'
+                    : 'pt-trend negative'
                 ">
 
                 <t t-esc="
                     state.data.revenue?.variation
-                "/>%
+                "/> %
 
-            </span>
+            </div>
 
         </div>
 
-        <div class="pt-finance-kpi">
+        <div class="pt-finance-card">
 
-            <span class="title">
-                Créances
+            <span class="pt-label">
+                Créances Clients
             </span>
 
-            <span class="value">
+            <div class="pt-value">
 
                 <t t-esc="
                     formatCurrency(
-                        state.data.receivables?.value
+                        state.data.receivables
                     )
                 "/>
 
-            </span>
+            </div>
 
         </div>
 
-        <div class="pt-finance-kpi">
+        <div class="pt-finance-card">
 
-            <span class="title">
-                Dettes
+            <span class="pt-label">
+                Dettes Fournisseurs
             </span>
 
-            <span class="value">
+            <div class="pt-value">
 
                 <t t-esc="
                     formatCurrency(
-                        state.data.payables?.value
+                        state.data.payables
                     )
                 "/>
 
-            </span>
+            </div>
 
         </div>
 
-        <div class="pt-finance-kpi">
+        <div class="pt-finance-card">
 
-            <span class="title">
+            <span class="pt-label">
                 Trésorerie
             </span>
 
-            <span class="value">
+            <div class="pt-value">
 
                 <t t-esc="
                     formatCurrency(
-                        state.data.cash?.value
+                        state.data.cash
                     )
                 "/>
 
-            </span>
+            </div>
 
         </div>
 

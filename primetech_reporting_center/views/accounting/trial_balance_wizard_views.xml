@@ -1,0 +1,47 @@
+<odoo>
+
+    <record
+        id="view_trial_balance_wizard"
+        model="ir.ui.view">
+
+        <field name="name">primetech.trial.balance.wizard.form</field>
+
+        <field name="model">primetech.trial.balance.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Balance Générale">
+
+                <group>
+
+                    <field name="date_from"/>
+
+                    <field name="date_to"/>
+
+                    <field name="level"/>
+
+                    <field name="posted_only"/>
+
+                </group>
+
+                <footer>
+
+                    <button
+                        name="action_open_report"
+                        string="Aperçu"
+                        type="object"
+                        class="btn-primary"/>
+
+                    <button
+                        string="Annuler"
+                        special="cancel"/>
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

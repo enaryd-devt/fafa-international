@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t
+    t-name="primetech_reporting_center.FinancialPosition"
+    owl="1">
+
+    <div class="pt-financial-position">
+
+        <div class="pt-position-grid">
+
+            <div class="pt-position-card">
+
+                <div class="pt-position-label">
+                    Actifs
+                </div>
+
+                <div class="pt-position-value">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.data.assets
+                        )
+                    "/>
+
+                </div>
+
+            </div>
+
+            <div class="pt-position-card">
+
+                <div class="pt-position-label">
+                    Passifs
+                </div>
+
+                <div class="pt-position-value">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.data.liabilities
+                        )
+                    "/>
+
+                </div>
+
+            </div>
+
+            <div class="pt-position-card">
+
+                <div class="pt-position-label">
+                    Capitaux Propres
+                </div>
+
+                <div class="pt-position-value">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.data.equity
+                        )
+                    "/>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pt-ratio-section">
+
+            <div class="pt-ratio-item">
+
+                <span>
+                    Ratio de Liquidité
+                </span>
+
+                <strong>
+
+                    <t t-esc="
+                        state.data.liquidity_ratio
+                    "/>
+
+                </strong>
+
+            </div>
+
+            <div class="pt-ratio-item">
+
+                <span>
+                    Ratio d'Endettement
+                </span>
+
+                <strong>
+
+                    <t t-esc="
+                        state.data.debt_ratio
+                    "/>
+
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div
+            t-attf-class="
+                pt-position-status
+                #{state.data.level === 'Excellent'
+                    ? 'excellent'
+                    : state.data.level === 'Bon'
+                    ? 'good'
+                    : 'warning'}
+            ">
+
+            <div class="pt-status-badge">
+
+                <t t-esc="
+                    state.data.level
+                "/>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</t>
+
+</templates>

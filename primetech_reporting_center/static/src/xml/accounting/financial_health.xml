@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t
+    t-name="primetech_reporting_center.FinancialHealth"
+    owl="1">
+
+    <div class="pt-financial-health">
+
+        <div class="pt-health-score">
+
+            <t t-esc="state.data.score"/>
+
+            <span>/100</span>
+
+        </div>
+
+        <div class="pt-health-level">
+
+            <t t-esc="state.data.level"/>
+
+        </div>
+
+    </div>
+
+</t>
+
+</templates>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t
+        t-name="primetech_reporting_center.AccountingDashboard"
+        owl="1">
+
+        <div class="pt-accounting-dashboard">
+
+            <div class="pt-page-header">
+
+                <div>
+
+                    <h1>
+                        Comptabilité
+                    </h1>
+
+                    <p>
+                        Pilotage financier et indicateurs stratégiques
+                    </p>
+
+                </div>
+
+            </div>
+
+            <FinanceKpis/>
+
+            <div class="pt-accounting-grid">
+
+                <div class="pt-full-width-section">
+
+    <div class="pt-section-card">
+
+        <div class="pt-section-title">
+
+            Santé Financière
+
+        </div>
+
+        <FinancialHealth/>
+
+    </div>
+
+                </div>
+
+                    <div class="pt-compact-grid">
+
+                        <div class="pt-section-card">
+
+                            <div class="pt-section-title">
+
+                                Analyse Créances
+
+                            </div>
+
+                            <ReceivablesAnalysis/>
+
+                        </div>
+
+                        <div class="pt-section-card">
+
+                            <div class="pt-section-title">
+
+                                Cash Flow
+
+                            </div>
+
+                            <CashflowForecast/>
+
+                        </div>
+
+                        <div class="pt-section-card">
+
+                            <div class="pt-section-title">
+
+                                Situation Financière
+
+                            </div>
+
+                            <FinancialPosition/>
+
+                        </div>
+
+                    </div>
+
+            </div>
+
+        </div>
+
+    </t>
+
+</templates>

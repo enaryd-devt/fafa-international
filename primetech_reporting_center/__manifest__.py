@@ -33,6 +33,12 @@
         "views/dashboard/dashboard_action.xml",
         "views/dashboard/placeholder_action.xml",
 
+        "views/accounting/accounting_dashboard_action.xml",
+        "views/accounting/trial_balance_action.xml",
+        "views/accounting/trial_balance_wizard_views.xml",
+        
+
+
         "views/menu/reporting_menu.xml",
         "views/menu/dashboard_menu.xml",
         "views/menu/accounting_menu.xml",
@@ -42,6 +48,11 @@
         "views/menu/hr_menu.xml",
         "views/menu/printing_menu.xml",
         "views/menu/configuration_menu.xml",
+
+        
+
+    
+
     ],
 
     "assets": {
@@ -53,7 +64,7 @@
 
             'primetech_reporting_center/static/src/xml/**/*.xml',
 
-            'primetech_reporting_center/static/src/scss/*.scss',
+            "primetech_reporting_center/static/src/scss/*.scss",
 
         ]
     },

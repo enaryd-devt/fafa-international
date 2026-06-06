@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t
+    t-name="primetech_reporting_center.ReceivablesAnalysis"
+    owl="1">
+
+    <div class="pt-receivables-dashboard">
+
+        <div class="pt-receivable-main-card">
+
+            <div class="pt-card-label">
+
+                Encours Clients
+
+            </div>
+
+            <div class="pt-card-value">
+
+                <t t-esc="
+                    formatCurrency(
+                        state.data.total_receivables
+                    )
+                "/>
+
+            </div>
+
+        </div>
+
+        <div class="pt-receivable-stats-grid">
+
+            <div class="pt-mini-card">
+
+                <div class="pt-mini-label">
+
+                    Factures Échues
+
+                </div>
+
+                <div class="pt-mini-value">
+
+                    <t t-esc="
+                        formatCurrency(
+                            state.data.overdue_amount
+                        )
+                    "/>
+
+                </div>
+
+            </div>
+
+            <div class="pt-mini-card">
+
+                <div class="pt-mini-label">
+
+                    Clients à Risque
+
+                </div>
+
+                <div class="pt-mini-value">
+
+                    <t t-esc="
+                        state.data.risk_customers || 0
+                    "/>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pt-top-debtors-card">
+
+            <div class="pt-section-title">
+
+                Top Débiteurs
+
+            </div>
+
+            <t
+                t-foreach="
+                    state.data.top_debtors || []
+                "
+                t-as="debtor"
+                t-key="debtor.id">
+
+                <div class="pt-debtor-item">
+
+                    <div class="pt-debtor-header">
+
+                        <span class="pt-debtor-name">
+
+                            <t t-esc="
+                                debtor.name
+                            "/>
+
+                        </span>
+
+                        <span class="pt-debtor-amount">
+
+                            <t t-esc="
+                                formatCurrency(
+                                    debtor.amount
+                                )
+                            "/>
+
+                        </span>
+
+                    </div>
+
+                    <div class="pt-debtor-bar">
+
+                        <div
+                            class="pt-debtor-progress"
+                            t-att-style="
+                                'width:' +
+                                (
+                                    debtor.amount /
+                                    state.data.total_receivables *
+                                    100
+                                ) +
+                                '%'
+                            "/>
+
+                    </div>
+
+                </div>
+
+            </t>
+
+        </div>
+
+    </div>
+
+</t>
+
+</templates>

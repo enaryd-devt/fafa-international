@@ -37,25 +37,33 @@ patch(ProductCard.prototype, {
     // =========================================================
 
     async afterLoadServerData() {
-        await super.afterLoadServerData(...arguments);
+        try {
+            await super.afterLoadServerData(...arguments);
 
-        const products = this.models["product.product"].getAll();
-        const productIds = products.map(p => p.id);
+            const products = this.models["product.product"].getAll();
+            const productIds = products.map((p) => p.id);
 
-        const data = await this.env.services.orm.read(
-            "product.product",
-            productIds,
-            ["qty_available", "virtual_available"]
-        );
+            const data = await this.env.services.orm.read(
+                "product.product",
+                productIds,
+                ["qty_available", "virtual_available"]
+            );
 
-        const map = new Map(data.map(p => [p.id, p]));
+            const map = new Map(data.map((p) => [p.id, p]));
 
-        for (const product of products) {
-            const stock = map.get(product.id);
-            if (stock) {
-                product.qty_available = stock.qty_available;
-                product.virtual_available = stock.virtual_available;
+            for (const product of products) {
+                const stock = map.get(product.id);
+
+                if (stock) {
+                    product.qty_available = stock.qty_available;
+                    product.virtual_available = stock.virtual_available;
+                }
             }
+        } catch (error) {
+            console.warn(
+                "Synchronisation stock impossible : mode hors connexion",
+                error
+            );
         }
     },
 
@@ -66,17 +74,24 @@ patch(ProductCard.prototype, {
     async refreshStock(ev) {
         ev.preventDefault();
         ev.stopPropagation();
-        ev.stopImmediatePropagation(); 
+        ev.stopImmediatePropagation();
 
-        const result = await this.orm.read(
-            "product.product",
-            [this.props.product.id],
-            ["qty_available", "virtual_available"]
-        );
+        try {
+            const result = await this.orm.read(
+                "product.product",
+                [this.props.product.id],
+                ["qty_available", "virtual_available"]
+            );
 
-        if (result?.length) {
-            this.props.product.qty_available = result[0].qty_available;
-            this.props.product.virtual_available = result[0].virtual_available;
+            if (result?.length) {
+                this.props.product.qty_available = result[0].qty_available;
+                this.props.product.virtual_available = result[0].virtual_available;
+            }
+        } catch (error) {
+            console.warn(
+                "Impossible de rafraîchir le stock : mode hors connexion",
+                error
+            );
         }
 
         this.state.stockHovered = false;

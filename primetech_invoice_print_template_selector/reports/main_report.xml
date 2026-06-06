@@ -1,30 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <odoo>
 
-     <template id="main_report">
+
+    <template id="main_report">
 
         <t t-call="web.html_container">
 
             <t t-foreach="docs" t-as="o">
 
-                <!-- TEMPLATE 1 -->
-                <t t-if="env.context.get('selected_template') == 'template_1'">
-                    <t t-call="primetech_invoice_print_template_selector.template_1"/>
-                </t>
+                <!-- FACTURE -->
 
-                <!-- TEMPLATE 2 -->
-                <t t-if="env.context.get('selected_template') == 'template_2'">
-                    <t t-call="primetech_invoice_print_template_selector.template_2"/>
-                </t>
+                <t t-call="primetech_invoice_print_template_selector.template_invoice"/>
 
-                <!-- TEMPLATE 3 -->
-                <t t-if="env.context.get('selected_template') == 'template_3'">
-                    <t t-call="primetech_invoice_print_template_selector.template_3"/>
-                </t>
+                <!-- PROTOCOLE D'ACCORD -->
 
-                <!-- TEMPLATE 4 -->
-                <t t-if="env.context.get('selected_template') == 'template_4'">
-                    <t t-call="primetech_invoice_print_template_selector.template_4"/>
+                <t t-if="env.context.get('print_agreement_protocol')">
+
+                    <div style="page-break-before: always;"/>
+
+                    <t t-call="primetech_invoice_print_template_selector.protocol_agreement_template"/>
+
                 </t>
 
             </t>

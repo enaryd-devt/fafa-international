@@ -7,7 +7,7 @@
         <field name="model">primetech.cash.flow.report.wizard</field>
         <field name="arch" type="xml">
 
-            <form string="Etat Journalier de Trésorerie">
+            <form string="Etat Périodique de Trésorerie">
 
                 <sheet>
 

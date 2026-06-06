@@ -1,9 +1,14 @@
 <odoo>
 
-<template id="template_4">
+<template id="template_invoice">
 
         <t t-call="web.external_layout">
 
+            <t t-set="warranty_months"
+            t-value="env.context.get('warranty_months')"/>
+
+            <t t-set="warranty_label"
+            t-value="env.context.get('warranty_label')"/>
             <t t-foreach="docs" t-as="o">
 
                 <main>
@@ -22,7 +27,7 @@
                                 ">
 
                                     <div style="
-                                        font-size:20px;
+                                        font-size:22px;
                                         font-weight:700;
                                         color:#0d4f9b;
                                         letter-spacing:0.3px;
@@ -42,7 +47,7 @@
                                     <!-- DATE -->
                                     <div style="
                                         text-align:right;
-                                        font-size:16px;
+                                        font-size:18px;
                                         font-weight:600;
                                         color:#0d4f9b;
                                         margin-bottom:60px;
@@ -424,7 +429,7 @@
                                     ">
 
                                     <div style="
-                                        width:240px;
+                                        width:280px;
                                         padding:8px 12px;
                                         border-left:4px solid #1f4e78;
                                         background:#f8fafc;
@@ -439,7 +444,7 @@
                                         </span>
 
                                         <span style="font-size:16px; font-weight:800; color:#1f4e78;">
-                                            01 mois
+                                            <t t-esc="warranty_label"/>
                                         </span>
 
                                     </div>
@@ -477,146 +482,7 @@
 
                                 </div>
 
-                            <!-- ========================= -->
-                            <!-- PAGE CONTRAT SAV -->
-                            <!-- ========================= -->
-
-                            <div style="page-break-before: always;"></div>
-
-                            
-                            <div style="
-                                font-size:16.5px;
-                                line-height:1.22;
-                                color:#111827;
-                                ">
-                                <h2 style="
-                                    text-align:center;
-                                    font-size:22px;
-                                    font-weight:900;
-                                    color:#163a5c;
-                                    margin-bottom:10px;
-                                    letter-spacing:0.5px;
-                                ">
-                                    SERVICE APRÈS VENTE (SAV)
-                                </h2>
-
-                                <p style="margin:0 0 3px 0;">
-                                    ENTRE LES SOUSSIGNÉS :
-                                </p>
-
-                                <p style="margin:0 0 3px 0;">
-                                    - ETS FAFFA INTERNATIONAL ; BP : 8627 DOUALA ; TEL : 691555812 - 233419048<br/>
-                                    Désigné dans tout ce qui suit, le <strong>VENDEUR</strong>
-                                </p>
-
-                                <p style="margin:0 0 3px 0;">
-                                    ET :
-                                </p>
-
-                                <p style="margin:0 0 3px 0;">
-                                    - Mr/Mme : <strong><t t-esc="o.partner_id.name"/></strong><br/>
-
-                                    <t t-if="o.partner_id.function">
-                                        - PROFESSION : <strong><t t-esc="o.partner_id.function"/></strong><br/>
-                                    </t>
-
-                                    <t t-if="o.partner_id.vat">
-                                        - N° CNI / NIU : <strong><t t-esc="o.partner_id.vat"/></strong><br/>
-                                    </t>
-
-                                    <t t-if="o.partner_id.phone">
-                                        - TEL : <strong><t t-esc="o.partner_id.phone"/></strong><br/>
-                                    </t>
-
-                                    Désigné dans tout ce qui suit, l’<strong>ACHETEUR</strong><br/><br/>
-                                </p>
-
-                                <p style="margin:4px 0 3px 0; font-weight:700;">
-                                    IL A ÉTÉ CONVENU ET ARRÊTÉ CE QUI SUIT :
-                                </p>
-
-                                <p style="font-size:14px; line-height:1.8; color:#111827; text-align: justify;">
-                                    <strong>Article 1 <t t-esc="idx"/></strong> :
-                                        le vendeur désigné vend 
-                                        <t t-set="idx" t-value="0"/>
-                                        <t t-foreach="o.invoice_line_ids" t-as="l">
-                                            <t t-set="idx" t-value="idx + 1"/>
-                                               <span t-esc="'%02d' % int(l.quantity)"/>  <span t-esc="l.name.split(']', 1)[-1].strip()"/>, 
-                                        </t> en bon état de fonctionnement moyennant un montant de :<strong> <span t-field="o.amount_total"/> (<span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>)</strong><br/>
-
-                                    <strong>Article 2</strong> : l’acheteur désigné ci-dessus prend connaissance du présent contrat avant tout achat ou avance faite au vendeur.<br/>
-
-                                    <strong>Article 3</strong> : la réservation de la machine ne peut être définitive qu’après un versement représentant les 1/3 du montant consenti entre les parties.<br/>
-
-                                    <strong>Article 4</strong> : en cas d’une avance faite, les modalités de versement seront définies de commun accord pour une durée maximum de (06) mois.<br/>
-
-                                    <strong>Article 5</strong> : le paiement de solde tout compte annule les Article 3 et 4 du présent contrat et l’acquéreur est tenu d’emporter immédiatement sa machine sans autre forme de procédure.<br/>
-
-                                    <strong>Article 6</strong> : en cas de désistement unilatéral de la part du client(e), le vendeur retient les 10% pour dommage et intérêt du montant préalablement fait et le premier est tenu d’attendre la vente du dit appareil sur une période de (06) mois à compter de la date de sa déclaration.<br/>
-
-                                    <strong>Article 7</strong> : le choix de la machine est fait par le client(e) en toute conscience, il (elle) peut se faire assister par l’un de nos hôtesses de vente. Toute fois le choix définitif revient au client(e).<br/>
-
-                                    <strong>Article 8</strong> : le vendeur ne saurait être responsable des dommages causés directement et/ou indirectement par le (la) client(e) à l’usage (manutention, foudre, mauvais usage etc.…). Le (la) client (e) devrait avoir un régulateur de tension de 5000W.<br/>
-
-                                    <strong>Article 9</strong> : la garantie fixée pour une durée de <strong>UN (01) mois </strong> au profit du (de la) client(e) et la maintenance un (01) an. Les pièces de rechange incombent au propriétaire de la machine durant ce délai d’un (01) mois. Durant la période de garantie, le vendeur ne prend pas en charge la carte mère, les malaxeurs, les vices, les couvercles, les roues, les roulements, le bloc et les joints.<br/>
-
-                                    <strong>Article 10</strong> : la machine demeure la propriété du vendeur jusqu’au paiement définitif des sommes dues à l’Article 1 du présent contrat.<br/>
-
-                                    <strong>Article 11</strong> : l’acheteur déclare et rassure le bon fonctionnement de la machine avant la sortie de la boutique pour son entrée en jouissance.<br/>
-
-                                    <strong>Article 12</strong> : en cas de litige, seuls les tribunaux de DOUALA seront compétents.<br/>
-
-                                    <strong>Article 13</strong> : les modalités définies à l’Article 4 impartissent aux parties en cas de résiliation et, l’un ou l’autre ne peut être notifié que par voie d’huissier.<br/>
-
-                                    <strong>signé pour servir et valoir ce que de droit.</strong>
-
-                                </p>
-                            </div>
-                            <!-- SIGNATURE -->
-                            <div style="
-                                margin-top:10px;
-                                width:100%;
-                                overflow:hidden;
-                                ">
-
-                                <!-- LE VENDEUR -->
-                                <div style="
-                                    float:left;
-                                    width:45%;
-                                    text-align:center;
-                                    ">
-                                    <strong style="color:#000; font-size:16px;">
-                                        LE VENDEUR
-                                    </strong>
-                                </div>
-
-                                <!-- L'ACHETEUR -->
-                                <div style="
-                                    float:right;
-                                    width:45%;
-                                    text-align:center;
-                                    ">
-                                    <strong style="color:#000; font-size:16px;">
-                                        L'ACHETEUR
-                                    </strong>
-                                </div>
-
-                            </div>
-                            <!-- DATE -->
-                            <div style="
-                                        text-align:letf;
-                                        font-size:13px;
-                                        font-weight:600;
-                                        color:#0d4f9b;
-                                     
-                                    ">
-                                        <br/><br/><br/><br/>
-                                        DOUALA LE :
-                                        <span t-field="o.invoice_date"/>
-                            </div>
-
-                           
-                        </div>
+                    </div>
 
                 </main>
 

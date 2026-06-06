@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<menuitem
-    id="menu_accounting_general_ledger"
-    name="Balance Générale"
-    parent="primetech_reporting_center.menu_primetech_reporting_accounting"
-    action="primetech_reporting_center.action_reporting_placeholder"
-    sequence="1"/>
+    <menuitem
+        id="menu_accounting_dashboard"
+        name="Vue d'ensemble"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_accounting_dashboard"
+        sequence="0"/>
+
+        <menuitem
+        id="menu_accounting_general_ledger"
+        name="Balance Générale"
+        parent="menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_trial_balance_wizard"
+        sequence="1"/>
 
     <menuitem
         id="menu_accounting_grand_livre"
         name="Grand Livre"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="2"/>
 
     <menuitem
         id="menu_accounting_journaux"
         name="Journaux Comptables"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="3"/>
 
     <menuitem
         id="menu_accounting_balance_tiers"
         name="Balance Tiers"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="4"/>
 
     <menuitem
         id="menu_accounting_bilan"
         name="Bilan"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="5"/>
 
     <menuitem
         id="menu_accounting_resultat"
         name="Compte de Résultat"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="6"/>
 
     <menuitem
         id="menu_accounting_tva"
         name="Rapport TVA"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="7"/>
 
     <menuitem
         id="menu_accounting_financial_position"
         name="Situation Financière"
-        parent="menu_primetech_reporting_accounting"
-        action="action_reporting_placeholder"
+        parent="primetech_reporting_center.menu_primetech_reporting_accounting"
+        action="primetech_reporting_center.action_reporting_placeholder"
         sequence="8"/>
 
 </odoo>
