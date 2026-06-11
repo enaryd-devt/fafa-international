@@ -4,6 +4,7 @@ from . import report_history
 from . import report_schedule
 from . import report_template
 
+
 from . import dashboard
 from . import dashboard_sales
 from . import dashboard_finance

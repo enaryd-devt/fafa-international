@@ -99,6 +99,25 @@ export class SmartAlerts extends Component {
 
     async openAlert(alert) {
 
+        sessionStorage.setItem(
+
+            "primetech_dashboard_state",
+
+            JSON.stringify({
+
+                filters:
+                    this.state.filters,
+
+                sidebarCollapsed:
+                    this.state.sidebarCollapsed,
+
+                scrollY:
+                    window.scrollY,
+
+            })
+
+        );
+
         switch (alert.action) {
 
             case "overdue_invoices":

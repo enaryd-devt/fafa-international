@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record
+        id="view_sales_preview_wizard_form"
+        model="ir.ui.view">
+
+        <field name="name">sales.preview.wizard.form</field>
+
+        <field name="model">primetech.sales.preview.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <form
+                string="Aperçu du Rapport">
+
+                <sheet>
+
+                    <div class="oe_title">
+
+                        <h1>
+
+                            <field
+                                name="name"
+                                readonly="1"/>
+
+                        </h1>
+
+                    </div>
+
+                    <field
+                        name="html"
+                        widget="html"
+                        nolabel="1"
+                        readonly="1"/>
+
+                </sheet>
+
+                <footer>
+
+                    <button
+                        name="action_print_pdf"
+                        type="object"
+                        string=" Imprimer PDF"
+                        icon="fa-file-pdf-o"
+                        class="btn-primary"/>
+
+                    <button
+                        name="action_export_xlsx"
+                        type="object"
+                        string=" Export Excel"
+                        icon="fa-file-excel-o"
+                        class="btn-success"/>
+
+                    <button
+                        name="action_back"
+                        type="object"
+                        string=" Retour"
+                        icon="fa-arrow-left"
+                        class="btn-secondary"/>
+
+                    <button
+                        string=" Fermer"
+                        special="cancel"
+                        icon="fa-times"/>
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

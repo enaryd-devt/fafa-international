@@ -1,9 +1,10 @@
 /** @odoo-module **/
 
 import {
-Component,
-useState,
-onWillUnmount,
+    Component,
+    useState,
+    onMounted,
+    onWillUnmount,
 } from "@odoo/owl";
 
 import { registry } from "@web/core/registry";
@@ -39,7 +40,7 @@ static template =
 static components = {
 
 
-  
+
     SmartAlerts,
     SalesForecast,
     TargetsProgress,
@@ -66,6 +67,14 @@ static components = {
 
 setup() {
 
+    const savedState = JSON.parse(
+
+        sessionStorage.getItem(
+            "primetech_dashboard_state"
+        ) || "{}"
+
+    );
+
     this.state = useState({
 
         sidebarCollapsed:
@@ -81,19 +90,22 @@ setup() {
                 "fr-FR"
             ),
 
-        filters: {
+        filters:
 
-            period: "month",
+            savedState.filters || {
 
-            dateFrom: null,
+                period: "month",
 
-            dateTo: null,
+                dateFrom: null,
 
-            companyId: null,
+                dateTo: null,
 
-        },
+                companyId: null,
+
+            },
 
     });
+
 
     this.refreshInterval =
         setInterval(() => {
@@ -107,58 +119,97 @@ setup() {
 
         }, 60000);
 
-    onWillUnmount(() => {
+        onMounted(() => {
 
-        clearInterval(
-            this.refreshInterval
+            if (savedState.scrollY) {
+
+                setTimeout(() => {
+
+                    window.scrollTo({
+
+                        top: savedState.scrollY,
+
+                        behavior: "instant",
+
+                    });
+
+                }, 300);
+
+            }
+
+        });
+
+        onWillUnmount(() => {
+
+            sessionStorage.setItem(
+
+                "primetech_dashboard_state",
+
+                JSON.stringify({
+
+                    filters:
+                        this.state.filters,
+
+                    sidebarCollapsed:
+                        this.state.sidebarCollapsed,
+
+                    scrollY:
+                        window.scrollY,
+
+                })
+
+            );
+
+            clearInterval(
+                this.refreshInterval
+            );
+
+        });
+
+
+    }
+
+    toggleSidebar() {
+
+        this.state.sidebarCollapsed =
+            !this.state.sidebarCollapsed;
+
+        localStorage.setItem(
+
+            "pt_sidebar",
+
+            this.state.sidebarCollapsed
+
         );
 
-    });
+    }
 
-}
+    updateFilters(filters) {
 
-toggleSidebar() {
+        this.state.filters = {
 
-    this.state.sidebarCollapsed =
-        !this.state.sidebarCollapsed;
+            ...this.state.filters,
 
-    localStorage.setItem(
+            ...filters,
 
-        "pt_sidebar",
+        };
 
-        this.state.sidebarCollapsed
+        this.state.refreshKey++;
 
-    );
+        this.state.lastRefresh =
+            new Date().toLocaleString(
+                "fr-FR"
+            );
 
-}
+        console.log(
 
-updateFilters(filters) {
+            "Dashboard Filters",
 
-    this.state.filters = {
+            this.state.filters
 
-        ...this.state.filters,
-
-        ...filters,
-
-    };
-
-    this.state.refreshKey++;
-
-    this.state.lastRefresh =
-        new Date().toLocaleString(
-            "fr-FR"
         );
 
-    console.log(
-
-        "Dashboard Filters",
-
-        this.state.filters
-
-    );
-
-}
-
+    }
 
 }
 

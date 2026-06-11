@@ -120,6 +120,25 @@ export class TopSalespersons extends Component {
 
     async openSalesperson(userId) {
 
+        sessionStorage.setItem(
+
+            "primetech_dashboard_state",
+
+            JSON.stringify({
+
+                filters:
+                    this.state.filters,
+
+                sidebarCollapsed:
+                    this.state.sidebarCollapsed,
+
+                scrollY:
+                    window.scrollY,
+
+            })
+
+        );
+
         await this.actionService.doAction({
 
             type:

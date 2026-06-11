@@ -115,6 +115,25 @@ export class TopProducts extends Component {
 
     async openProduct(productId) {
 
+            sessionStorage.setItem(
+
+                "primetech_dashboard_state",
+
+                JSON.stringify({
+
+                    filters:
+                        this.state.filters,
+
+                    sidebarCollapsed:
+                        this.state.sidebarCollapsed,
+
+                    scrollY:
+                        window.scrollY,
+
+                })
+
+            );
+
             await this.actionService.doAction({
 
                 type: "ir.actions.act_window",

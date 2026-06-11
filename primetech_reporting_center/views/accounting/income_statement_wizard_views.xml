@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <record id="view_income_statement_wizard"
+            model="ir.ui.view">
+
+        <field name="name">income.statement.wizard.form</field>
+
+        <field name="model">primetech.income.statement.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Compte de Résultat">
+
+                <group>
+
+                    <field name="date_from"/>
+
+                    <field name="date_to"/>
+
+                    <field name="posted_only"/>
+
+                </group>
+
+                <footer>
+
+                    <button
+                        name="action_open_report"
+                        type="object"
+                        string="Prévisualiser"
+                        class="btn-primary"
+                        icon="fa-eye"
+                    />
+
+                    <button
+                        name="action_print"
+                        type="object"
+                        string="Imprimer PDF"
+                        icon="fa-print"
+                    />
+
+                    <button
+                        name="action_export_excel"
+                        type="object"
+                        string="Export XLSX"
+                        icon="fa-file-excel-o"
+                    />
+
+                    <button
+                        string="Annuler"
+                        special="cancel"
+                    />
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

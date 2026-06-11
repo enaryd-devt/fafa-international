@@ -81,6 +81,7 @@ class AccountingController(http.Controller):
         ].get_financial_position()
     
     
+
     @http.route(
         "/primetech_reporting/accounting/trial_balance",
         type="json",
@@ -88,9 +89,34 @@ class AccountingController(http.Controller):
     )
     def trial_balance(self, **kwargs):
 
+        date_from = kwargs.get(
+            "date_from"
+        )
+
+        date_to = kwargs.get(
+            "date_to"
+        )
+
+        level = kwargs.get(
+            "level",
+            "4"
+        )
+
+        posted_only = kwargs.get(
+            "posted_only",
+            True
+        )
+
         return request.env[
             "primetech.trial.balance"
         ].get_trial_balance(
-            kwargs.get("date_from"),
-            kwargs.get("date_to"),
+
+            date_from=date_from,
+
+            date_to=date_to,
+
+            level=level,
+
+            posted_only=posted_only,
+
         )

@@ -1,1 +1,2 @@
-from . import trial_balance_wizard
+from . import accounting
+from . import sales

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record
+        id="view_sales_periodic_report_wizard_form"
+        model="ir.ui.view">
+
+        <field name="name">sales.periodic.report.wizard.form</field>
+
+        <field name="model">primetech.sales.periodic.report.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <form
+                string="Rapport Périodique des Ventes">
+
+                <group>
+
+                    <group>
+
+                        <field name="date_from"/>
+
+                        <field name="date_to"/>
+
+                        <field name="company_id"/>
+
+                    </group>
+
+                    <group>
+
+                        <field name="user_id"/>
+
+                        <field name="partner_id"/>
+
+                        <field name="state_filter"/>
+
+                    </group>
+
+                </group>
+
+                <footer>
+
+                    <button
+                        name="action_preview"
+                        type="object"
+                        string=" Aperçu"
+                        icon="fa-eye"
+                        class="btn-primary"/>
+
+
+                    <button
+                        string=" Fermer"
+                        special="cancel"
+                        icon="fa-times"/>
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

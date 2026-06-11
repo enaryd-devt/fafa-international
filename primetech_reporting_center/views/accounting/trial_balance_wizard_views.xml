@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <odoo>
 
     <record
@@ -10,31 +12,81 @@
 
         <field name="arch" type="xml">
 
-            <form string="Balance Générale">
+            <form
+                string="Balance Générale"
+                create="false"
+                edit="false">
 
-                <group>
+                <sheet>
 
-                    <field name="date_from"/>
+                    <div class="oe_title">
 
-                    <field name="date_to"/>
+                        <h1>
 
-                    <field name="level"/>
+                            Balance Générale
 
-                    <field name="posted_only"/>
+                        </h1>
 
-                </group>
+                        <div class="text-muted">
+
+                            Paramètres de génération du rapport
+
+                        </div>
+
+                    </div>
+
+                    <group>
+
+                        <group string="Période d'analyse">
+
+                            <field
+                                name="date_from"
+                                required="1"/>
+
+                            <field
+                                name="date_to"
+                                required="1"/>
+
+                        </group>
+
+                        <group string="Options">
+
+                            <field
+                                name="level"/>
+
+                            <field
+                                name="posted_only"/>
+
+                        </group>
+
+                    </group>
+
+                    <separator
+                        string="Le rapport sera généré selon les critères sélectionnés"
+                        colspan="4"/>
+
+                </sheet>
 
                 <footer>
 
                     <button
                         name="action_open_report"
-                        string="Aperçu"
+                        string="Générer le rapport"
                         type="object"
-                        class="btn-primary"/>
+                        class="btn btn-primary"/>
+                    
+                    <button
+                        name="action_export_excel"
+                        type="object"
+                        string="Export XLSX"
+                        class="btn-secondary"
+                        icon="fa-file-excel-o"/>
+                        
 
                     <button
                         string="Annuler"
-                        special="cancel"/>
+                        special="cancel"
+                        class="btn btn-secondary"/>
 
                 </footer>
 

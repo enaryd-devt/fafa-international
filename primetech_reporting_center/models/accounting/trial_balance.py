@@ -326,6 +326,7 @@ from collections import defaultdict
 from odoo import api, models
 
 
+
 class PrimetechTrialBalance(models.AbstractModel):
 
     _name = "primetech.trial.balance"
@@ -345,12 +346,23 @@ class PrimetechTrialBalance(models.AbstractModel):
 
         return 4
 
+    def _get_prefixes(self, code):
+
+        return list(
+            dict.fromkeys([
+                code[:1],
+                code[:2],
+                code[:3],
+                code,
+            ])
+        )
     def _get_name(
         self,
         code,
         account=None,
-    ):
+        ):
 
+        
         if len(code) == 1:
 
             return OHADA_CLASSES.get(
@@ -374,20 +386,19 @@ class PrimetechTrialBalance(models.AbstractModel):
 
         return account.name if account else code
 
+
     @api.model
     def get_trial_balance(
         self,
         date_from=False,
         date_to=False,
+        level="4",
+        posted_only=True,
     ):
 
-        Account = self.env[
-            "account.account"
-        ]
+        Account = self.env["account.account"]
 
-        MoveLine = self.env[
-            "account.move.line"
-        ]
+        MoveLine = self.env["account.move.line"]
 
         balances = defaultdict(
             lambda: {
@@ -398,13 +409,17 @@ class PrimetechTrialBalance(models.AbstractModel):
 
                 "level": 0,
 
-                "opening_debit": 0.0,
-
-                "opening_credit": 0.0,
+                "opening_balance": 0.0,
 
                 "period_debit": 0.0,
 
                 "period_credit": 0.0,
+
+                "closing_balance": 0.0,
+
+                "opening_debit": 0.0,
+
+                "opening_credit": 0.0,
 
                 "closing_debit": 0.0,
 
@@ -422,17 +437,9 @@ class PrimetechTrialBalance(models.AbstractModel):
 
             code = account.code or ""
 
-            prefixes = [
-
-                code[:1],
-
-                code[:2],
-
-                code[:3],
-
-                code,
-
-            ]
+            prefixes = self._get_prefixes(
+                code
+            )
 
             opening_domain = [
 
@@ -440,30 +447,42 @@ class PrimetechTrialBalance(models.AbstractModel):
                     "account_id",
                     "=",
                     account.id
-                ),
-
-                (
-                    "parent_state",
-                    "=",
-                    "posted"
                 )
 
             ]
 
+            if posted_only:
+
+                opening_domain.append(
+                    (
+                        "parent_state",
+                        "=",
+                        "posted"
+                    )
+                )
+
             if date_from:
 
                 opening_domain.append(
-
                     (
                         "date",
                         "<",
                         date_from
                     )
-
                 )
 
             opening_lines = MoveLine.search(
                 opening_domain
+            )
+
+            opening_balance = sum(
+
+                opening_lines.mapped("debit")
+
+            ) - sum(
+
+                opening_lines.mapped("credit")
+
             )
 
             period_domain = [
@@ -472,54 +491,42 @@ class PrimetechTrialBalance(models.AbstractModel):
                     "account_id",
                     "=",
                     account.id
-                ),
-
-                (
-                    "parent_state",
-                    "=",
-                    "posted"
                 )
 
             ]
 
+            if posted_only:
+
+                period_domain.append(
+                    (
+                        "parent_state",
+                        "=",
+                        "posted"
+                    )
+                )
+
             if date_from:
 
                 period_domain.append(
-
                     (
                         "date",
                         ">=",
                         date_from
                     )
-
                 )
 
             if date_to:
 
                 period_domain.append(
-
                     (
                         "date",
                         "<=",
                         date_to
                     )
-
                 )
 
             period_lines = MoveLine.search(
                 period_domain
-            )
-
-            opening_debit = sum(
-                opening_lines.mapped(
-                    "debit"
-                )
-            )
-
-            opening_credit = sum(
-                opening_lines.mapped(
-                    "credit"
-                )
             )
 
             period_debit = sum(
@@ -534,23 +541,47 @@ class PrimetechTrialBalance(models.AbstractModel):
                 )
             )
 
-            closing_debit = (
-                opening_debit
+            closing_balance = (
+
+                opening_balance
+
                 +
+
                 period_debit
+
+                -
+
+                period_credit
+
+            )
+
+            opening_debit = (
+                opening_balance
+                if opening_balance > 0
+                else 0
+            )
+
+            opening_credit = (
+                abs(opening_balance)
+                if opening_balance < 0
+                else 0
+            )
+
+            closing_debit = (
+                closing_balance
+                if closing_balance > 0
+                else 0
             )
 
             closing_credit = (
-                opening_credit
-                +
-                period_credit
+                abs(closing_balance)
+                if closing_balance < 0
+                else 0
             )
 
             for prefix in prefixes:
 
-                line = balances[
-                    prefix
-                ]
+                line = balances[prefix]
 
                 line["code"] = prefix
 
@@ -563,12 +594,8 @@ class PrimetechTrialBalance(models.AbstractModel):
                     prefix
                 )
 
-                line["opening_debit"] += (
-                    opening_debit
-                )
-
-                line["opening_credit"] += (
-                    opening_credit
+                line["opening_balance"] += (
+                    opening_balance
                 )
 
                 line["period_debit"] += (
@@ -579,6 +606,18 @@ class PrimetechTrialBalance(models.AbstractModel):
                     period_credit
                 )
 
+                line["closing_balance"] += (
+                    closing_balance
+                )
+
+                line["opening_debit"] += (
+                    opening_debit
+                )
+
+                line["opening_credit"] += (
+                    opening_credit
+                )
+
                 line["closing_debit"] += (
                     closing_debit
                 )
@@ -587,106 +626,221 @@ class PrimetechTrialBalance(models.AbstractModel):
                     closing_credit
                 )
 
-        result = list(
-            balances.values()
+        # =====================================
+        # CONSTRUCTION HIERARCHIQUE INVERSE
+        # =====================================
+
+        level = int(level or 4)
+
+        all_lines = [
+            line
+            for line in balances.values()
+            if line["level"] <= level
+        ]
+
+        details = sorted(
+            [l for l in all_lines if l["level"] == 4],
+            key=lambda x: x["code"]
         )
 
-        result.sort(
+        aggregates = {
+            l["code"]: l
+            for l in all_lines
+            if l["level"] < 4
+        }
 
-            key=lambda x: (
+        result = []
 
-                x["code"],
+        added_level3 = set()
+        added_level2 = set()
+        added_level1 = set()
 
-                x["level"]
+        for i, detail in enumerate(details):
+
+            result.append(detail)
+
+            code = detail["code"]
+
+            parent3 = code[:3]
+            parent2 = code[:2]
+            parent1 = code[:1]
+
+            next_code = (
+                details[i + 1]["code"]
+                if i < len(details) - 1
+                else None
+            )
+
+            next_parent3 = (
+                next_code[:3]
+                if next_code
+                else None
+            )
+
+            next_parent2 = (
+                next_code[:2]
+                if next_code
+                else None
+            )
+
+            next_parent1 = (
+                next_code[:1]
+                if next_code
+                else None
+            )
+
+            # Fin du niveau 3
+            if parent3 != next_parent3:
+
+                if (
+                    parent3 in aggregates
+                    and parent3 not in added_level3
+                ):
+                    result.append(
+                        aggregates[parent3]
+                    )
+                    added_level3.add(parent3)
+
+            # Fin du niveau 2
+            if parent2 != next_parent2:
+
+                if (
+                    parent2 in aggregates
+                    and parent2 not in added_level2
+                ):
+                    result.append(
+                        aggregates[parent2]
+                    )
+                    added_level2.add(parent2)
+
+            # Fin de la classe
+            if parent1 != next_parent1:
+
+                if (
+                    parent1 in aggregates
+                    and parent1 not in added_level1
+                ):
+                    result.append(
+                        aggregates[parent1]
+                    )
+                    added_level1.add(parent1)
+        
+        
+        
+        
+
+
+
+    
+
+        totals_bilan = {
+
+            "opening_debit": 0.0,
+            "opening_credit": 0.0,
+
+            "period_debit": 0.0,
+            "period_credit": 0.0,
+
+            "closing_debit": 0.0,
+            "closing_credit": 0.0,
+
+        }
+
+        totals_gestion = {
+
+            "opening_debit": 0.0,
+            "opening_credit": 0.0,
+
+            "period_debit": 0.0,
+            "period_credit": 0.0,
+
+            "closing_debit": 0.0,
+            "closing_credit": 0.0,
+
+        }
+
+        detail_lines = [
+
+            line
+
+            for line in result
+
+            if line["level"] == 4
+
+        ]
+
+        for line in detail_lines:
+
+            first_digit = (
+                line["code"][:1]
+                if line["code"]
+                else ""
+            )
+
+            target = (
+
+                totals_bilan
+
+                if first_digit in [
+
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+
+                ]
+
+                else totals_gestion
 
             )
 
-        )
+            target["opening_debit"] += (
+                line["opening_debit"]
+            )
 
-        total_opening_debit = sum(
+            target["opening_credit"] += (
+                line["opening_credit"]
+            )
 
-            line["opening_debit"]
+            target["period_debit"] += (
+                line["period_debit"]
+            )
 
-            for line in result
+            target["period_credit"] += (
+                line["period_credit"]
+            )
 
-            if line["level"] == 4
+            target["closing_debit"] += (
+                line["closing_debit"]
+            )
 
-        )
+            target["closing_credit"] += (
+                line["closing_credit"]
+            )
 
-        total_opening_credit = sum(
+        totals_balance = {
 
-            line["opening_credit"]
+            key:
 
-            for line in result
+            totals_bilan[key]
 
-            if line["level"] == 4
+            +
 
-        )
+            totals_gestion[key]
 
-        total_period_debit = sum(
+            for key in totals_bilan
 
-            line["period_debit"]
-
-            for line in result
-
-            if line["level"] == 4
-
-        )
-
-        total_period_credit = sum(
-
-            line["period_credit"]
-
-            for line in result
-
-            if line["level"] == 4
-
-        )
-
-        total_closing_debit = sum(
-
-            line["closing_debit"]
-
-            for line in result
-
-            if line["level"] == 4
-
-        )
-
-        total_closing_credit = sum(
-
-            line["closing_credit"]
-
-            for line in result
-
-            if line["level"] == 4
-
-        )
+        }
 
         return {
 
             "lines": result,
 
-            "totals_balance": {
+            "totals_bilan": totals_bilan,
 
-                "opening_debit":
-                    total_opening_debit,
+            "totals_gestion": totals_gestion,
 
-                "opening_credit":
-                    total_opening_credit,
-
-                "period_debit":
-                    total_period_debit,
-
-                "period_credit":
-                    total_period_credit,
-
-                "closing_debit":
-                    total_closing_debit,
-
-                "closing_credit":
-                    total_closing_credit,
-
-            },
+            "totals_balance": totals_balance,
 
         }

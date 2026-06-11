@@ -1,0 +1,302 @@
+.o_sales_overview_dashboard {
+
+    padding: 24px 32px;
+
+    background: var(--o-webclient-background-color);
+
+}
+
+/* =====================================
+   HEADER
+===================================== */
+
+.dashboard-header {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 32px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--o-brand-primary),
+            rgba(255,255,255,.05)
+        );
+
+    color: white;
+
+    margin-bottom: 28px;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,.15);
+
+}
+
+.dashboard-header h1 {
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+}
+
+.dashboard-header p {
+
+    font-size: 15px;
+
+    opacity: .9;
+
+    margin: 0;
+
+}
+
+/* =====================================
+   KPI CARDS
+===================================== */
+
+.kpi-card {
+
+    border: 0 !important;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    background:
+        var(--o-view-background-color);
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+
+    transition:
+        all .25s ease;
+
+    height: 100%;
+
+}
+
+.kpi-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.15);
+
+}
+
+.kpi-card .card-body {
+
+    padding: 22px;
+
+}
+
+.kpi-card h6 {
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
+
+    color: #7b7b7b;
+
+    margin-bottom: 12px;
+
+}
+
+.kpi-card h3 {
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    margin: 0;
+
+    color: var(--o-main-text-color);
+
+}
+
+/* =====================================
+   KPI COLORS
+===================================== */
+
+.kpi-success {
+
+    border-left: 5px solid #22c55e;
+
+}
+
+.kpi-primary {
+
+    border-left: 5px solid #3b82f6;
+
+}
+
+.kpi-warning {
+
+    border-left: 5px solid #f59e0b;
+
+}
+
+.kpi-danger {
+
+    border-left: 5px solid #ef4444;
+
+}
+
+.kpi-purple {
+
+    border-left: 5px solid #8b5cf6;
+
+}
+
+.kpi-cyan {
+
+    border-left: 5px solid #06b6d4;
+
+}
+
+/* =====================================
+   TABLES
+===================================== */
+
+.dashboard-table {
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    border: none;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+
+}
+
+.dashboard-table .card-header {
+
+    border: none;
+
+    padding: 18px 24px;
+
+    background:
+        var(--o-view-background-color);
+
+}
+
+.dashboard-table .card-header h5 {
+
+    margin: 0;
+
+    font-size: 17px;
+
+    font-weight: 600;
+
+}
+
+.dashboard-table table {
+
+    margin-bottom: 0;
+
+}
+
+.dashboard-table thead {
+
+    background:
+        rgba(0,0,0,.03);
+
+}
+
+.dashboard-table thead th {
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    color: #666;
+
+    border: none;
+
+}
+
+.dashboard-table tbody tr {
+
+    transition:
+        background .2s ease;
+
+}
+
+.dashboard-table tbody tr:hover {
+
+    background:
+        rgba(0,0,0,.03);
+
+}
+
+/* =====================================
+   CHART
+===================================== */
+
+.sales-chart-container {
+
+    background:
+        var(--o-view-background-color);
+
+    border-radius: 18px;
+
+    padding: 24px;
+
+    margin-bottom: 24px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+
+}
+
+.sales-chart-container h5 {
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    margin-bottom: 20px;
+
+}
+
+.sales-chart-container canvas {
+
+    width: 100% !important;
+
+    height: 400px !important;
+
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 992px) {
+
+    .kpi-card h3 {
+
+        font-size: 24px;
+
+    }
+
+    .dashboard-header h1 {
+
+        font-size: 26px;
+
+    }
+
+}

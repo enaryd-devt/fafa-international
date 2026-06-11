@@ -194,6 +194,25 @@ formatCurrency(amount) {
 
 async openCustomerInvoices(customerId) {
 
+    sessionStorage.setItem(
+
+        "primetech_dashboard_state",
+
+        JSON.stringify({
+
+            filters:
+                this.state.filters,
+
+            sidebarCollapsed:
+                this.state.sidebarCollapsed,
+
+            scrollY:
+                window.scrollY,
+
+        })
+
+    );
+
     await this.actionService.doAction({
 
         type: "ir.actions.act_window",
@@ -233,6 +252,25 @@ async openCustomerInvoices(customerId) {
 }
 
 async openReservedProduct(productId) {
+
+    sessionStorage.setItem(
+
+        "primetech_dashboard_state",
+
+        JSON.stringify({
+
+            filters:
+                this.state.filters,
+
+            sidebarCollapsed:
+                this.state.sidebarCollapsed,
+
+            scrollY:
+                window.scrollY,
+
+        })
+
+    );
 
     await this.actionService.doAction({
 

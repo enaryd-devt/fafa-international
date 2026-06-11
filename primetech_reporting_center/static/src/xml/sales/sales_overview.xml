@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-name="primetech_reporting_center.SalesOverviewDashboard">
+
+        <div class="o_sales_overview_dashboard">
+
+            <t t-if="!state.loaded">
+
+
+                <div class="text-center p-5">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                </div>
+
+            </t>
+
+            <t t-if="state.loaded">
+                <div class="dashboard-header mb-4">
+
+                    <div class="dashboard-title">
+
+                        <h1>
+
+                            Vue d'Ensemble Commerciale
+
+                        </h1>
+
+                        <p>
+
+                            Pilotage global des ventes,
+                            de la facturation et de la performance commerciale
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3 mb-4">
+
+                    <!-- CA HT -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>CA HT</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.turnover_ht
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CA TTC -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>CA TTC</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.turnover_ttc
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CA MOIS -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>CA du Mois</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.turnover_month
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- CROISSANCE -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Croissance</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.growth_rate
+                                    "/> %
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row g-3 mb-4">
+
+                    <!-- CLIENTS -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Clients</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.customer_count
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- FACTURES -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Factures</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.invoice_count
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- COMMANDES -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Commandes</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.order_count
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PANIER MOYEN -->
+
+                    <div class="col-lg-3">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Panier Moyen</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.average_ticket
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row g-3 mb-4">
+
+                    <div class="col-lg-6">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Factures Impayées</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.unpaid_amount
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="card kpi-card">
+
+                            <div class="card-body">
+
+                                <h6>Commandes à Facturer</h6>
+
+                                <h3>
+
+                                    <t t-esc="
+                                        state.data.to_invoice_amount
+                                        ?.toLocaleString()
+                                    "/>
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="sales-chart-container">
+
+                                <h5 class="mb-3">
+
+                                    Evolution Mensuelle du Chiffre d'Affaires
+
+                                </h5>
+
+                                <canvas id="salesEvolutionChart"/>
+
+                            </div>
+                <div class="row mt-4">
+
+                    <div class="col-lg-12">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h5>
+
+                                    Top 10 Commerciaux
+
+                                </h5>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <table class="table table-sm">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Commercial
+                                            </th>
+
+                                            <th class="text-end">
+                                                CA
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <t t-foreach="
+                                            state.data.top_salespersons || []
+                                        "
+                                        t-as="sp"
+                                        t-key="sp.name">
+
+                                            <tr>
+
+                                                <td>
+
+                                                    <t t-esc="
+                                                        sp.name
+                                                    "/>
+
+                                                </td>
+
+                                                <td class="text-end">
+
+                                                    <t t-esc="
+                                                        sp.amount
+                                                        .toLocaleString()
+                                                    "/>
+
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-6">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h5>
+                                    Top Clients
+                                </h5>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <table class="table table-sm">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Client
+                                            </th>
+
+                                            <th class="text-end">
+                                                CA
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <t t-foreach="state.data.top_customers || []"
+                                           t-as="customer"
+                                           t-key="customer.name">
+
+                                            <tr>
+
+                                                <td>
+                                                    <t t-esc="customer.name"/>
+                                                </td>
+
+                                                <td class="text-end">
+                                                    <t t-esc="customer.amount.toLocaleString()"/>
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                <h5>
+                                    Top Produits
+                                </h5>
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <table class="table table-sm">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Produit
+                                            </th>
+
+                                            <th class="text-end">
+                                                CA
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        <t t-foreach="state.data.top_products || []"
+                                           t-as="product"
+                                           t-key="product.name">
+
+                                            <tr>
+
+                                                <td>
+                                                    <t t-esc="product.name"/>
+                                                </td>
+
+                                                <td class="text-end">
+                                                    <t t-esc="product.amount.toLocaleString()"/>
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </t>
+
+        </div>
+
+    </t>
+
+</templates>

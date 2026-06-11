@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <record id="view_partner_balance_wizard"
+            model="ir.ui.view">
+
+        <field name="name">partner.balance.wizard.form</field>
+
+        <field name="model">primetech.partner.balance.wizard</field>
+
+        <field name="arch"
+               type="xml">
+
+            <form string="Balance des Tiers">
+
+                <group>
+
+                    <group>
+
+                        <field name="date_from"/>
+
+                        <field name="date_to"/>
+
+                    </group>
+
+                    <group>
+
+                        <field name="partner_type"/>
+
+                        <field name="posted_only"/>
+
+                    </group>
+
+                </group>
+
+                <footer>
+
+                    <button
+                        name="action_open_report"
+                        type="object"
+                        string="Prévisualiser"
+                        class="btn-primary"
+                        icon="fa-eye"/>
+
+                    <button
+                        name="action_export_excel"
+                        type="object"
+                        string="Export XLSX"
+                        class="btn-secondary"
+                        icon="fa-file-excel-o"/>
+
+                    <button
+                        string="Annuler"
+                        special="cancel"/>
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="primetech_pos_receipt.OrderReceipt"
+       t-inherit="point_of_sale.OrderReceipt"
+       t-inherit-mode="extension">
+
+        <xpath expr="//div[contains(@class,'pos-receipt')]"
+               position="replace">
+
+            <div class="pos-receipt p-2">
+
+                <!-- ================================= -->
+                <!-- ENTETE PERSONNALISE -->
+                <!-- ================================= -->
+
+                <div style="
+                    text-align:center;
+                    margin-bottom:5px;
+                    ">
+
+                    <!-- Logo -->
+
+                    <img
+                        t-attf-src="/web/image?model=res.company&amp;id={{props.data.headerData.company.id}}&amp;field=logo"
+                        alt="Logo"
+                        style="
+                            max-width:120px;
+                            max-height:70px;
+                            margin-bottom:5px;
+                        "/>
+
+                    <!-- Nom société -->
+
+                    <div style="
+                        font-size:14px;
+                        font-weight:bold;
+                        text-transform:uppercase;
+                    ">
+
+                        <t t-esc="props.data.headerData.company.name"/>
+
+                    </div>
+
+                    <!-- Téléphone -->
+
+                    <div
+                        t-if="props.data.headerData.company.phone"
+                        style="
+                            font-size:10px;
+                            margin-top:2px;
+                        ">
+
+                        Tél :
+                        <t t-esc="props.data.headerData.company.phone"/>
+
+                    </div>
+
+                </div>
+                <table style="
+                    width:100%;
+                    font-size:10px;
+                    ">
+
+                    <tr>
+                        <td><strong>Ticket</strong></td>
+                        <td style="text-align:right;">
+                            <t t-esc="props.data.name"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td style="text-align:right;">
+                            <t t-esc="props.data.date"/>
+                        </td>
+                    </tr>
+
+                    <tr t-if="props.data.cashier">
+                        <td><strong>Servi par</strong></td>
+                        <td style="text-align:right;">
+                            <t t-esc="props.data.cashier"/>
+                        </td>
+                    </tr>
+
+                    <tr t-if="props.data.partner_name">
+                        <td><strong>Client</strong></td>
+                        <td style="text-align:right;">
+                            <t t-esc="props.data.partner_name"/>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div style="
+                    border-top:1px dashed #000;
+                    margin:4px 0;
+                "></div>
+
+                <div style="
+                    border-top:1px dashed #000;
+                    margin:4px 0;
+                "></div>
+
+
+                <!-- ================================= -->
+                <!-- ARTICLES -->
+                <!-- ================================= -->
+
+                <div style="
+                    margin-top:5px;
+                    ">
+
+                    <t t-foreach="props.data.orderlines"
+                    t-as="line"
+                    t-key="line_index">
+
+                        <div style="
+                            border-bottom:0.2px dotted #ccc;
+                            padding:4px 0;
+                        ">
+
+                            <!-- NOM + PU -->
+
+                            <table style="
+                                width:100%;
+                                font-size:10px;
+                                ">
+
+                                <tr>
+
+                                    <td style="
+                                        font-weight:bold;
+                                        word-break:break-word;
+                                    ">
+
+                                        <t t-esc="line.productName"/>
+
+                                    </td>
+
+                                    <td style="
+                                        text-align:right;
+                                        white-space:nowrap;
+                                        
+                                    ">
+
+                                        <t t-esc="line.unitPrice"/>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <!-- REMISE -->
+
+                            <div
+                                t-if="line.discount and line.discount != '0'"
+                                style="
+                                    font-size:8px;
+                                    font-style:italic;
+                                    color:#666;
+                                ">
+
+                                Remise :
+                                <t t-esc="line.discount"/>%
+
+                            </div>
+
+                            <!-- QTE x PU = PT -->
+
+                            <table style="
+                                width:100%;
+                                margin-top:2px;
+                                font-size:9px;
+                            ">
+
+                                <tr>
+
+                                    <td style="
+                                        font-weight:bold;
+                                    ">
+
+                                        <t t-esc="line.qty"/>
+                                        x
+                                        <t t-esc="line.unitPrice"/>
+
+                                    </td>
+
+                                    <td style="
+                                        text-align:right;
+                                        font-weight:bold;
+                                        font-size:13px
+                                    ">
+
+                                        <t t-esc="line.price"/>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </div>
+
+                    </t>
+
+                </div>
+
+                <div style="
+                    text-align:right;
+                    margin-top:5px;
+                    font-size:10px;
+                    ">
+
+                    <strong>
+
+                        Nombre d'articles :
+                        <t t-esc="props.data.orderlines.length"/>
+
+                    </strong>
+
+                </div>
+
+                <!-- ================================= -->
+                <!-- TOTAUX -->
+                <!-- ================================= -->
+
+                <div style="
+                    border-top:1px dashed #000;
+                    border-bottom:1px dashed #000;
+                    padding:6px 0;
+                    margin-top:8px;
+                ">
+
+                    <table style="
+                        width:100%;
+                        font-size:11px;
+                    ">
+
+                        <tr>
+
+                            <td>
+                                <strong>TOTAL À PAYER</strong>
+                            </td>
+
+                            <td style="
+                                text-align:right;
+                                font-weight:bold;
+                            ">
+                                <t t-esc="
+                                    props.formatCurrency(
+                                        props.data.amount_total
+                                    )
+                                "/>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                <strong>RÈGLEMENT</strong>
+                            </td>
+
+                            <td style="text-align:right;">
+
+                                <t t-esc="
+                                    props.formatCurrency(
+                                        props.data.total_paid
+                                    )
+                                "/>
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                <strong>RESTE À PAYER</strong>
+                            </td>
+
+                            <td style="text-align:right;">
+
+                                <t t-esc="
+                                    props.formatCurrency(
+                                        Math.max(
+                                            0,
+                                            props.data.amount_total -
+                                            props.data.total_paid
+                                        )
+                                    )
+                                "/>
+
+                            </td>
+
+                        </tr>
+
+                        <tr t-if="props.data.order_change > 0">
+
+                            <td>
+                                <strong>MONNAIE RENDUE</strong>
+                            </td>
+
+                            <td style="
+                                text-align:right;
+                                font-weight:bold;
+                            ">
+
+                                <t t-esc="
+                                    props.formatCurrency(
+                                        props.data.order_change
+                                    )
+                                "/>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <!-- ================================= -->
+                <!-- MODES DE REGLEMENT -->
+                <!-- ================================= -->
+
+                <div style="
+                    margin-top:10px;
+                    font-size:10px;
+                ">
+
+                    <div style="
+                        font-weight:bold;
+                        margin-bottom:4px;
+                    ">
+
+                        MODE(S) DE RÈGLEMENT
+
+                    </div>
+
+                    <table style="width:100%;">
+
+                        <tr
+                            t-foreach="props.data.paymentlines"
+                            t-as="payment"
+                            t-key="payment_index">
+
+                            <td>
+
+                                <t t-esc="payment.name"/>
+
+                            </td>
+
+                            <td style="text-align:right;">
+
+                                <t t-esc="
+                                    props.formatCurrency(
+                                        payment.amount
+                                    )
+                                "/>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+                <!-- ================================= -->
+                <!-- MESSAGE DE FIN -->
+                <!-- ================================= -->
+
+                <div style="
+                    margin-top:15px;
+                    text-align:center;
+                    font-size:10px;
+                ">
+
+                    --------------------------------
+
+                    <br/><br/>
+
+                    <strong>
+                        MERCI POUR VOTRE CONFIANCE
+                    </strong>
+
+                    <br/><br/>
+
+                    SERVICE APRÈS-VENTE DISPONIBLE
+
+                    <br/>
+
+                    Conservez ce ticket pour toute réclamation.
+
+                    <br/><br/>
+
+                    FAFA INTERNATIONAL
+
+
+                    Email : contact@fafainternational.com
+
+                    <br/><br/>
+
+                    --------------------------------
+
+                </div>
+
+            </div>
+
+        </xpath>
+
+    </t>
+
+</templates>

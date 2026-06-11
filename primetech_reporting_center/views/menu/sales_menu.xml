@@ -1,44 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <odoo>
 
-    <menuitem name="Chiffre d'Affaires"
-              id="menu_sales_turnover"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
 
-    <menuitem name="Ventes par Client"
-              id="menu_sales_customer"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Vue d'Ensemble"
+        id="menu_sales_dashboard"
+        parent="menu_primetech_reporting_sales"
+        action="primetech_reporting_center.action_sales_overview_dashboard"
+        sequence="10"/>
 
-    <menuitem name="Ventes par Produit"
-              id="menu_sales_product"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Rapport Périodique des Ventes"
+        id="menu_sales_period_analysis"
+        parent="menu_primetech_reporting_sales"
+        action="primetech_reporting_center.action_sales_periodic_report"
+        sequence="20"/>
 
-    <menuitem name="Ventes par Commercial"
-              id="menu_sales_person"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Chiffre d'Affaires"
+        id="menu_sales_turnover"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="30"/>
 
-    <menuitem name="Commandes Confirmées"
-              id="menu_sales_orders_confirmed"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Analyse Clients"
+        id="menu_sales_customer"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="40"/>
 
-    <menuitem name="Commandes en Attente"
-              id="menu_sales_orders_pending"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Analyse Produits"
+        id="menu_sales_product"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="50"/>
 
-    <menuitem name="Factures Clients"
-              id="menu_sales_invoices"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Performance Commerciale"
+        id="menu_sales_performance"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="60"/>
 
-    <menuitem name="Marges Commerciales"
-              id="menu_sales_margin"
-              parent="menu_primetech_reporting_sales"
-              action="action_reporting_placeholder"/>
+    <menuitem
+        name="Suivi des Commandes"
+        id="menu_sales_orders"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="70"/>
+
+    <menuitem
+        name="Analyse de Facturation"
+        id="menu_sales_billing"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="80"/>
+
+    <menuitem
+        name="Rentabilité Commerciale"
+        id="menu_sales_profitability"
+        parent="menu_primetech_reporting_sales"
+        action="action_reporting_placeholder"
+        sequence="90"/>
+
 
 </odoo>

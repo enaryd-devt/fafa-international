@@ -129,6 +129,25 @@ export class TopCustomers extends Component {
 
     async openCustomer(customerId) {
 
+        sessionStorage.setItem(
+
+            "primetech_dashboard_state",
+
+            JSON.stringify({
+
+                filters:
+                    this.state.filters,
+
+                sidebarCollapsed:
+                    this.state.sidebarCollapsed,
+
+                scrollY:
+                    window.scrollY,
+
+            })
+
+        );
+
         await this.actionService.doAction({
 
             type: "ir.actions.act_window",

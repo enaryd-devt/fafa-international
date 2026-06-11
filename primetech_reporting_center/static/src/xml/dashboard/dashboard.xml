@@ -79,7 +79,7 @@
                         filters="state.filters"
                         refreshKey="state.refreshKey"/>
 
-            
+    
                     <ChartContainer
                         filters="state.filters"
                         refreshKey="state.refreshKey"/>
