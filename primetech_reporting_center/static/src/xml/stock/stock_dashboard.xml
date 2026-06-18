@@ -1,0 +1,1244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t t-name="primetech_reporting_center.StockDashboard">
+
+<div class="pt_stock_dashboard container-fluid">
+
+    <t t-if="state.loading">
+
+        <div class="text-center p-5">
+
+            <i
+                class="
+                    fa fa-spinner
+                    fa-spin
+                    fa-3x
+                "
+            />
+
+            <h4 class="mt-3">
+
+                Chargement du Dashboard...
+
+            </h4>
+
+        </div>
+
+    </t>
+
+    <t t-if="!state.loading">
+
+        <!-- ===================================== -->
+        <!-- HEADER PREMIUM -->
+        <!-- ===================================== -->
+
+        <div class="dashboard-header">
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                "
+            >
+
+                <div>
+
+                    <div
+                        class="
+                            dashboard-subtitle
+                        "
+                    >
+
+                        ENTREPÔT ET LOGISTIQUE
+
+                    </div>
+
+                    <h1>
+
+                        Vue d'Ensemble Stock
+
+                    </h1>
+
+                    <div class="text-muted">
+
+                        Pilotage opérationnel en temps réel
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="
+                        dashboard-badge
+                    "
+                >
+
+                    <i
+                        class="
+                            fa fa-chart-line
+                            me-2
+                        "
+                    />
+
+                    Executive Dashboard
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- KPI LIGNE 1 -->
+        <!-- ===================================== -->
+
+        <div class="row g-4">
+
+            <!-- PRODUITS -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-blue
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i
+                                class="
+                                    fa fa-cubes
+                                "
+                            />
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Produits
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.products_count
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STOCK -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-green
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-building"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Stock Total
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.stock_qty
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- VALEUR -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-purple
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-money"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Valeur Stock
+
+                            </div>
+
+                            <div class="kpi-value stock-value-small">
+
+                                <t
+                                    t-esc="
+                                        formatCurrency(
+                                            state.stock_value
+                                        )
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RUPTURE -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-red
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-warning"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Ruptures
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.out_of_stock
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- KPI LIGNE 2 -->
+        <!-- ===================================== -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-orange
+                    "
+                >
+
+                        <div class="card-body">
+
+                            <div class="kpi-icon">
+
+                                <i class="fa fa-hourglass"/> 
+
+                            </div>
+
+                            <div class="kpi-content">
+
+                                <div class="kpi-title">
+
+                                    Produits Dormants
+
+                                </div>
+
+                                <div class="kpi-value">
+
+                                    <t
+                                        t-esc="
+                                            state.dormant_products
+                                        "
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                </div>
+
+            </div>
+                        <!-- EMPLACEMENTS -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-cyan
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-map-marker"/> 
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Emplacements
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.locations_count
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- LOTS -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-indigo
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i
+                                class="
+                                    fa fa-barcode
+                                "
+                            />
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Lots / Séries
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.lots_count
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- EN ATTENTE -->
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-red
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i
+                                class="
+                                    fa fa-hourglass-half
+                                "
+                            />
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Opérations en Attente
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t
+                                    t-esc="
+                                        state.pending_pickings
+                                    "
+                                />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- ACTIVITE DU MOIS -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-chart-line
+                                    me-2
+                                "
+                            />
+
+                            Activité du Mois
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-4">
+
+                            <!-- ENTREES -->
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-success
+                                    "
+                                >
+
+                                    <div
+                                        class="
+                                            activity-icon
+                                        "
+                                    >
+
+                                        <i
+                                            class="
+                                                fa fa-arrow-down
+                                            "
+                                        />
+
+                                    </div>
+
+                                    <div
+                                        class="
+                                            activity-content
+                                        "
+                                    >
+
+                                        <div
+                                            class="
+                                                activity-title
+                                            "
+                                        >
+
+                                            Entrées
+
+                                        </div>
+
+                                        <div
+                                            class="
+                                                activity-value
+                                            "
+                                        >
+
+                                            <t
+                                                t-esc="
+                                                    state.incoming_count
+                                                "
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- SORTIES -->
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-danger
+                                    "
+                                >
+
+                                    <div
+                                        class="
+                                            activity-icon
+                                        "
+                                    >
+
+                                        <i
+                                            class="
+                                                fa fa-arrow-up
+                                            "
+                                        />
+
+                                    </div>
+
+                                    <div
+                                        class="
+                                            activity-content
+                                        "
+                                    >
+
+                                        <div
+                                            class="
+                                                activity-title
+                                            "
+                                        >
+
+                                            Sorties
+
+                                        </div>
+
+                                        <div
+                                            class="
+                                                activity-value
+                                            "
+                                        >
+
+                                            <t
+                                                t-esc="
+                                                    state.outgoing_count
+                                                "
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- TRANSFERTS -->
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-primary
+                                    "
+                                >
+
+                                    <div
+                                        class="
+                                            activity-icon
+                                        "
+                                    >
+
+                                        <i class="fa fa-exchange"/>
+
+                                    </div>
+
+                                    <div
+                                        class="
+                                            activity-content
+                                        "
+                                    >
+
+                                        <div
+                                            class="
+                                                activity-title
+                                            "
+                                        >
+
+                                            Transferts
+
+                                        </div>
+
+                                        <div
+                                            class="
+                                                activity-value
+                                            "
+                                        >
+
+                                            <t
+                                                t-esc="
+                                                    state.internal_count
+                                                "
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- ALERTES + CAMEMBERT -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-lg-4">
+
+                <div
+                    class="
+                        dashboard-card
+                        h-100
+                    "
+                >
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-bell
+                                    me-2
+                                "
+                            />
+
+                            Centre d'Alertes
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+                        <!-- RUPTURES -->
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-danger
+                            "
+                        >
+
+                            <div
+                                class="
+                                    stock-alert-icon
+                                "
+                            >
+
+                                <i class="fa fa-warning"/>
+
+                            </div>
+
+                            <div
+                                class="
+                                    stock-alert-content
+                                "
+                            >
+
+                                <div
+                                    class="
+                                        stock-alert-title
+                                    "
+                                >
+
+                                    Produits en Rupture
+
+                                </div>
+
+                                <div
+                                    class="
+                                        stock-alert-value
+                                    "
+                                >
+
+                                    <t
+                                        t-esc="
+                                            state.out_of_stock
+                                        "
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- DORMANTS -->
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-warning
+                            "
+                        >
+
+                            <div
+                                class="
+                                    stock-alert-icon
+                                "
+                            >
+
+                                <i class="fa fa-hourglass"/>
+
+                            </div>
+
+                            <div
+                                class="
+                                    stock-alert-content
+                                "
+                            >
+
+                                <div
+                                    class="
+                                        stock-alert-title
+                                    "
+                                >
+
+                                    Produits Dormants
+
+                                </div>
+
+                                <div
+                                    class="
+                                        stock-alert-value
+                                    "
+                                >
+
+                                    <t
+                                        t-esc="
+                                            state.dormant_products
+                                        "
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ATTENTE -->
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-primary
+                            "
+                        >
+
+                            <div
+                                class="
+                                    stock-alert-icon
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa fa-hourglass-half
+                                    "
+                                />
+
+                            </div>
+
+                            <div
+                                class="
+                                    stock-alert-content
+                                "
+                            >
+
+                                <div
+                                    class="
+                                        stock-alert-title
+                                    "
+                                >
+
+                                    Opérations en Attente
+
+                                </div>
+
+                                <div
+                                    class="
+                                        stock-alert-value
+                                    "
+                                >
+
+                                    <t
+                                        t-esc="
+                                            state.pending_pickings
+                                        "
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CAMEMBERT -->
+
+            <div class="col-lg-8">
+
+                <div
+                    class="
+                        dashboard-card
+                        h-100
+                    "
+                >
+
+                    <div class="card-header">
+
+                        <div
+                            class="
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                            "
+                        >
+
+                            <h5>
+
+                                <i
+                                    class="
+                                        fa fa-chart-pie
+                                        me-2
+                                    "
+                                />
+
+                                Répartition du Stock
+
+                            </h5>
+
+                            <span
+                                class="
+                                    dashboard-badge
+                                "
+                            >
+
+                                TOP 10 CATÉGORIES
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="stockCategoryChart"
+                            height="300"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- EVOLUTION MENSUELLE -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div
+                    class="
+                        dashboard-card
+                    "
+                >
+
+                    <div class="card-header">
+
+                        <div
+                            class="
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                            "
+                        >
+
+                            <h5>
+
+                                <i
+                                    class="
+                                        fa fa-chart-area
+                                        me-2
+                                    "
+                                />
+
+                                Évolution des Mouvements
+
+                            </h5>
+
+                            <span
+                                class="
+                                    dashboard-badge
+                                "
+                            >
+
+                                12 DERNIERS MOIS
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="stockMonthlyChart"
+                            height="120"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- TOP PRODUITS -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div
+                    class="
+                        dashboard-card
+                    "
+                >
+
+                    <div class="card-header">
+
+                        <div
+                            class="
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                            "
+                        >
+
+                            <h5>
+
+                                <i
+                                    class="
+                                        fa fa-trophy
+                                        me-2
+                                    "
+                                />
+
+                                Top Produits
+
+                            </h5>
+
+                            <span
+                                class="
+                                    dashboard-badge
+                                "
+                            >
+
+                                TOP 10
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body p-0">
+
+                        <table
+                            class="
+                                table
+                                table-hover
+                                mb-0
+                            "
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Produit
+                                    </th>
+
+                                    <th
+                                        class="
+                                            text-end
+                                        "
+                                    >
+                                        Stock
+                                    </th>
+
+                                    <th
+                                        class="
+                                            text-end
+                                        "
+                                    >
+                                        Réservé
+                                    </th>
+
+                                    <th
+                                        class="
+                                            text-end
+                                        "
+                                    >
+                                        Valeur
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr
+                                    t-foreach="
+                                        state.top_products
+                                    "
+                                    t-as="product"
+                                    t-key="product.id"
+                                >
+
+                                    <td>
+
+                                        <div
+                                            class="
+                                                d-flex
+                                                align-items-center
+                                                gap-2
+                                            "
+                                        >
+
+                                            <i
+                                                class="
+                                                    fa fa-box
+                                                    text-primary
+                                                "
+                                            />
+
+                                            <span>
+
+                                                <t
+                                                    t-esc="
+                                                        product.name
+                                                    "
+                                                />
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                    <td
+                                        class="
+                                            text-end
+                                            fw-bold
+                                        "
+                                    >
+
+                                        <t
+                                            t-esc="
+                                                product.qty
+                                            "
+                                        />
+
+                                    </td>
+
+                                    <td
+                                        class="
+                                            text-end
+                                        "
+                                    >
+
+                                        <t
+                                            t-esc="
+                                                product.reserved
+                                            "
+                                        />
+
+                                    </td>
+
+                                    <td
+                                        class="
+                                            text-end
+                                            fw-bold
+                                        "
+                                    >
+                                        <t
+                                            t-esc="
+                                                    formatCurrency(
+                                                        product.value
+                                                    )
+                                                "
+                                            />
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </t>
+
+</div>
+
+</t>
+
+</templates>
+                        

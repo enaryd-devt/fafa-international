@@ -1,0 +1,1150 @@
+.pt_stock_dashboard {
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fafc 0%,
+            #eef2f7 100%
+        );
+
+    min-height: 100vh;
+
+    padding-bottom: 40px;
+
+    h1 {
+
+        font-size: 2.2rem;
+
+        font-weight: 700;
+
+        color: #0f172a;
+
+        letter-spacing: -.5px;
+    }
+
+    .text-muted {
+
+        color: #64748b !important;
+
+        font-size: .95rem;
+    }
+
+    /* =====================================
+       KPI CARDS PREMIUM
+       ===================================== */
+
+    .dashboard-card {
+
+        position: relative;
+
+        border: none;
+
+        border-radius: 18px;
+
+        overflow: hidden;
+
+        background: rgba(
+            255,
+            255,
+            255,
+            .85
+        );
+
+        backdrop-filter: blur(8px);
+
+        box-shadow:
+
+            0 1px 2px rgba(
+                0,
+                0,
+                0,
+                .04
+            ),
+
+            0 8px 30px rgba(
+                15,
+                23,
+                42,
+                .06
+            );
+
+        transition:
+            all .25s ease;
+    }
+
+    .dashboard-card:hover {
+
+        transform:
+            translateY(-5px);
+
+        box-shadow:
+
+            0 15px 35px rgba(
+                15,
+                23,
+                42,
+                .10
+            );
+
+    }
+
+    .dashboard-card::before {
+
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+
+        left: 0;
+
+        width: 100%;
+
+        height: 4px;
+
+        background:
+
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #06b6d4
+            );
+    }
+
+    .card-header {
+
+        border: none;
+
+        background: transparent;
+
+        padding:
+
+            1.2rem
+            1.5rem;
+
+        font-size: 15px;
+
+        font-weight: 600;
+
+        color: #0f172a;
+    }
+
+    .card-body {
+
+        padding: 1.5rem;
+    }
+
+    /* =====================================
+       KPI
+       ===================================== */
+
+    .kpi-title {
+
+        font-size: .80rem;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1px;
+
+        color: #64748b;
+
+        margin-bottom: 12px;
+
+        font-weight: 600;
+    }
+
+    .kpi-value {
+
+        font-size: 2.4rem;
+
+        font-weight: 800;
+
+        color: #0f172a;
+
+        line-height: 1;
+    }
+
+    .text-danger {
+
+        color: #dc2626 !important;
+    }
+
+    .text-success {
+
+        color: #16a34a !important;
+    }
+
+    .text-primary {
+
+        color: #2563eb !important;
+    }
+
+    .text-warning {
+
+        color: #d97706 !important;
+    }
+
+    /* =====================================
+       ACTIVITE
+       ===================================== */
+
+    .activity-box {
+
+        border-radius: 16px;
+
+        background: #ffffff;
+
+        padding: 30px;
+
+        border: 1px solid #edf2f7;
+
+        transition:
+            all .25s ease;
+    }
+
+    .activity-box:hover {
+
+        transform:
+            translateY(-3px);
+
+        box-shadow:
+
+            0 12px 25px rgba(
+                15,
+                23,
+                42,
+                .08
+            );
+    }
+
+    .activity-title {
+
+        font-size: .85rem;
+
+        font-weight: 700;
+
+        letter-spacing: 1px;
+
+        text-transform: uppercase;
+    }
+
+    .activity-value {
+
+        font-size: 3rem;
+
+        font-weight: 800;
+
+        margin-top: 15px;
+    }
+        /* =====================================
+       ALERTES PREMIUM
+       ===================================== */
+
+    .alert {
+
+        border: none;
+
+        border-radius: 14px;
+
+        padding:
+
+            14px
+            18px;
+
+        font-weight: 600;
+
+        margin-bottom: 12px;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        box-shadow:
+
+            0 4px 12px rgba(
+                0,
+                0,
+                0,
+                .04
+            );
+    }
+
+    .alert-danger {
+
+        background:
+            rgba(
+                220,
+                38,
+                38,
+                .08
+            );
+
+        color: #b91c1c;
+    }
+
+    .alert-warning {
+
+        background:
+            rgba(
+                217,
+                119,
+                6,
+                .08
+            );
+
+        color: #b45309;
+    }
+
+    .alert-primary {
+
+        background:
+            rgba(
+                37,
+                99,
+                235,
+                .08
+            );
+
+        color: #1d4ed8;
+    }
+
+    /* =====================================
+       TABLE TOP PRODUITS
+       ===================================== */
+
+    .table {
+
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+
+        background:
+
+            linear-gradient(
+                180deg,
+                #f8fafc,
+                #f1f5f9
+            );
+
+        border: none;
+
+        padding:
+
+            16px
+            18px;
+
+        font-size: .85rem;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: .5px;
+
+        color: #475569;
+    }
+
+    .table tbody td {
+
+        padding:
+
+            16px
+            18px;
+
+        border-color: #f1f5f9;
+
+        vertical-align: middle;
+    }
+
+    .table tbody tr {
+
+        transition:
+            all .20s ease;
+    }
+
+    .table tbody tr:hover {
+
+        background:
+
+            rgba(
+                37,
+                99,
+                235,
+                .04
+            );
+
+        transform:
+            scale(1.002);
+    }
+
+    /* =====================================
+       GRAPHIQUES
+       ===================================== */
+
+    #stockCategoryChart {
+
+        min-height: 380px;
+
+        max-height: 380px;
+    }
+
+    #stockMonthlyChart {
+
+        min-height: 420px;
+
+        max-height: 420px;
+    }
+
+    canvas {
+
+        width: 100% !important;
+    }
+
+    /* =====================================
+       KPI SPECIAUX
+       ===================================== */
+
+    .kpi-success {
+
+        color: #16a34a;
+    }
+
+    .kpi-danger {
+
+        color: #dc2626;
+    }
+
+    .kpi-warning {
+
+        color: #d97706;
+    }
+
+    .kpi-primary {
+
+        color: #2563eb;
+    }
+
+    /* =====================================
+       BARRE DE TITRE
+       ===================================== */
+
+    .dashboard-header {
+
+        margin-bottom: 25px;
+
+        padding:
+
+            20px
+            25px;
+
+        border-radius: 20px;
+
+        background:
+
+            linear-gradient(
+                135deg,
+                #ffffff,
+                #f8fafc
+            );
+
+        box-shadow:
+
+            0 8px 30px rgba(
+                15,
+                23,
+                42,
+                .06
+            );
+    }
+
+    /* =====================================
+       RESPONSIVE
+       ===================================== */
+
+    @media (
+        max-width: 992px
+    ) {
+
+        .kpi-value {
+
+            font-size: 1.8rem;
+        }
+
+        .activity-value {
+
+            font-size: 2rem;
+        }
+
+        #stockCategoryChart {
+
+            min-height: 300px;
+        }
+
+        #stockMonthlyChart {
+
+            min-height: 300px;
+        }
+    }
+
+    @media (
+        max-width: 768px
+    ) {
+
+        .dashboard-card {
+
+            margin-bottom: 15px;
+        }
+
+        h1 {
+
+            font-size: 1.6rem;
+        }
+
+        .kpi-value {
+
+            font-size: 1.5rem;
+        }
+    }
+
+    /* =====================================
+       SCROLLBAR PREMIUM
+       ===================================== */
+
+    ::-webkit-scrollbar {
+
+        width: 8px;
+
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+
+        background: #cbd5e1;
+
+        border-radius: 20px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+
+        background: #94a3b8;
+    }
+
+}
+
+/* =====================================
+   KPI PREMIUM
+   ===================================== */
+
+.kpi-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 150px;
+}
+
+.kpi-card .card-body {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+.kpi-icon {
+
+    width: 70px;
+
+    height: 70px;
+
+    min-width: 70px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+
+    color: white;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.kpi-content {
+
+    flex: 1;
+}
+
+.kpi-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    right: -30px;
+
+    top: -30px;
+
+    width: 120px;
+
+    height: 120px;
+
+    border-radius: 50%;
+
+    opacity: .08;
+}
+
+/* =========================
+   BLUE
+   ========================= */
+
+.kpi-blue .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+}
+
+.kpi-blue::after {
+
+    background: #2563eb;
+}
+
+/* =========================
+   GREEN
+   ========================= */
+
+.kpi-green .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+}
+
+.kpi-green::after {
+
+    background: #16a34a;
+}
+
+/* =========================
+   PURPLE
+   ========================= */
+
+.kpi-purple .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #8b5cf6
+        );
+}
+
+.kpi-purple::after {
+
+    background: #7c3aed;
+}
+
+/* =========================
+   RED
+   ========================= */
+
+.kpi-red .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #ef4444
+        );
+}
+
+.kpi-red::after {
+
+    background: #dc2626;
+}
+
+/* =========================
+   ORANGE
+   ========================= */
+
+.kpi-orange .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #ea580c,
+            #fb923c
+        );
+}
+
+.kpi-orange::after {
+
+    background: #ea580c;
+}
+
+/* =========================
+   CYAN
+   ========================= */
+
+.kpi-cyan .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #0891b2,
+            #06b6d4
+        );
+}
+
+.kpi-cyan::after {
+
+    background: #0891b2;
+}
+
+/* =========================
+   INDIGO
+   ========================= */
+
+.kpi-indigo .kpi-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #4338ca,
+            #6366f1
+        );
+}
+
+.kpi-indigo::after {
+
+    background: #4338ca;
+}
+/* =====================================
+   HEADER EXECUTIVE
+   ===================================== */
+
+.dashboard-subtitle {
+
+    font-size: .80rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+
+    color: #2563eb;
+
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+
+.dashboard-date {
+
+    padding:
+
+        12px
+        20px;
+
+    border-radius: 30px;
+
+    background: white;
+
+    box-shadow:
+
+        0 4px 20px
+        rgba(
+            0,
+            0,
+            0,
+            .06
+        );
+
+    font-weight: 600;
+}
+
+/* =====================================
+   ACTIVITE PREMIUM
+   ===================================== */
+
+.activity-success {
+
+    border-left:
+        5px solid #16a34a;
+}
+
+.activity-danger {
+
+    border-left:
+        5px solid #dc2626;
+}
+
+.activity-primary {
+
+    border-left:
+        5px solid #2563eb;
+}
+
+.activity-box {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+.activity-icon {
+
+    width: 70px;
+
+    height: 70px;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 28px;
+}
+
+.activity-success
+.activity-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+}
+
+.activity-danger
+.activity-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #ef4444
+        );
+}
+
+.activity-primary
+.activity-icon {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+}
+
+.activity-content {
+
+    flex: 1;
+}
+
+/* =====================================
+   GLOW EFFECT
+   ===================================== */
+
+.dashboard-card:hover .kpi-icon {
+
+    transform: scale(1.08);
+
+    transition: .25s;
+}
+
+.dashboard-card:hover {
+
+    box-shadow:
+
+        0 20px 40px
+        rgba(
+            37,
+            99,
+            235,
+            .12
+        );
+}
+
+/* =====================================
+   STOCK ALERT PREMIUM
+   ===================================== */
+
+.stock-alert {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    border-radius: 18px;
+
+    margin-bottom: 14px;
+
+    transition: all .25s ease;
+
+    border: 1px solid transparent;
+}
+
+.stock-alert:hover {
+
+    transform: translateX(4px);
+}
+
+.stock-alert-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    min-width: 58px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+.stock-alert-content {
+
+    flex: 1;
+}
+
+.stock-alert-title {
+
+    font-size: .85rem;
+
+    font-weight: 600;
+
+    color: #64748b;
+
+    margin-bottom: 4px;
+}
+
+.stock-alert-value {
+
+    font-size: 2rem;
+
+    font-weight: 800;
+
+    line-height: 1;
+}
+.stock-alert-danger {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(220,38,38,.06),
+            rgba(220,38,38,.02)
+        );
+
+    border-color:
+        rgba(220,38,38,.15);
+}
+
+.stock-alert-danger .stock-alert-icon {
+
+    background:
+        rgba(220,38,38,.15);
+
+    color: #dc2626;
+}
+
+.stock-alert-warning {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245,158,11,.08),
+            rgba(245,158,11,.02)
+        );
+
+    border-color:
+        rgba(245,158,11,.18);
+}
+
+.stock-alert-warning .stock-alert-icon {
+
+    background:
+        rgba(245,158,11,.15);
+
+    color: #d97706;
+}
+
+.stock-alert-primary {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,.08),
+            rgba(37,99,235,.02)
+        );
+
+    border-color:
+        rgba(37,99,235,.18);
+}
+
+.stock-alert-primary .stock-alert-icon {
+
+    background:
+        rgba(37,99,235,.15);
+
+    color: #2563eb;
+}
+.dashboard-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+
+        8px
+        16px;
+
+    border-radius: 30px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    color: white;
+
+    font-size: .80rem;
+
+    font-weight: 700;
+
+    box-shadow:
+
+        0 6px 18px rgba(
+            37,
+            99,
+            235,
+            .25
+        );
+}
+.activity-content,
+.stock-alert-content {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.pt-location-cell {
+    min-width: 340px;
+    vertical-align: top;
+}
+
+.pt-location-card {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    background: #ffffff;
+}
+
+.pt-location-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.pt-location-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pt-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pt-qty {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.pt-reserved {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.pt-available {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.pt-value {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+@media print {
+
+    .pt-location-card {
+        page-break-inside: avoid;
+    }
+
+    .pt-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
+}

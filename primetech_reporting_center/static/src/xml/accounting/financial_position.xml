@@ -4,61 +4,177 @@
 
 <t
     t-name="primetech_reporting_center.FinancialPosition"
-    owl="1">
+    owl="1"
+>
 
-    <div class="pt-financial-position">
+    <div class="finance-position-container">
 
-        <div class="pt-position-grid">
+        <!-- ===================================== -->
+        <!-- ACTIFS / PASSIFS / CAPITAUX -->
+        <!-- ===================================== -->
 
-            <div class="pt-position-card">
+        <div class="row g-3">
 
-                <div class="pt-position-label">
-                    Actifs
-                </div>
+            <!-- ACTIFS -->
 
-                <div class="pt-position-value">
+            <div class="col-md-4">
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.data.assets
-                        )
-                    "/>
+                <div
+                    class="
+                        finance-position-card
+                        assets
+                    "
+                >
+
+                    <div
+                        class="
+                            finance-position-icon
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa fa-building-columns
+                            "
+                        />
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-label
+                        "
+                    >
+
+                        Actifs
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-value
+                        "
+                    >
+
+                        <t
+                            t-esc="
+                                formatCurrency(
+                                    state.data.assets
+                                )
+                            "
+                        />
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div class="pt-position-card">
+            <!-- PASSIFS -->
 
-                <div class="pt-position-label">
-                    Passifs
-                </div>
+            <div class="col-md-4">
 
-                <div class="pt-position-value">
+                <div
+                    class="
+                        finance-position-card
+                        liabilities
+                    "
+                >
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.data.liabilities
-                        )
-                    "/>
+                    <div
+                        class="
+                            finance-position-icon
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa fa-file-invoice-dollar
+                            "
+                        />
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-label
+                        "
+                    >
+
+                        Passifs
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-value
+                        "
+                    >
+
+                        <t
+                            t-esc="
+                                formatCurrency(
+                                    state.data.liabilities
+                                )
+                            "
+                        />
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div class="pt-position-card">
+            <!-- EQUITY -->
 
-                <div class="pt-position-label">
-                    Capitaux Propres
-                </div>
+            <div class="col-md-4">
 
-                <div class="pt-position-value">
+                <div
+                    class="
+                        finance-position-card
+                        equity
+                    "
+                >
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.data.equity
-                        )
-                    "/>
+                    <div
+                        class="
+                            finance-position-icon
+                        "
+                    >
+
+                        <i
+                            class="
+                                fa fa-coins
+                            "
+                        />
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-label
+                        "
+                    >
+
+                        Capitaux Propres
+
+                    </div>
+
+                    <div
+                        class="
+                            finance-position-value
+                        "
+                    >
+
+                        <t
+                            t-esc="
+                                formatCurrency(
+                                    state.data.equity
+                                )
+                            "
+                        />
+
+                    </div>
 
                 </div>
 
@@ -66,35 +182,47 @@
 
         </div>
 
-        <div class="pt-ratio-section">
+        <!-- ===================================== -->
+        <!-- RATIOS -->
+        <!-- ===================================== -->
 
-            <div class="pt-ratio-item">
+        <div class="finance-ratio-section">
 
-                <span>
+            <div class="finance-ratio-item">
+
+                <div>
+
                     Ratio de Liquidité
-                </span>
+
+                </div>
 
                 <strong>
 
-                    <t t-esc="
-                        state.data.liquidity_ratio
-                    "/>
+                    <t
+                        t-esc="
+                            state.data.liquidity_ratio
+                        "
+                    />
 
                 </strong>
 
             </div>
 
-            <div class="pt-ratio-item">
+            <div class="finance-ratio-item">
 
-                <span>
+                <div>
+
                     Ratio d'Endettement
-                </span>
+
+                </div>
 
                 <strong>
 
-                    <t t-esc="
-                        state.data.debt_ratio
-                    "/>
+                    <t
+                        t-esc="
+                            state.data.debt_ratio
+                        "
+                    />
 
                 </strong>
 
@@ -102,23 +230,37 @@
 
         </div>
 
-        <div
-            t-attf-class="
-                pt-position-status
-                #{state.data.level === 'Excellent'
-                    ? 'excellent'
-                    : state.data.level === 'Bon'
-                    ? 'good'
-                    : 'warning'}
-            ">
+        <!-- ===================================== -->
+        <!-- STATUT -->
+        <!-- ===================================== -->
 
-            <div class="pt-status-badge">
+        <div class="text-center mt-4">
 
-                <t t-esc="
-                    state.data.level
-                "/>
+            <span
+                t-attf-class="
+                    finance-status-badge
+                    #{state.data.level === 'Excellent'
+                        ? 'excellent'
+                        : state.data.level === 'Bon'
+                            ? 'good'
+                            : 'warning'}
+                "
+            >
 
-            </div>
+                <i
+                    class="
+                        fa fa-shield-halved
+                        me-2
+                    "
+                />
+
+                <t
+                    t-esc="
+                        state.data.level
+                    "
+                />
+
+            </span>
 
         </div>
 

@@ -9,7 +9,7 @@ import {
 
 import { registry } from "@web/core/registry";
 
-import { Sidebar } from "./report_center";
+
 import { PrimetechKPICards } from "./kpi_cards";
 import { ChartContainer } from "./charts";
 import { RecentActivities } from "./recent_activities";
@@ -52,7 +52,6 @@ static components = {
     BusinessAnalysisChart ,
     TopSalespersons,
     AlertsPanel,
-    Sidebar,
     PrimetechKPICards,
     ChartContainer,
     RecentActivities,
@@ -76,12 +75,6 @@ setup() {
     );
 
     this.state = useState({
-
-        sidebarCollapsed:
-
-            localStorage.getItem(
-                "pt_sidebar"
-            ) === "true",
 
         refreshKey: 0,
 
@@ -150,9 +143,6 @@ setup() {
                     filters:
                         this.state.filters,
 
-                    sidebarCollapsed:
-                        this.state.sidebarCollapsed,
-
                     scrollY:
                         window.scrollY,
 
@@ -169,20 +159,7 @@ setup() {
 
     }
 
-    toggleSidebar() {
 
-        this.state.sidebarCollapsed =
-            !this.state.sidebarCollapsed;
-
-        localStorage.setItem(
-
-            "pt_sidebar",
-
-            this.state.sidebarCollapsed
-
-        );
-
-    }
 
     updateFilters(filters) {
 

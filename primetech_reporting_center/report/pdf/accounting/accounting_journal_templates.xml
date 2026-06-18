@@ -4,243 +4,246 @@
 
     <template id="accounting_journal_template">
 
-        <t t-call="web.html_container">
-
-            <div style="
-                font-family:Arial, sans-serif;
-                font-size:12px;
-                color:#000;
-                padding:20px;
-            ">
-
-                <!-- ENTETE -->
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
 
                 <div style="
-                    text-align:center;
-                    margin-bottom:20px;
+                    font-family:Arial, sans-serif;
+                    font-size:12px;
+                    color:#000;
+                    padding:20px;
                 ">
 
-                    <h2 style="
-                        margin:0;
-                        font-size:22px;
-                        font-weight:bold;
-                    ">
-                        JOURNAUX COMPTABLES
-                    </h2>
+                    <!-- ENTETE -->
 
                     <div style="
-                        margin-top:8px;
-                        font-size:13px;
+                        text-align:center;
+                        margin-bottom:20px;
                     ">
 
-                        Du
-                        <strong>
-                            <t t-esc="date_from"/>
-                        </strong>
-
-                        au
-
-                        <strong>
-                            <t t-esc="date_to"/>
-                        </strong>
-
-                    </div>
-
-                    <div style="
-                        margin-top:5px;
-                        font-size:11px;
-                        color:#555;
-                    ">
-
-                        Généré le
-                        <t t-esc="generated_at"/>
-
-                    </div>
-
-                </div>
-
-                <!-- JOURNAUX -->
-
-                <t t-foreach="data['journals']"
-                   t-as="journal">
-
-                    <div style="
-                        margin-top:25px;
-                    ">
-
-                        <!-- TITRE JOURNAL -->
+                        <h2 style="
+                            margin:0;
+                            font-size:22px;
+                            font-weight:bold;
+                        ">
+                            JOURNAUX COMPTABLES
+                        </h2>
 
                         <div style="
-                            background:#f0f0f0;
-                            border:1px solid #999;
-                            padding:8px;
-                            font-weight:bold;
-                            font-size:14px;
+                            margin-top:8px;
+                            font-size:13px;
                         ">
 
-                            Journal :
-                            <t t-esc="journal['journal_code']"/>
+                            Du
+                            <strong>
+                                <t t-esc="date_from"/>
+                            </strong>
 
-                            -
+                            au
 
-                            <t t-esc="journal['journal_name']"/>
+                            <strong>
+                                <t t-esc="date_to"/>
+                            </strong>
 
                         </div>
 
-                        <!-- TABLEAU -->
-
-                        <table style="
-                            width:100%;
-                            border-collapse:collapse;
+                        <div style="
                             margin-top:5px;
+                            font-size:11px;
+                            color:#555;
                         ">
 
-                            <thead>
+                            Généré le
+                            <t t-esc="generated_at"/>
 
-                                <tr style="
-                                    background:#e6e6e6;
-                                ">
+                        </div>
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Date
-                                    </th>
+                    </div>
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Pièce
-                                    </th>
+                    <!-- JOURNAUX -->
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Tiers
-                                    </th>
+                    <t t-foreach="data['journals']"
+                    t-as="journal">
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Compte
-                                    </th>
+                        <div style="
+                            margin-top:25px;
+                        ">
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Intitulé
-                                    </th>
+                            <!-- TITRE JOURNAL -->
 
-                                    <th style="border:1px solid #999;padding:6px;">
-                                        Libellé
-                                    </th>
+                            <div style="
+                                background:#f0f0f0;
+                                border:1px solid #999;
+                                padding:8px;
+                                font-weight:bold;
+                                font-size:14px;
+                            ">
 
-                                    <th style="
-                                        border:1px solid #999;
-                                        padding:6px;
-                                        text-align:right;
+                                Journal :
+                                <t t-esc="journal['journal_code']"/>
+
+                                -
+
+                                <t t-esc="journal['journal_name']"/>
+
+                            </div>
+
+                            <!-- TABLEAU -->
+
+                            <table style="
+                                width:100%;
+                                border-collapse:collapse;
+                                margin-top:5px;
+                            ">
+
+                                <thead>
+
+                                    <tr style="
+                                        background:#e6e6e6;
                                     ">
-                                        Débit
-                                    </th>
 
-                                    <th style="
-                                        border:1px solid #999;
-                                        padding:6px;
-                                        text-align:right;
-                                    ">
-                                        Crédit
-                                    </th>
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Date
+                                        </th>
 
-                                </tr>
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Pièce
+                                        </th>
 
-                            </thead>
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Tiers
+                                        </th>
 
-                            <tbody>
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Compte
+                                        </th>
 
-                                <t t-foreach="journal['entries']"
-                                   t-as="line">
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Intitulé
+                                        </th>
 
-                                    <tr>
+                                        <th style="border:1px solid #999;padding:6px;">
+                                            Libellé
+                                        </th>
 
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['date']"/>
-                                        </td>
-
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['move']"/>
-                                        </td>
-
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['partner']"/>
-                                        </td>
-
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['account']"/>
-                                        </td>
-
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['account_name']"/>
-                                        </td>
-
-                                        <td style="border:1px solid #ccc;padding:4px;">
-                                            <t t-esc="line['label']"/>
-                                        </td>
-
-                                        <td style="
-                                            border:1px solid #ccc;
-                                            padding:4px;
-                                            text-align:right;
-                                        ">
-                                            <t t-esc="'{:,.0f}'.format(line['debit'])"/>
-                                        </td>
-
-                                        <td style="
-                                            border:1px solid #ccc;
-                                            padding:4px;
-                                            text-align:right;
-                                        ">
-                                            <t t-esc="'{:,.0f}'.format(line['credit'])"/>
-                                        </td>
-
-                                    </tr>
-
-                                </t>
-
-                                <!-- TOTAL -->
-
-                                <tr style="
-                                    background:#f5f5f5;
-                                    font-weight:bold;
-                                ">
-
-                                    <td colspan="6"
-                                        style="
+                                        <th style="
                                             border:1px solid #999;
                                             padding:6px;
                                             text-align:right;
                                         ">
-                                        TOTAL JOURNAL
-                                    </td>
+                                            Débit
+                                        </th>
 
-                                    <td style="
-                                        border:1px solid #999;
-                                        padding:6px;
-                                        text-align:right;
+                                        <th style="
+                                            border:1px solid #999;
+                                            padding:6px;
+                                            text-align:right;
+                                        ">
+                                            Crédit
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <t t-foreach="journal['entries']"
+                                    t-as="line">
+
+                                        <tr>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['date']"/>
+                                            </td>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['move']"/>
+                                            </td>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['partner']"/>
+                                            </td>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['account']"/>
+                                            </td>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['account_name']"/>
+                                            </td>
+
+                                            <td style="border:1px solid #ccc;padding:4px;">
+                                                <t t-esc="line['label']"/>
+                                            </td>
+
+                                            <td style="
+                                                border:1px solid #ccc;
+                                                padding:4px;
+                                                text-align:right;
+                                            ">
+                                                <t t-esc="'{:,.0f}'.format(line['debit'])"/>
+                                            </td>
+
+                                            <td style="
+                                                border:1px solid #ccc;
+                                                padding:4px;
+                                                text-align:right;
+                                            ">
+                                                <t t-esc="'{:,.0f}'.format(line['credit'])"/>
+                                            </td>
+
+                                        </tr>
+
+                                    </t>
+
+                                    <!-- TOTAL -->
+
+                                    <tr style="
+                                        background:#f5f5f5;
+                                        font-weight:bold;
                                     ">
-                                        <t t-esc="'{:,.0f}'.format(journal['total_debit'])"/>
-                                    </td>
 
-                                    <td style="
-                                        border:1px solid #999;
-                                        padding:6px;
-                                        text-align:right;
-                                    ">
-                                        <t t-esc="'{:,.0f}'.format(journal['total_credit'])"/>
-                                    </td>
+                                        <td colspan="6"
+                                            style="
+                                                border:1px solid #999;
+                                                padding:6px;
+                                                text-align:right;
+                                            ">
+                                            TOTAL JOURNAL
+                                        </td>
 
-                                </tr>
+                                        <td style="
+                                            border:1px solid #999;
+                                            padding:6px;
+                                            text-align:right;
+                                        ">
+                                            <t t-esc="'{:,.0f}'.format(journal['total_debit'])"/>
+                                        </td>
 
-                            </tbody>
+                                        <td style="
+                                            border:1px solid #999;
+                                            padding:6px;
+                                            text-align:right;
+                                        ">
+                                            <t t-esc="'{:,.0f}'.format(journal['total_credit'])"/>
+                                        </td>
 
-                        </table>
+                                    </tr>
 
-                    </div>
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </t>
+
+                </div>
 
                 </t>
+            </t>
 
-            </div>
-
-        </t>
 
     </template>
 

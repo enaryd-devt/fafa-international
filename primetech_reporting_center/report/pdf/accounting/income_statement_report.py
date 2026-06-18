@@ -18,6 +18,8 @@ class IncomeStatementReport(models.AbstractModel):
         data=None,
     ):
 
+        data = data or {}
+
         wizard = self.env[
             "primetech.income.statement.wizard"
         ].browse(docids)

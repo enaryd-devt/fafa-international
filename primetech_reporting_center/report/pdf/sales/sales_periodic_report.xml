@@ -20,15 +20,7 @@
 
         <field name="binding_type">report</field>
 
-        <field name="print_report_name">
-
-            'Rapport_Ventes_%s'
-            % (
-                object.date_from
-                or ''
-            )
-
-        </field>
+        <field name="print_report_name">'Rapport_Ventes_%s' % (object.date_from or '')</field>
 
     </record>
 

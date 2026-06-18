@@ -18,6 +18,10 @@ patch(PosOrder.prototype, {
             false;
 
         result.partner_name = partner?.name || "";
+        result.partner_phone =
+            partner?.mobile ||
+            partner?.phone ||
+            "";
 
         return result;
     },

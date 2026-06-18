@@ -1,6 +1,9 @@
 from datetime import datetime
 
 from odoo import models
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class SalesPeriodicPdfReport(
 models.AbstractModel
@@ -97,4 +100,5 @@ models.AbstractModel
                 report_data,
 
         }
+
 

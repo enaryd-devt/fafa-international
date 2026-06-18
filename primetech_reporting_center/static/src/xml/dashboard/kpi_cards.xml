@@ -7,20 +7,24 @@
 
     <div class="pt-kpi-grid">
 
+        <!-- ===================================== -->
         <!-- CA -->
+        <!-- ===================================== -->
 
         <div
             class="pt-kpi-card revenue pt-clickable"
             t-on-click="openRevenue">
 
             <div class="pt-kpi-icon">
-                <i class="bi bi-cash-stack"></i>
+
+                <i class="fa fa-line-chart"/>
+
             </div>
 
             <div class="pt-kpi-content">
 
                 <div class="pt-kpi-title">
-                    Chiffre d'affaire du Mois en cours
+                    Chiffre d'Affaires
                 </div>
 
                 <div
@@ -44,54 +48,74 @@
 
                 <div
                     t-att-class="
-                        'pt-kpi-trend ' +
+                        'pt-trend-pill ' +
                         getTrendClass(
                             state.revenue_trend
                         )
                     ">
 
+                    <!-- Hausse -->
+
+                    <i
+                        t-if="state.revenue_trend &gt; 0"
+                        class="fa fa-arrow-up"/>
+
+                    <!-- Baisse -->
+
+                    <i
+                        t-if="state.revenue_trend &lt; 0"
+                        class="fa fa-arrow-down"/>
+
+                    <!-- Stable -->
+
+                    <i
+                        t-if="state.revenue_trend == 0"
+                        class="fa fa-circle"/>
+
                     <span>
 
-                        <t t-esc="
-                            getTrendIcon(
-                                state.revenue_trend
-                            )
-                        "/>
+                        <t t-if="state.revenue_trend == 0">
+                            Stable
+                        </t>
 
-                        <t t-esc="
-                            formatTrend(
-                                state.revenue_trend
-                            )
-                        "/>
+                        <t t-if="state.revenue_trend != 0">
+
+                            <t t-esc="
+                                formatTrend(
+                                    state.revenue_trend
+                                )
+                            "/>
+
+                        </t>
 
                     </span>
 
-                    <small>
-                        vs mois précédent
-                    </small>
-
                 </div>
+
+                <small class="pt-kpi-subtitle">
+                    vs mois précédent
+                </small>
 
             </div>
 
         </div>
 
-        <!-- ACHAT -->
+        <!-- ===================================== -->
+        <!-- ACHATS -->
+        <!-- ===================================== -->
 
-        <div
-            class="pt-kpi-card purchase pt-clickable"
-            t-on-click="openPurchases">
+        <div class="pt-kpi-card purchase pt-clickable" t-on-click="openPurchases">
 
             <div class="pt-kpi-icon">
 
-                <i class="bi bi-cart-check"></i>
+                <i class="fa fa-shopping-cart"/>
 
             </div>
 
             <div class="pt-kpi-content">
 
                 <div class="pt-kpi-title">
-                    Achats du Mois en cours
+                    Achats du Mois
                 </div>
 
                 <div
@@ -115,47 +139,69 @@
 
                 <div
                     t-att-class="
-                        'pt-kpi-trend ' +
+                        'pt-trend-pill ' +
                         getTrendClass(
                             state.purchases_trend
                         )
                     ">
 
+                    <!-- Hausse -->
+
+                    <i
+                        t-if="state.purchases_trend &gt; 0"
+                        class="fa fa-arrow-up"/>
+
+                    <!-- Baisse -->
+
+                    <i
+                        t-if="state.purchases_trend &lt; 0"
+                        class="fa fa-arrow-down"/>
+
+                    <!-- Stable -->
+
+                    <i
+                        t-if="state.purchases_trend == 0"
+                        class="fa fa-circle"/>
+
                     <span>
 
-                        <t t-esc="
-                            getTrendIcon(
-                                state.purchases_trend
-                            )
-                        "/>
+                        <t t-if="state.purchases_trend == 0">
+                            Stable
+                        </t>
 
-                        <t t-esc="
-                            formatTrend(
-                                state.purchases_trend
-                            )
-                        "/>
+                        <t t-if="state.purchases_trend != 0">
+
+                            <t t-esc="
+                                formatTrend(
+                                    state.purchases_trend
+                                )
+                            "/>
+
+                        </t>
 
                     </span>
 
-                    <small>
-                        vs mois précédent
-                    </small>
-
                 </div>
+
+                <small class="pt-kpi-subtitle">
+                    vs mois précédent
+                </small>
 
             </div>
 
         </div>
 
-        <!-- CREANCES -->
+        <!-- ===================================== -->
+        <!-- CREANCES CLIENTS -->
+        <!-- ===================================== -->
 
         <div
-            class="pt-kpi-card stock pt-clickable"
+            class="pt-kpi-card receivable pt-clickable"
             t-on-click="openReceivables">
 
             <div class="pt-kpi-icon">
 
-                <i class="bi bi-wallet2"></i>
+                <i class="fa fa-money"/>
 
             </div>
 
@@ -170,7 +216,9 @@
                     t-att-style="
                         'font-size:' +
                         getFontSize(
-                            state.stock
+                            formatCurrency(
+                                state.receivables
+                            )
                         )
                     ">
 
@@ -184,42 +232,64 @@
 
                 <div
                     t-att-class="
-                        'pt-kpi-trend ' +
+                        'pt-trend-pill ' +
                         getTrendClass(
                             state.receivables_trend
                         )
                     ">
 
+                    <!-- Hausse -->
+
+                    <i
+                        t-if="state.receivables_trend &gt; 0"
+                        class="fa fa-arrow-up"/>
+
+                    <!-- Baisse -->
+
+                    <i
+                        t-if="state.receivables_trend &lt; 0"
+                        class="fa fa-arrow-down"/>
+
+                    <!-- Stable -->
+
+                    <i
+                        t-if="state.receivables_trend == 0"
+                        class="fa fa-circle"/>
+
                     <span>
 
-                        <t t-esc="
-                            getTrendIcon(
-                                state.receivables_trend
-                            )
-                        "/>
+                        <t t-if="state.receivables_trend == 0">
+                            Stable
+                        </t>
 
-                        <t t-esc="
-                            formatTrend(
-                                state.receivables_trend
-                            )
-                        "/>
+                        <t t-if="state.receivables_trend != 0">
+
+                            <t t-esc="
+                                formatTrend(
+                                    state.receivables_trend
+                                )
+                            "/>
+
+                        </t>
 
                     </span>
 
-                    <small>
-                        vs mois précédent
-                    </small>
-
                 </div>
+
+                <small class="pt-kpi-subtitle">
+                    vs mois précédent
+                </small>
 
             </div>
 
         </div>
 
-        <!-- LIVRAISON -->
+        <!-- ===================================== -->
+        <!-- COMMANDES A LIVRER -->
+        <!-- ===================================== -->
 
-        <div
-            class="pt-kpi-card hr pt-clickable"
+        <!--<div
+            class="pt-kpi-card delivery pt-clickable"
             t-on-click="openDeliveries">
 
             <div class="pt-kpi-icon">
@@ -234,34 +304,36 @@
                     Commandes à Livrer
                 </div>
 
-                <div
+               <div
                     class="pt-kpi-value"
                     t-att-style="
                         'font-size:' +
                         getFontSize(
-                            state.employees
+                            state.deliveries || 0
                         )
                     ">
 
-                 <t t-esc="state.deliveries"/>
+                    <t t-esc="state.deliveries || 0"/>
 
                 </div>
 
                 <div
                     t-att-class="
-                        'pt-kpi-trend ' +
+                        'pt-trend-pill ' +
                         getTrendClass(
                             state.deliveries_trend
                         )
                     ">
 
-                    <span>
+                    <i
+                        t-if="state.deliveries_trend &gt;= 0"
+                        class="bi bi-arrow-up-right"/>
 
-                        <t t-esc="
-                            getTrendIcon(
-                                state.deliveries_trend
-                            )
-                        "/>
+                    <i
+                        t-if="state.deliveries_trend &lt; 0"
+                        class="bi bi-arrow-down-right"/>
+
+                    <span>
 
                         <t t-esc="
                             formatTrend(
@@ -271,15 +343,15 @@
 
                     </span>
 
-                    <small>
-                        vs mois précédent
-                    </small>
-
                 </div>
+
+                <small class="pt-kpi-subtitle">
+                    vs mois précédent
+                </small>
 
             </div>
 
-        </div>
+        </div> -->
 
     </div>
 

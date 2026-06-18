@@ -108,3 +108,4 @@ class TrialBalanceWizard(models.TransientModel):
                 "posted_only": self.posted_only,
             }
         )
+    

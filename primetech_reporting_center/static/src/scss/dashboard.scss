@@ -57,157 +57,65 @@
     grid-template-columns: 80px 1fr;
 
 }
+/* =====================================
+   FULL WIDTH DASHBOARD
+===================================== */
+
+.pt-reporting-dashboard {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+}
+
+.pt-dashboard-layout {
+
+    display: block !important;
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+}
+
 .pt-dashboard-content {
-    transition: all .3s ease;
-    min-width: 0;
 
-    width: 100%;
+    width: 100% !important;
 
-    transition: all .3s ease;
-}
+    max-width: 100% !important;
 
-.pt-sidebar {
+    flex: 1 1 auto !important;
 
-    background: white;
+    margin: 0 !important;
 
-    border-radius: 18px;
-
-    padding: 20px;
-
-    box-shadow: var(--pt-shadow);
-
-    height: fit-content;
-
-    position: sticky;
-
-    top: 20px;
-}
-.pt-sidebar-title {
-
-    font-weight: 700;
-
-    margin-bottom: 18px;
-
-    color: var(--pt-primary);
-}
-.pt-sidebar-menu {
-
-    list-style: none;
-
-    padding: 0;
-    margin: 0;
-}
-.pt-sidebar-menu li {
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    transition: all .25s ease;
-
-    margin-bottom: 6px;
-}
-.pt-sidebar-menu li:hover {
-
-    background: #f5f7fa;
-}
-.pt-sidebar-menu i {
-
-    width: 20px;
-
-    margin-right: 10px;
-}
-.pt-sidebar {
-
-    width: 100%;
-
-    transition: all .3s ease;
-
-}
-.pt-sidebar.collapsed {
-
-    width: 80px;
-
-}
-.pt-sidebar-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 24px;
-
-}
-.pt-toggle-btn {
-
-    width: 40px;
-    height: 40px;
-
-}
-.pt-sidebar.collapsed .pt-sidebar-menu li {
-
-    justify-content: center;
-
-}
-.pt-sidebar.collapsed .pt-sidebar-menu i {
-
-    margin-right: 0;
-
-}
-.pt-sidebar-menu li {
-
-    display: flex;
-
-    align-items: center;
-
-}
-.pt-sidebar {
-
-    backdrop-filter: blur(12px);
+    padding: 0 !important;
 
 }
 
-.pt-sidebar-brand {
+/* Odoo */
 
-    display: flex;
+.o_action_manager {
 
-    flex-direction: column;
+    width: 100% !important;
+
 }
-.pt-sidebar-title {
 
-    font-size: 16px;
+.o_content {
 
-    font-weight: 700;
+    width: 100% !important;
 
-    color: var(--pt-primary);
+    max-width: 100% !important;
+
 }
-.pt-sidebar-subtitle {
 
-    font-size: 12px;
+.o_control_panel {
 
-    color: var(--pt-text-muted);
+    max-width: 100% !important;
+
 }
-.pt-toggle-btn {
 
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-}
-.pt-toggle-btn:hover {
-
-    transform: rotate(90deg);
-
-    transition: all .25s ease;
-}/* ======================================
+/* ======================================
    TOP CLIENTS / TOP PRODUITS
 ====================================== */
 
@@ -2746,4 +2654,146 @@
 .pt-kpi-icon i {
     font-size: 42px;
     line-height: 1;
+}
+
+.pt-kpi-subtitle {
+
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+
+}
+
+.pt-trend-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 8px;
+
+    padding: 5px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+.pt-trend-pill.positive {
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+}
+
+.pt-trend-pill.negative {
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+}
+
+/* =======================================
+   COULEURS KPI
+======================================= */
+
+.pt-kpi-card.revenue .pt-kpi-icon {
+
+    background: #dbeafe;
+    color: #2563eb;
+
+}
+
+.pt-kpi-card.purchase .pt-kpi-icon {
+
+    background: #ffedd5;
+    color: #ea580c;
+
+}
+
+.pt-kpi-card.receivable .pt-kpi-icon {
+
+    background: #dcfce7;
+    color: #16a34a;
+
+}
+
+.pt-kpi-card.delivery .pt-kpi-icon {
+
+    background: #ede9fe;
+    color: #7c3aed;
+
+}
+
+.pt-kpi-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 24px;
+
+    flex-shrink: 0;
+
+}
+
+.pt-kpi-card {
+
+    transition: all .25s ease;
+
+}
+
+.pt-kpi-card:hover {
+
+    transform: translateY(-4px);
+
+}
+
+.pt-trend-pill {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+}
+
+.pt-trend-pill .fa-arrow-up {
+
+    color: #16a34a;
+
+}
+
+.pt-trend-pill .fa-arrow-down {
+
+    color: #dc2626;
+
+}
+
+.pt-trend-pill .fa-circle {
+
+    color: #64748b;
+
+    font-size: 8px;
+
 }

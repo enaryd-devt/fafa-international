@@ -2,6 +2,9 @@
 
 <odoo>
 
+    <!-- ===================================================== -->
+    <!-- VUE D'ENSEMBLE -->
+    <!-- ===================================================== -->
 
     <menuitem
         name="Vue d'Ensemble"
@@ -10,61 +13,83 @@
         action="primetech_reporting_center.action_sales_overview_dashboard"
         sequence="10"/>
 
+    <!-- ===================================================== -->
+    <!-- ANALYSE -->
+    <!-- ===================================================== -->
+
     <menuitem
-        name="Rapport Périodique des Ventes"
-        id="menu_sales_period_analysis"
+        name="Analyse"
+        id="menu_sales_analysis_root"
         parent="menu_primetech_reporting_sales"
-        action="primetech_reporting_center.action_sales_periodic_report"
         sequence="20"/>
 
     <menuitem
-        name="Chiffre d'Affaires"
-        id="menu_sales_turnover"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="30"/>
+        name="Rapport Périodique des Ventes"
+        id="menu_sales_period_analysis"
+        parent="menu_sales_analysis_root"
+        action="primetech_reporting_center.action_sales_periodic_report"
+        sequence="10"/>
 
     <menuitem
         name="Analyse Clients"
         id="menu_sales_customer"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="40"/>
+        parent="menu_sales_analysis_root"
+        action="action_sales_customer_analysis_report"
+        sequence="20"/>
 
     <menuitem
         name="Analyse Produits"
         id="menu_sales_product"
+        parent="menu_sales_analysis_root"
+        action="action_sales_product_analysis_report"
+        sequence="30"/>
+
+    <!-- ===================================================== -->
+    <!-- PERFORMANCE -->
+    <!-- ===================================================== -->
+
+    <menuitem
+        name="Performance"
+        id="menu_sales_performance_root"
         parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="50"/>
+        sequence="30"/>
 
     <menuitem
         name="Performance Commerciale"
         id="menu_sales_performance"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="60"/>
-
-    <menuitem
-        name="Suivi des Commandes"
-        id="menu_sales_orders"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="70"/>
-
-    <menuitem
-        name="Analyse de Facturation"
-        id="menu_sales_billing"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="80"/>
+        parent="menu_sales_performance_root"
+        action="action_sales_performance_report_wizard"
+        sequence="10"/>
 
     <menuitem
         name="Rentabilité Commerciale"
         id="menu_sales_profitability"
-        parent="menu_primetech_reporting_sales"
-        action="action_reporting_placeholder"
-        sequence="90"/>
+        parent="menu_sales_performance_root"
+        action="action_sales_profitability_report_wizard"
+        sequence="20"/>
 
+    <!-- ===================================================== -->
+    <!-- OPÉRATIONS -->
+    <!-- ===================================================== -->
+
+    <menuitem
+        name="Opérations"
+        id="menu_sales_operations_root"
+        parent="menu_primetech_reporting_sales"
+        sequence="40"/>
+
+    <menuitem
+        name="Suivi des Commandes"
+        id="menu_sales_orders"
+        parent="menu_sales_operations_root"
+        action="action_sales_orders_tracking_report_wizard"
+        sequence="10"/>
+
+    <menuitem
+        name="Analyse de Facturation"
+        id="menu_sales_billing"
+        parent="menu_sales_operations_root"
+        action="action_invoice_analysis_report_wizard"
+        sequence="20"/>
 
 </odoo>

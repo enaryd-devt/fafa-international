@@ -6,3 +6,5 @@ from . import partner_balance_wizard
 from . import partner_balance_wizard
 from . import balance_sheet_wizard
 from . import income_statement_wizard
+from . import invoice_analysis_report_wizard
+from . import cash_period_report_wizard

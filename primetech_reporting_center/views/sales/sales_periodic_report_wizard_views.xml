@@ -12,47 +12,99 @@
 
         <field name="arch" type="xml">
 
-            <form
-                string="Rapport Périodique des Ventes">
+            <form string="Rapport Périodique des Ventes">
 
-                <group>
+                <sheet>
 
-                    <group>
+                    <div class="oe_title">
 
-                        <field name="date_from"/>
+                        <h1>
+                            Rapport Périodique des Ventes
+                        </h1>
 
-                        <field name="date_to"/>
+                        <div class="text-muted">
+                            Analyse détaillée des ventes par période,
+                            client, commercial et statut.
+                        </div>
 
-                        <field name="company_id"/>
+                    </div>
+
+                    <div class="alert alert-primary mt16"
+                         role="alert">
+
+                        <i class="fa fa-line-chart me-2"/>
+
+                        Sélectionnez vos critères puis générez
+                        le rapport des ventes pour la période souhaitée.
+
+                    </div>
+
+                    <group col="2">
+
+                        <group string="Période d'Analyse">
+
+                            <field name="date_from"/>
+
+                            <field name="date_to"/>
+
+                        </group>
+
+                        <group string="Société">
+
+                            <field name="company_id"/>
+
+                        </group>
 
                     </group>
 
-                    <group>
+                    <separator string="Filtres Commerciaux"/>
 
-                        <field name="user_id"/>
+                    <group col="2">
 
-                        <field name="partner_id"/>
+                        <group>
 
-                        <field name="state_filter"/>
+                            <field
+                                name="user_id"
+                                options="{'no_create': True}"/>
+
+                        </group>
+
+                        <group>
+
+                            <field
+                                name="partner_id"
+                                options="{'no_create': True}"/>
+
+                        </group>
 
                     </group>
 
-                </group>
+                    <separator string="État des Documents"/>
+
+                    <group>
+
+                        <field
+                            name="state_filter"
+                            widget="radio"/>
+
+                    </group>
+
+                </sheet>
 
                 <footer>
 
                     <button
                         name="action_preview"
                         type="object"
-                        string=" Aperçu"
+                        string="Aperçu"
                         icon="fa-eye"
-                        class="btn-primary"/>
-
+                        class="btn btn-primary"/>
 
                     <button
-                        string=" Fermer"
+                        string="Fermer"
                         special="cancel"
-                        icon="fa-times"/>
+                        icon="fa-times"
+                        class="btn btn-secondary"/>
 
                 </footer>
 

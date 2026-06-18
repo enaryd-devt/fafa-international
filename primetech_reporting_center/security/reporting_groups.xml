@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========================================= -->
+    <!-- DASHBOARD -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_dashboard"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Dashboard
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- COMPTABILITE -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_accounting"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Comptabilité
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- VENTE -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_sales"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Vente
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- ACHAT -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_purchase"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Achat
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- STOCK -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_stock"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Stock
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- RH -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_hr"
+        model="res.groups"
+    >
+
+        <field name="name">
+            RH
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+    </record>
+
+    <!-- ========================================= -->
+    <!-- MANAGER -->
+    <!-- ========================================= -->
+
+    <record
+        id="group_reporting_manager"
+        model="res.groups"
+    >
+
+        <field name="name">
+            Manager
+        </field>
+
+        <field
+            name="category_id"
+            ref="primetech_reporting_center.module_category_reporting_center"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[
+                (4, ref('primetech_reporting_center.group_reporting_dashboard')),
+                (4, ref('primetech_reporting_center.group_reporting_accounting')),
+                (4, ref('primetech_reporting_center.group_reporting_sales')),
+                (4, ref('primetech_reporting_center.group_reporting_purchase')),
+                (4, ref('primetech_reporting_center.group_reporting_stock')),
+                (4, ref('primetech_reporting_center.group_reporting_hr'))
+            ]"
+        />
+
+        <field
+            name="users"
+            eval="[(4, ref('base.user_admin'))]"
+        />
+
+    </record>
+
+</odoo>

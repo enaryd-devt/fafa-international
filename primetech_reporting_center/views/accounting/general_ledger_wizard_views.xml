@@ -16,25 +16,74 @@
 
                 <sheet>
 
+                    <!-- ===================================== -->
+                    <!-- TITRE -->
+                    <!-- ===================================== -->
+
+                    <div class="oe_title">
+
+                        <h1>
+
+                            Grand Livre OHADA
+
+                        </h1>
+
+                        <div class="text-muted">
+
+                            Consultation détaillée des mouvements
+                            comptables par compte
+
+                        </div>
+
+                    </div>
+
+                    <!-- ===================================== -->
+                    <!-- INFORMATION -->
+                    <!-- ===================================== -->
+
+                    <div class="alert alert-primary"
+                         role="alert">
+
+                        <i class="fa fa-book me-2"/>
+
+                        Définissez la période et la plage de comptes
+                        à analyser pour générer le Grand Livre.
+
+                    </div>
+
+                    <!-- ===================================== -->
+                    <!-- PARAMETRES -->
+                    <!-- ===================================== -->
+
                     <group>
 
-                        <group>
+                        <group string="Période d'Analyse">
 
-                            <field name="date_from"/>
+                            <field
+                                name="date_from"/>
 
-                            <field name="date_to"/>
+                            <field
+                                name="date_to"/>
 
                         </group>
 
-                        <group>
+                        <group string="Options">
 
-                            <field name="posted_only"/>
+                            <field
+                                name="posted_only"/>
 
-                            <field name="hide_zero_balance"/>
+                            <field
+                                name="hide_zero_balance"/>
 
                         </group>
 
                     </group>
+
+                    <!-- ===================================== -->
+                    <!-- COMPTES -->
+                    <!-- ===================================== -->
+
+                    <separator string="Plage de Comptes"/>
 
                     <group>
 
@@ -42,7 +91,8 @@
 
                             <field
                                 name="account_from_id"
-                                options="{'no_create': True}"/>
+                                options="{'no_create': True,
+                                          'no_open': True}"/>
 
                         </group>
 
@@ -50,11 +100,48 @@
 
                             <field
                                 name="account_to_id"
-                                options="{'no_create': True}"/>
+                                options="{'no_create': True,
+                                          'no_open': True}"/>
 
                         </group>
 
                     </group>
+
+                    <!-- ===================================== -->
+                    <!-- AIDE -->
+                    <!-- ===================================== -->
+
+                    <separator string="Contenu du Rapport"/>
+
+                    <div class="text-muted">
+
+                        Le Grand Livre présentera :
+
+                        <ul style="margin-top:8px;">
+
+                            <li>
+                                Les écritures détaillées par compte
+                            </li>
+
+                            <li>
+                                Les soldes initiaux
+                            </li>
+
+                            <li>
+                                Les mouvements débiteurs et créditeurs
+                            </li>
+
+                            <li>
+                                Les soldes cumulés
+                            </li>
+
+                            <li>
+                                Les totaux par compte
+                            </li>
+
+                        </ul>
+
+                    </div>
 
                 </sheet>
 
@@ -64,19 +151,21 @@
                         name="action_open_report"
                         type="object"
                         string="Prévisualiser"
-                        class="btn-primary"
-                        icon="fa-eye"/>
+                        icon="fa-eye"
+                        class="btn-primary"/>
 
                     <button
                         name="action_export_excel"
                         type="object"
-                        string="Export XLSX"
-                        class="btn-secondary"
-                        icon="fa-file-excel-o"/>
+                        string="Exporter Excel"
+                        icon="fa-file-excel-o"
+                        class="btn-success"/>
 
                     <button
                         string="Fermer"
-                        special="cancel"/>
+                        special="cancel"
+                        icon="fa-times"
+                        class="btn-secondary"/>
 
                 </footer>
 

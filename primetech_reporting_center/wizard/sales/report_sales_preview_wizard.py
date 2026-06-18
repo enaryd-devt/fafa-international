@@ -54,21 +54,11 @@ class ReportSalesPreviewWizard(
 
     def action_back(self):
 
-        self.ensure_one()
-
         return {
 
-            "type": "ir.actions.act_window",
+            "type": "ir.actions.client",
 
-            "name": "Rapport Périodique des Ventes",
-
-            "res_model":
-                "primetech.sales.periodic.report.wizard",
-
-            "view_mode": "form",
-
-            "res_id": self.wizard_id,
-
-            "target": "current",
+            "tag":
+                "primetech_accounting_dashboard",
 
         }

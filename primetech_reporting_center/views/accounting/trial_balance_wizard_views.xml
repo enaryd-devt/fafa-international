@@ -19,6 +19,10 @@
 
                 <sheet>
 
+                    <!-- ===================================== -->
+                    <!-- TITRE -->
+                    <!-- ===================================== -->
+
                     <div class="oe_title">
 
                         <h1>
@@ -29,15 +33,34 @@
 
                         <div class="text-muted">
 
-                            Paramètres de génération du rapport
+                            Analyse des soldes comptables et contrôle
+                            de l'équilibre des comptes
 
                         </div>
 
                     </div>
 
+                    <!-- ===================================== -->
+                    <!-- MESSAGE -->
+                    <!-- ===================================== -->
+
+                    <div class="alert alert-primary"
+                         role="alert">
+
+                        <i class="fa fa-balance-scale me-2"/>
+
+                        Sélectionnez la période et les paramètres
+                        d'analyse pour générer votre balance générale.
+
+                    </div>
+
+                    <!-- ===================================== -->
+                    <!-- PARAMETRES -->
+                    <!-- ===================================== -->
+
                     <group>
 
-                        <group string="Période d'analyse">
+                        <group string="Période d'Analyse">
 
                             <field
                                 name="date_from"
@@ -49,7 +72,7 @@
 
                         </group>
 
-                        <group string="Options">
+                        <group string="Options de Génération">
 
                             <field
                                 name="level"/>
@@ -61,9 +84,38 @@
 
                     </group>
 
-                    <separator
-                        string="Le rapport sera généré selon les critères sélectionnés"
-                        colspan="4"/>
+                    <!-- ===================================== -->
+                    <!-- INFORMATIONS -->
+                    <!-- ===================================== -->
+
+                    <separator string="Informations"/>
+
+                    <div class="text-muted">
+
+                        Le rapport affichera :
+
+                        <ul style="margin-top:8px;">
+
+                            <li>
+                                Les soldes débiteurs et créditeurs
+                            </li>
+
+                            <li>
+                                Les regroupements par niveau comptable
+                            </li>
+
+                            <li>
+                                Les mouvements de la période
+                            </li>
+
+                            <li>
+                                Les comptes détaillés ou synthétiques
+                                selon le niveau choisi
+                            </li>
+
+                        </ul>
+
+                    </div>
 
                 </sheet>
 
@@ -71,22 +123,23 @@
 
                     <button
                         name="action_open_report"
-                        string="Générer le rapport"
                         type="object"
-                        class="btn btn-primary"/>
-                    
+                        string="Prévisualiser"
+                        icon="fa-eye"
+                        class="btn-primary"/>
+
                     <button
                         name="action_export_excel"
                         type="object"
-                        string="Export XLSX"
-                        class="btn-secondary"
-                        icon="fa-file-excel-o"/>
-                        
+                        string="Exporter Excel"
+                        icon="fa-file-excel-o"
+                        class="btn-success"/>
 
                     <button
-                        string="Annuler"
+                        string="Fermer"
                         special="cancel"
-                        class="btn btn-secondary"/>
+                        icon="fa-times"
+                        class="btn-secondary"/>
 
                 </footer>
 

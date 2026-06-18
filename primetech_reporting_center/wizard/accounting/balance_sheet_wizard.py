@@ -121,5 +121,6 @@ class BalanceSheetWizard(models.TransientModel):
                 "display_mode": self.display_mode,
             }
         )
+
     
     

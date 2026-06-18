@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+<t t-name="primetech_reporting_center.PurchaseOverviewDashboard">
+
+<div class="container-fluid pt-dashboard p-4">
+
+    <t t-if="state.loading">
+
+        <div class="text-center p-5">
+
+            <i
+                class="
+                    fa fa-spinner
+                    fa-spin
+                    fa-3x
+                "
+            />
+
+            <h4 class="mt-3">
+
+                Chargement du Dashboard...
+
+            </h4>
+
+        </div>
+
+    </t>
+
+    <t t-else="">
+
+        <!-- ===================================== -->
+        <!-- HEADER PREMIUM -->
+        <!-- ===================================== -->
+
+        <div class="dashboard-header">
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                "
+            >
+
+                <div>
+
+                    <div class="dashboard-subtitle">
+
+                        PROCUREMENT ET SOURCING
+
+                    </div>
+
+                    <h1>
+
+                        Vue d'Ensemble des Achats
+
+                    </h1>
+
+                    <div class="text-muted">
+
+                        Pilotage fournisseurs,
+                        commandes et dépenses
+
+                    </div>
+
+                </div>
+
+                <div class="dashboard-badge">
+
+                    <i
+                        class="
+                            fa fa-cart-shopping
+                            me-2
+                        "
+                    />
+
+                    Executive Purchase Dashboard
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- KPI LIGNE 1 -->
+        <!-- ===================================== -->
+
+        <div class="row g-4">
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-blue
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-file-text-o"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Commandes
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="state.purchase_count"/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-green
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-truck"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Fournisseurs
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="state.supplier_count"/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-purple
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-credit-card"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Total HT
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="
+                                    formatCurrency(
+                                        state.total_ht
+                                    )
+                                "/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-red
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-line-chart"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Total TTC
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="
+                                    formatCurrency(
+                                        state.total_ttc
+                                    )
+                                "/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- KPI LIGNE 2 -->
+        <!-- ===================================== -->
+
+        <div class="row g-4 mt-1">
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-orange
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-cart-arrow-down"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Panier Moyen
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="
+                                    formatCurrency(
+                                        state.average_order
+                                    )
+                                "/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-cyan
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-download"/>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Réceptions
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="state.pending_receipts"/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+                    <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-indigo
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i
+                                class="fa fa-file-text-o"
+                                style="
+                                    font-size:34px;
+                                    color:white;
+                                "
+                            />
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Factures à Valider
+
+                            </div>
+
+                            <div class="kpi-value">
+
+                                <t t-esc="state.vendor_bills_to_validate"/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-3 col-lg-6">
+
+                <div
+                    class="
+                        dashboard-card
+                        kpi-card
+                        kpi-green
+                    "
+                >
+
+                    <div class="card-body">
+
+                        <div class="kpi-icon">
+
+                            <i class="fa fa-arrow-up"></i>
+
+                        </div>
+
+                        <div class="kpi-content">
+
+                            <div class="kpi-title">
+
+                                Croissance
+
+                            </div>
+
+                            <div
+                                t-att-class="
+                                    'kpi-value ' +
+                                    getGrowthClass()
+                                "
+                            >
+
+                                <t t-esc="state.growth_percentage"/>%
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- ACTIVITE ACHATS -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-12">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-chart-line
+                                    me-2
+                                "
+                            />
+
+                            Activité Achats
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row g-4">
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-success
+                                    "
+                                >
+
+                                    <div class="activity-icon">
+
+                                        <i class="fa fa-file-text-o"/>
+
+                                    </div>
+
+                                    <div class="activity-content">
+
+                                        <div class="activity-title">
+
+                                            Commandes
+
+                                        </div>
+
+                                        <div class="activity-value">
+
+                                            <t t-esc="state.purchase_count"/>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-primary
+                                    "
+                                >
+
+                                    <div class="activity-icon">
+
+                                        <i class="fa fa-truck"/>
+
+                                    </div>
+
+                                    <div class="activity-content">
+
+                                        <div class="activity-title">
+
+                                            Réceptions
+
+                                        </div>
+
+                                        <div class="activity-value">
+
+                                            <t t-esc="state.pending_receipts"/>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-4">
+
+                                <div
+                                    class="
+                                        activity-box
+                                        activity-danger
+                                    "
+                                >
+
+                                    <div class="activity-icon">
+
+                                        <i class="fa fa-money"/>
+
+                                    </div>
+
+                                    <div class="activity-content">
+
+                                        <div class="activity-title">
+
+                                            Factures
+
+                                        </div>
+
+                                        <div class="activity-value">
+
+                                            <t t-esc="state.vendor_bills_to_validate"/>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- ALERTES + TOP FOURNISSEURS -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-lg-4">
+
+                <div class="dashboard-card h-100">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-bell
+                                    me-2
+                                "
+                            />
+
+                            Centre d'Alertes
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-danger
+                            "
+                        >
+
+                            <div class="stock-alert-icon">
+
+                                <i class="fa fa-clock-o"/>
+
+                            </div>
+
+                            <div class="stock-alert-content">
+
+                                <div class="stock-alert-title">
+
+                                    Achats en Retard
+
+                                </div>
+
+                                <div class="stock-alert-value">
+
+                                    <t t-esc="
+                                        state.late_purchase_orders.length
+                                    "/>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-warning
+                            "
+                        >
+
+                            <div class="stock-alert-icon">
+
+                                <i class="fa fa-download"/>
+
+                            </div>
+
+                            <div class="stock-alert-content">
+
+                                <div class="stock-alert-title">
+
+                                    Réceptions Incomplètes
+
+                                </div>
+
+                                <div class="stock-alert-value">
+
+                                    <t t-esc="
+                                        state.incomplete_receipts.length
+                                    "/>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="
+                                stock-alert
+                                stock-alert-primary
+                            "
+                        >
+
+                            <div class="stock-alert-icon">
+
+                                <i class="fa fa-file-text-o"/>
+
+                            </div>
+
+                            <div class="stock-alert-content">
+
+                                <div class="stock-alert-title">
+
+                                    Factures Bloquées
+
+                                </div>
+
+                                <div class="stock-alert-value">
+
+                                    <t t-esc="
+                                        state.blocked_vendor_bills.length
+                                    "/>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-8">
+
+                <div class="dashboard-card h-100">
+
+                    <div class="card-header">
+
+                        <div
+                            class="
+                                d-flex
+                                justify-content-between
+                                align-items-center
+                            "
+                        >
+
+                            <h5>
+
+                                <i
+                                    class="
+                                        fa fa-chart-pie
+                                        me-2
+                                    "
+                                />
+
+                                Top Fournisseurs
+
+                            </h5>
+
+                            <span class="dashboard-badge">
+
+                                TOP 10
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="pt_supplier_chart"
+                            height="150"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================== -->
+        <!-- GRAPHIQUES -->
+        <!-- ===================================== -->
+
+        <div class="row mt-4">
+
+            <div class="col-xl-8">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-chart-area
+                                    me-2
+                                "
+                            />
+
+                            Evolution Mensuelle
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="pt_purchase_monthly_chart"
+                            height="120"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-4">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        Dépenses par Catégorie
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="pt_category_chart"
+                            height="250"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row mt-4">
+
+            <div class="col-xl-6">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-box
+                                    me-2
+                                "
+                            />
+
+                            Top Produits
+
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <canvas
+                            id="pt_products_chart"
+                            height="250"
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-6">
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <h5>
+
+                            <i
+                                class="
+                                    fa fa-history
+                                    me-2
+                                "
+                            />
+
+                            Dernières Commandes
+
+                        </h5>
+
+                    </div>
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="
+                                table
+                                table-hover
+                                mb-0
+                            "
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Référence</th>
+                                    <th>Fournisseur</th>
+                                    <th>Date</th>
+                                    <th class="text-end">
+                                        Montant
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr
+                                    t-foreach="
+                                        state.recent_purchase_orders
+                                    "
+                                    t-as="order"
+                                    t-key="order.name"
+                                >
+
+                                    <td>
+
+                                        <strong>
+
+                                            <t t-esc="order.name"/>
+
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+
+                                        <t t-esc="order.supplier"/>
+
+                                    </td>
+
+                                    <td>
+
+                                        <t t-esc="order.date"/>
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        <strong>
+
+                                            <t t-esc="
+                                                formatCurrency(
+                                                    order.amount
+                                                )
+                                            "/>
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </t>
+
+</div>
+
+</t>
+
+</templates>

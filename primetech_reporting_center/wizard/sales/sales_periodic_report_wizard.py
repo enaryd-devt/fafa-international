@@ -45,7 +45,6 @@ class SalesPeriodicReportWizard(
     )
 
     state_filter = fields.Selection(
-
         [
 
             (
@@ -101,7 +100,7 @@ class SalesPeriodicReportWizard(
             "ir.qweb"
         ]._render(
 
-            "primetech_reporting_center.sales_periodic_preview_template",
+            "primetech_reporting_center.sales_periodic_pdf",
 
             {
 
@@ -112,6 +111,8 @@ class SalesPeriodicReportWizard(
                 "print_date": datetime.now().strftime(
                     "%d/%m/%Y %H:%M:%S"
                 ),
+                
+                "generated_at": datetime.now(),
 
             },
 
@@ -159,6 +160,11 @@ class SalesPeriodicReportWizard(
 
             "view_mode":
                 "form",
+
+            "view_id":
+                self.env.ref(
+                    "primetech_reporting_center.view_sales_preview_wizard_form"
+                ).id,
 
             "target":
                 "current",

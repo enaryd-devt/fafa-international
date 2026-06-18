@@ -4,65 +4,184 @@
 
 <t
     t-name="primetech_reporting_center.ReceivablesAnalysis"
-    owl="1">
+    owl="1"
+>
 
-    <div class="pt-receivables-dashboard">
+    <div class="finance-receivables">
 
-        <div class="pt-receivable-main-card">
+        <!-- ===================================== -->
+        <!-- KPI PRINCIPAL -->
+        <!-- ===================================== -->
 
-            <div class="pt-card-label">
+        <div
+            class="
+                finance-main-kpi
+            "
+        >
 
-                Encours Clients
+            <div
+                class="
+                    finance-main-icon
+                "
+            >
+
+                <i
+                    class="
+                        fa fa-file-invoice-dollar
+                    "
+                />
 
             </div>
 
-            <div class="pt-card-value">
+            <div
+                class="
+                    finance-main-content
+                "
+            >
 
-                <t t-esc="
-                    formatCurrency(
-                        state.data.total_receivables
-                    )
-                "/>
+                <div
+                    class="
+                        finance-main-label
+                    "
+                >
+
+                    Encours Clients
+
+                </div>
+
+                <div
+                    class="
+                        finance-main-value
+                    "
+                >
+
+                    <t
+                        t-esc="
+                            formatCurrency(
+                                state.data.total_receivables
+                            )
+                        "
+                    />
+
+                </div>
 
             </div>
 
         </div>
 
-        <div class="pt-receivable-stats-grid">
+        <!-- ===================================== -->
+        <!-- KPI SECONDAIRES -->
+        <!-- ===================================== -->
 
-            <div class="pt-mini-card">
+        <div class="row g-3 mt-2">
 
-                <div class="pt-mini-label">
+            <div class="col-6">
 
-                    Factures Échues
+                <div
+                    class="
+                        finance-mini-card
+                        danger
+                    "
+                >
 
-                </div>
+                    <div
+                        class="
+                            finance-mini-icon
+                        "
+                    >
 
-                <div class="pt-mini-value">
+                        <i
+                            class="
+                                fa fa-clock
+                            "
+                        />
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.data.overdue_amount
-                        )
-                    "/>
+                    </div>
+
+                    <div>
+
+                        <div
+                            class="
+                                finance-mini-label
+                            "
+                        >
+
+                            Factures Échues
+
+                        </div>
+
+                        <div
+                            class="
+                                finance-mini-value
+                            "
+                        >
+
+                            <t
+                                t-esc="
+                                    formatCurrency(
+                                        state.data.overdue_amount
+                                    )
+                                "
+                            />
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
-            <div class="pt-mini-card">
+            <div class="col-6">
 
-                <div class="pt-mini-label">
+                <div
+                    class="
+                        finance-mini-card
+                        warning
+                    "
+                >
 
-                    Clients à Risque
+                    <div
+                        class="
+                            finance-mini-icon
+                        "
+                    >
 
-                </div>
+                        <i
+                            class="
+                                fa fa-triangle-exclamation
+                            "
+                        />
 
-                <div class="pt-mini-value">
+                    </div>
 
-                    <t t-esc="
-                        state.data.risk_customers || 0
-                    "/>
+                    <div>
+
+                        <div
+                            class="
+                                finance-mini-label
+                            "
+                        >
+
+                            Clients à Risque
+
+                        </div>
+
+                        <div
+                            class="
+                                finance-mini-value
+                            "
+                        >
+
+                            <t
+                                t-esc="
+                                    state.data.risk_customers || 0
+                                "
+                            />
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -70,9 +189,28 @@
 
         </div>
 
-        <div class="pt-top-debtors-card">
+        <!-- ===================================== -->
+        <!-- TOP DEBITEURS -->
+        <!-- ===================================== -->
 
-            <div class="pt-section-title">
+        <div
+            class="
+                finance-debtors-section
+            "
+        >
+
+            <div
+                class="
+                    finance-section-title
+                "
+            >
+
+                <i
+                    class="
+                        fa fa-trophy
+                        me-2
+                    "
+                />
 
                 Top Débiteurs
 
@@ -83,45 +221,86 @@
                     state.data.top_debtors || []
                 "
                 t-as="debtor"
-                t-key="debtor.id">
+                t-key="debtor.id"
+            >
 
-                <div class="pt-debtor-item">
+                <div
+                    class="
+                        finance-debtor-card
+                    "
+                >
 
-                    <div class="pt-debtor-header">
+                    <div
+                        class="
+                            finance-debtor-header
+                        "
+                    >
 
-                        <span class="pt-debtor-name">
+                        <span
+                            class="
+                                finance-debtor-name
+                            "
+                        >
 
-                            <t t-esc="
-                                debtor.name
-                            "/>
+                            <i
+                                class="
+                                    fa fa-building
+                                    me-2
+                                "
+                            />
+
+                            <t
+                                t-esc="
+                                    debtor.name
+                                "
+                            />
 
                         </span>
 
-                        <span class="pt-debtor-amount">
+                        <span
+                            class="
+                                finance-debtor-amount
+                            "
+                        >
 
-                            <t t-esc="
-                                formatCurrency(
-                                    debtor.amount
-                                )
-                            "/>
+                            <t
+                                t-esc="
+                                    formatCurrency(
+                                        debtor.amount
+                                    )
+                                "
+                            />
 
                         </span>
 
                     </div>
 
-                    <div class="pt-debtor-bar">
+                    <div
+                        class="
+                            finance-progress
+                        "
+                    >
 
                         <div
-                            class="pt-debtor-progress"
+                            class="
+                                finance-progress-bar
+                            "
                             t-att-style="
                                 'width:' +
                                 (
-                                    debtor.amount /
-                                    state.data.total_receivables *
-                                    100
+                                    state.data.total_receivables
+                                    ?
+                                    (
+                                        debtor.amount /
+                                        state.data.total_receivables *
+                                        100
+                                    )
+                                    :
+                                    0
                                 ) +
                                 '%'
-                            "/>
+                            "
+                        />
 
                     </div>
 

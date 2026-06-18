@@ -52,6 +52,11 @@ class ReportPreviewWizard(models.TransientModel):
     
     def action_back_to_menu(self):
 
-        return self.env.ref(
-            "primetech_reporting_center.action_accounting_dashboard"
-        ).read()[0]
+        return {
+
+            "type": "ir.actions.client",
+
+            "tag":
+                "primetech_accounting_dashboard",
+
+        }

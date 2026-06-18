@@ -4,21 +4,60 @@
 
 <t
     t-name="primetech_reporting_center.FinancialHealth"
-    owl="1">
+    owl="1"
+>
 
-    <div class="pt-financial-health">
+    <div class="finance-health-container">
 
-        <div class="pt-health-score">
+        <div
+            t-att-class="
+                state.data.score >= 80
+                ? 'finance-health-circle excellent'
+                : state.data.score >= 60
+                    ? 'finance-health-circle good'
+                    : state.data.score >= 40
+                        ? 'finance-health-circle warning'
+                        : 'finance-health-circle danger'
+            "
+        >
 
-            <t t-esc="state.data.score"/>
+            <div class="finance-health-score">
 
-            <span>/100</span>
+                <t t-esc="state.data.score"/>
+
+            </div>
+
+            <div class="finance-health-max">
+
+                /100
+
+            </div>
 
         </div>
 
-        <div class="pt-health-level">
+        <div class="finance-health-info">
 
-            <t t-esc="state.data.level"/>
+            <div class="finance-health-title">
+
+                Santé Financière
+
+            </div>
+
+            <div
+                t-att-class="
+                    state.data.score >= 80
+                    ? 'finance-health-badge excellent'
+                    : state.data.score >= 60
+                        ? 'finance-health-badge good'
+                        : state.data.score >= 40
+                            ? 'finance-health-badge warning'
+                            : 'finance-health-badge danger'
+                "
+            >
+
+                <t t-esc="state.data.level"/>
+
+            </div>
 
         </div>
 

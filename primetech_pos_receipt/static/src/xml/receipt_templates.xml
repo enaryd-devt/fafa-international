@@ -84,9 +84,22 @@
                     </tr>
 
                     <tr t-if="props.data.partner_name">
-                        <td><strong>Client</strong></td>
+                        <td>
+                            <strong>Client</strong>
+                        </td>
+
                         <td style="text-align:right;">
                             <t t-esc="props.data.partner_name"/>
+                        </td>
+                    </tr>
+
+                    <tr t-if="props.data.partner_phone">
+                        <td>
+                           
+                        </td>
+
+                        <td style="text-align:right;">
+                           Tél: <t t-esc="props.data.partner_phone"/>
                         </td>
                     </tr>
 
