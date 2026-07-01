@@ -1,0 +1,261 @@
+/* ==========================================================
+   PRODUCT STOCK OVERVIEW
+   PrimeTech Inventory Count
+========================================================== */
+
+.pt_stock_overview {
+
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.pt_stock_header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #0f62fe,
+        #3d8bfd
+    );
+
+    color: white;
+
+}
+
+.pt_stock_title{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:16px;
+    font-weight:600;
+
+}
+
+.pt_stock_title i{
+
+    font-size:22px;
+
+}
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.pt_stock_tree{
+
+    border:none;
+
+}
+
+.pt_stock_tree table{
+
+    margin:0;
+
+}
+
+.pt_stock_tree thead{
+
+    background:#f6f8fb;
+
+}
+
+.pt_stock_tree thead th{
+
+    border:none !important;
+
+    color:#3b4a5a;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    padding:12px 10px;
+
+}
+
+.pt_stock_tree tbody td{
+
+    padding:10px;
+
+    border-top:1px solid #eef1f5;
+
+    vertical-align:middle;
+
+    font-size:13px;
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.pt_stock_tree tbody tr{
+
+    transition:all .18s ease;
+
+}
+
+.pt_stock_tree tbody tr:hover{
+
+    background:#eef6ff !important;
+
+    cursor:pointer;
+
+}
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.o_field_badge{
+
+    border-radius:18px !important;
+
+    padding:4px 12px !important;
+
+    font-weight:600;
+
+    font-size:12px;
+
+}
+
+/* ==========================================================
+   QUANTITY
+========================================================== */
+
+.pt_qty_good{
+
+    color:#0f9d58;
+
+    font-weight:700;
+
+}
+
+.pt_qty_warning{
+
+    color:#ff9800;
+
+    font-weight:700;
+
+}
+
+.pt_qty_danger{
+
+    color:#d93025;
+
+    font-weight:700;
+
+}
+
+/* ==========================================================
+   LOT
+========================================================== */
+
+.pt_stock_tree td[data-name="lot_id"]{
+
+    font-weight:600;
+
+    color:#0f62fe;
+
+}
+
+/* ==========================================================
+   EXPIRATION
+========================================================== */
+
+.pt_stock_tree td[data-name="lot_expiration_date"]{
+
+    font-weight:600;
+
+}
+
+/* ==========================================================
+   TOTAL ROW
+========================================================== */
+
+.pt_stock_tree tfoot{
+
+    background:#f7f9fc;
+
+    font-weight:700;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:1200px){
+
+    .pt_stock_header{
+
+        padding:12px;
+
+    }
+
+    .pt_stock_title{
+
+        font-size:14px;
+
+    }
+
+}
+
+@media (max-width:992px){
+
+    .pt_stock_tree{
+
+        overflow-x:auto;
+
+    }
+
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+.pt_stock_overview{
+
+    animation:ptFade .25s ease;
+
+}
+
+@keyframes ptFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
