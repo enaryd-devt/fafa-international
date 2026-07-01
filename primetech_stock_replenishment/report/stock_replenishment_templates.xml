@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template
+        id="stock_replenishment_report"
+    >
+
+        <t t-call="web.html_container">
+
+            <t t-foreach="docs" t-as="o">
+
+                <t t-call="web.external_layout">
+
+                    <div class="page">
+
+                        <!-- ====================================== -->
+                        <!-- TITRE -->
+                        <!-- ====================================== -->
+
+                        <div
+                            style="
+                                text-align:center;
+                                margin-bottom:20px;
+                            "
+                        >
+
+                            <h2>
+                                BON DE REAPPROVISIONNEMENT
+                            </h2>
+
+                            <h4>
+                                <span t-field="o.name"/>
+                            </h4>
+
+                        </div>
+
+                        <!-- ====================================== -->
+                        <!-- INFOS -->
+                        <!-- ====================================== -->
+
+                        <table
+                            style="
+                                width:100%;
+                                margin-bottom:20px;
+                                border-collapse:collapse;
+                            "
+                        >
+
+                            <tr>
+
+                                <td>
+                                    <strong>Date :</strong>
+                                    <span t-field="o.date"/>
+                                </td>
+
+                                <td>
+                                    <strong>Préparé par :</strong>
+                                    <span t-field="o.user_id"/>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+
+                                <td colspan="2">
+
+                                    <strong>Société :</strong>
+
+                                    <span
+                                        t-field="o.company_id"
+                                    />
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                        <!-- ====================================== -->
+                        <!-- PRODUITS -->
+                        <!-- ====================================== -->
+
+                        <t
+                            t-set="categories"
+                            t-value="o.line_ids.mapped('categ_id')"
+                        />
+
+                        <t
+                            t-foreach="categories"
+                            t-as="category"
+                        >
+
+                            <div
+                                style="
+                                    background:#EAEAEA;
+                                    padding:8px;
+                                    margin-top:15px;
+                                    font-weight:bold;
+                                "
+                            >
+
+                                <span
+                                    t-field="category.name"
+                                />
+
+                            </div>
+
+                            <table
+                                class="table table-sm"
+                                style="
+                                    width:100%;
+                                    border-collapse:collapse;
+                                "
+                            >
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Produit</th>
+
+                                        <th>Stock</th>
+
+                                        <th>Seuil</th>
+
+                                        <th>Optimal</th>
+
+                                        <th>A Commander</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <t
+                                        t-foreach="
+                                            o.line_ids.filtered(
+                                                lambda l:
+                                                l.categ_id.id
+                                                ==
+                                                category.id
+                                            )
+                                        "
+                                        t-as="line"
+                                    >
+
+                                        <tr>
+
+                                            <td>
+                                                <span
+                                                    t-field="line.product_id"
+                                                />
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    text-align:right;
+                                                "
+                                            >
+                                                <span
+                                                    t-field="line.qty_available"
+                                                />
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    text-align:right;
+                                                "
+                                            >
+                                                <span
+                                                    t-field="line.alert_quantity"
+                                                />
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    text-align:right;
+                                                "
+                                            >
+                                                <span
+                                                    t-field="line.optimal_quantity"
+                                                />
+                                            </td>
+
+                                            <td
+                                                style="
+                                                    text-align:right;
+                                                "
+                                            >
+                                                <strong>
+
+                                                    <span
+                                                        t-field="line.qty_to_order"
+                                                    />
+
+                                                </strong>
+                                            </td>
+
+                                        </tr>
+
+                                    </t>
+
+                                </tbody>
+
+                            </table>
+
+                        </t>
+
+                        <!-- ====================================== -->
+                        <!-- RESUME -->
+                        <!-- ====================================== -->
+
+                        <div
+                            style="
+                                margin-top:20px;
+                            "
+                        >
+
+                            <strong>
+                                Nombre d'articles :
+                            </strong>
+
+                            <span
+                                t-field="o.article_count"
+                            />
+
+                            <br/>
+
+                            <strong>
+                                Quantité totale :
+                            </strong>
+
+                            <span
+                                t-field="o.total_qty"
+                            />
+
+                        </div>
+
+                        <!-- ====================================== -->
+                        <!-- SIGNATURES -->
+                        <!-- ====================================== -->
+
+                        <table
+                            style="
+                                width:100%;
+                                margin-top:70px;
+                            "
+                        >
+
+                            <tr>
+
+                                <td
+                                    style="
+                                        text-align:center;
+                                    "
+                                >
+
+                                    Préparé par
+
+                                    <br/><br/><br/>
+
+                                    ____________________
+
+                                </td>
+
+                                <td
+                                    style="
+                                        text-align:center;
+                                    "
+                                >
+
+                                    Responsable Stock
+
+                                    <br/><br/><br/>
+
+                                    ____________________
+
+                                </td>
+
+                                <td
+                                    style="
+                                        text-align:center;
+                                    "
+                                >
+
+                                    Direction
+
+                                    <br/><br/><br/>
+
+                                    ____________________
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                </t>
+
+            </t>
+
+        </t>
+
+    </template>
+
+</odoo>

@@ -1,14 +1,10 @@
-from datetime import datetime
-
-from odoo import api, fields, models
-
 from collections import defaultdict
+
+from odoo import api, models
 
 
 class SalesPeriodicReport(models.AbstractModel):
-
     _name = "primetech.sales.periodic.report"
-
     _description = "Rapport Périodique des Ventes"
 
     @api.model
@@ -22,54 +18,44 @@ class SalesPeriodicReport(models.AbstractModel):
         state_filter="all",
     ):
 
-        invoice_domain = [
+        # =====================================================
+        # DOMAINE
+        # =====================================================
 
-            ("move_type", "=", "out_invoice"),
-
-            ("state", "=", "posted"),
-
-            ("invoice_date", ">=", date_from),
-
-            ("invoice_date", "<=", date_to),
-
+        domain = [
+            ("date", ">=", date_from),
+            ("date", "<=", date_to),
         ]
 
         if company_id:
-
-            invoice_domain.append(
-                ("company_id", "=", company_id)
-            )
+            domain.append(("company_id", "=", company_id))
 
         if user_id:
-
-            invoice_domain.append(
-                (
-                    "invoice_user_id",
-                    "=",
-                    user_id,
-                )
-            )
+            domain.append(("user_id", "=", user_id))
 
         if partner_id:
+            domain.append(("partner_id", "=", partner_id))
 
-            invoice_domain.append(
-                (
-                    "partner_id",
-                    "=",
-                    partner_id,
-                )
-            )
+        if state_filter != "all":
+            domain.append(("state", "=", state_filter))
 
-        invoices = self.env[
-            "account.move"
-        ].search(invoice_domain)
+        # =====================================================
+        # VENTES
+        # =====================================================
+
+        sales = self.env["sale.report"].search(
+            domain,
+            order="date, id",
+        )
+
+        # =====================================================
+        # VARIABLES
+        # =====================================================
 
         sales_lines = []
 
         total_ht = 0.0
-
         total_ttc = 0.0
-
         total_qty = 0.0
 
         seller_summary = defaultdict(
@@ -94,112 +80,163 @@ class SalesPeriodicReport(models.AbstractModel):
             }
         )
 
-        for invoice in invoices:
+        warehouse_summary = defaultdict(
+            lambda: {
+                "qty": 0.0,
+                "ht": 0.0,
+            }
+        )
+
+        # =====================================================
+        # PARCOURS DES VENTES
+        # =====================================================
+
+        for sale in sales:
 
             seller = (
-                invoice.invoice_user_id.name
-                or "-"
+                sale.user_id.name
+                if sale.user_id
+                else "-"
             )
 
             customer = (
-                invoice.partner_id.name
-                or "-"
+                sale.partner_id.display_name
+                if sale.partner_id
+                else "-"
             )
 
-            for line in invoice.invoice_line_ids:
+            warehouse = (
+                sale.warehouse_id.display_name
+                if sale.warehouse_id
+                else "-"
+            )
 
-                qty = line.quantity
+            product = (
+                sale.product_id.display_name
+                if sale.product_id
+                else "-"
+            )
 
-                ht = line.price_subtotal
+            qty = sale.product_uom_qty or 0.0
 
-                ttc = line.price_total
+            ht = sale.price_subtotal or 0.0
 
-                total_qty += qty
+            ttc = sale.price_total or 0.0
 
-                total_ht += ht
+            delivered = sale.qty_delivered or 0.0
 
-                total_ttc += ttc
+            invoiced = sale.qty_invoiced or 0.0
 
-                sales_lines.append({
+            # ==========================================
+            # TYPE DE VENTE
+            # ==========================================
 
-                    "invoice":
-                        invoice.name,
+            sale_type = "Commande"
 
-                    "date":
-                        invoice.invoice_date,
+            document = ""
 
-                    "customer":
-                        customer,
+            if sale.order_reference:
 
-                    "seller":
-                        seller,
+                document = sale.order_reference.name
 
-                    "product":
-                        line.product_id.display_name,
+                if sale.order_reference._name == "pos.order":
+                    sale_type = "Point de Vente"
 
-                    "qty":
-                        qty,
+            # ==========================================
+            # TOTAUX
+            # ==========================================
 
-                    "unit_price":
-                        line.price_unit,
+            total_qty += qty
+            total_ht += ht
+            total_ttc += ttc
 
-                    "ht":
-                        ht,
+            # ==========================================
+            # DETAIL
+            # ==========================================
 
-                    "ttc":
-                        ttc,
+            sales_lines.append({
 
-                })
+                "document": document,
 
-                seller_summary[
-                    seller
-                ]["qty"] += qty
+                "sale_type": sale_type,
 
-                seller_summary[
-                    seller
-                ]["ht"] += ht
+                "date": sale.date,
 
-                seller_summary[
-                    seller
-                ]["ttc"] += ttc
+                "warehouse": warehouse,
 
-                customer_summary[
-                    customer
-                ]["ht"] += ht
+                "customer": customer,
 
-                customer_summary[
-                    customer
-                ]["ttc"] += ttc
+                "seller": seller,
 
-                product_summary[
-                    line.product_id.display_name
-                ]["qty"] += qty
+                "product": product,
 
-                product_summary[
-                    line.product_id.display_name
-                ]["ht"] += ht
-        # =====================================
+                "qty": qty,
+
+                "qty_delivered": delivered,
+
+                "qty_invoiced": invoiced,
+
+                "unit_price": sale.price_unit,
+
+                "discount": sale.discount,
+
+                "discount_amount": sale.discount_amount,
+
+                "ht": ht,
+
+                "ttc": ttc,
+
+                "state": sale.state,
+
+                "invoice_status": sale.invoice_status,
+
+            })
+
+            # ==========================================
+            # COMMERCIAUX
+            # ==========================================
+
+            seller_summary[seller]["qty"] += qty
+            seller_summary[seller]["ht"] += ht
+            seller_summary[seller]["ttc"] += ttc
+
+            # ==========================================
+            # CLIENTS
+            # ==========================================
+
+            customer_summary[customer]["ht"] += ht
+            customer_summary[customer]["ttc"] += ttc
+
+            # ==========================================
+            # PRODUITS
+            # ==========================================
+
+            product_summary[product]["qty"] += qty
+            product_summary[product]["ht"] += ht
+
+            # ==========================================
+            # MAGASINS
+            # ==========================================
+
+            warehouse_summary[warehouse]["qty"] += qty
+            warehouse_summary[warehouse]["ht"] += ht
+                    # =====================================================
         # RESUME GENERAL
-        # =====================================
+        # =====================================================
 
         summary = {
 
-            "invoice_count":
-                len(invoices),
+            "sale_count":
+                len(sales),
 
             "customer_count":
-                len(
-                    invoices.mapped(
-                        "partner_id"
-                    )
-                ),
+                len(set(customer_summary.keys())),
 
             "seller_count":
-                len(
-                    invoices.mapped(
-                        "invoice_user_id"
-                    )
-                ),
+                len(set(seller_summary.keys())),
+
+            "warehouse_count":
+                len(set(warehouse_summary.keys())),
 
             "turnover_ht":
                 total_ht,
@@ -212,27 +249,28 @@ class SalesPeriodicReport(models.AbstractModel):
 
             "average_ticket":
                 (
-                    total_ht / len(invoices)
-                    if invoices
+                    total_ht / len(sales)
+                    if sales
                     else 0.0
                 ),
 
         }
 
-        # =====================================
+        # =====================================================
         # TOP CLIENTS
-        # =====================================
+        # =====================================================
 
         top_customers = sorted(
 
             [
 
                 {
-                    "customer": k,
-                    **v,
+                    "customer": customer,
+                    **values,
                 }
 
-                for k, v in customer_summary.items()
+                for customer, values
+                in customer_summary.items()
 
             ],
 
@@ -242,20 +280,21 @@ class SalesPeriodicReport(models.AbstractModel):
 
         )[:10]
 
-        # =====================================
+        # =====================================================
         # TOP PRODUITS
-        # =====================================
+        # =====================================================
 
         top_products = sorted(
 
             [
 
                 {
-                    "product": k,
-                    **v,
+                    "product": product,
+                    **values,
                 }
 
-                for k, v in product_summary.items()
+                for product, values
+                in product_summary.items()
 
             ],
 
@@ -265,20 +304,21 @@ class SalesPeriodicReport(models.AbstractModel):
 
         )[:10]
 
-        # =====================================
+        # =====================================================
         # TOP COMMERCIAUX
-        # =====================================
+        # =====================================================
 
         top_salespersons = sorted(
 
             [
 
                 {
-                    "seller": k,
-                    **v,
+                    "seller": seller,
+                    **values,
                 }
 
-                for k, v in seller_summary.items()
+                for seller, values
+                in seller_summary.items()
 
             ],
 
@@ -288,9 +328,48 @@ class SalesPeriodicReport(models.AbstractModel):
 
         )[:10]
 
-        # =====================================
+        # =====================================================
+        # TOP MAGASINS
+        # =====================================================
+
+        top_warehouses = sorted(
+
+            [
+
+                {
+                    "warehouse": warehouse,
+                    **values,
+                }
+
+                for warehouse, values
+                in warehouse_summary.items()
+
+            ],
+
+            key=lambda x: x["ht"],
+
+            reverse=True,
+
+        )
+
+        # =====================================================
+        # DETAIL TRIE
+        # =====================================================
+
+        sales_lines = sorted(
+
+            sales_lines,
+
+            key=lambda x: (
+                x["date"],
+                x["document"],
+            ),
+
+        )
+
+        # =====================================================
         # RETURN
-        # =====================================
+        # =====================================================
 
         return {
 
@@ -307,11 +386,14 @@ class SalesPeriodicReport(models.AbstractModel):
                     [
 
                         {
-                            "seller": k,
-                            **v,
+
+                            "seller": seller,
+
+                            **values,
+
                         }
 
-                        for k, v
+                        for seller, values
                         in seller_summary.items()
 
                     ],
@@ -329,11 +411,14 @@ class SalesPeriodicReport(models.AbstractModel):
                     [
 
                         {
-                            "customer": k,
-                            **v,
+
+                            "customer": customer,
+
+                            **values,
+
                         }
 
-                        for k, v
+                        for customer, values
                         in customer_summary.items()
 
                     ],
@@ -351,11 +436,14 @@ class SalesPeriodicReport(models.AbstractModel):
                     [
 
                         {
-                            "product": k,
-                            **v,
+
+                            "product": product,
+
+                            **values,
+
                         }
 
-                        for k, v
+                        for product, values
                         in product_summary.items()
 
                     ],
@@ -366,14 +454,24 @@ class SalesPeriodicReport(models.AbstractModel):
 
                 ),
 
+            "warehouse_summary":
+
+                top_warehouses,
+
             "top_customers":
+
                 top_customers,
 
             "top_products":
+
                 top_products,
 
             "top_salespersons":
+
                 top_salespersons,
 
+            "top_warehouses":
+
+                top_warehouses,
+
         }
-        

@@ -4,12 +4,19 @@ from odoo import models, fields, api
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    alert_quantity = fields.Float(string='Alert Quantity')
 
+    has_discount = fields.Boolean(
+        string="Remise"
+    )
+
+    alert_quantity = fields.Float(string='Alert Quantity')
+    optimal_quantity = fields.Float(string="Optimal Quantity")
+    
     show_alert_quantity = fields.Boolean(
         compute='_compute_show_alert_quantity',
         string="Show Alert Quantity Field"
     )
+       
 
     def _compute_show_alert_quantity(self):
         method = self.env['ir.config_parameter'].sudo().get_param('zehntech_product_low_stock_alert.method', 'global')

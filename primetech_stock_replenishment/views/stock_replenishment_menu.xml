@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <menuitem
+        id="menu_stock_replenishment"
+        name="Bons de Réapprovisionnement"
+        parent="stock.menu_stock_warehouse_mgmt"
+        action="action_stock_replenishment"
+        sequence="95"
+        groups="primetech_stock_replenishment.group_stock_replenishment_user,primetech_stock_replenishment.group_stock_replenishment_manager"
+    />
+
+    <menuitem
+        id="menu_generate_replenishment"
+        name="Générer un Réapprovisionnement"
+        parent="stock.menu_stock_warehouse_mgmt"
+        action="action_generate_replenishment"
+        sequence="94"
+        groups="primetech_stock_replenishment.group_stock_replenishment_manager"
+    />
+
+</odoo>

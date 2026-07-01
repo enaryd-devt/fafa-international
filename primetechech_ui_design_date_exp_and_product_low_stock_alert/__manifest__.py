@@ -9,6 +9,7 @@
     'depends': ['product', 'stock'],
     'data': [
         'views/inventory_low_stock_views.xml',
+        'views/product_product_views.xml',
     ],
  
     'license': 'OPL-1',

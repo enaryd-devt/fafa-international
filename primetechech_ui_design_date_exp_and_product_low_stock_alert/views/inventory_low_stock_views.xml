@@ -654,24 +654,65 @@
 
         </field>
     </record>
-    <!-- ================================= LIST VIEW ================================== -->
-    
+<!-- ================================= LIST VIEW ================================== -->
+
     <record id="product_template_tree_low_stock" model="ir.ui.view">
+
         <field name="name">product.template.tree.low.stock.alert</field>
+
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_tree_view" />
+
+        <field
+            name="inherit_id"
+            ref="product.product_template_tree_view"
+        />
+
         <field name="arch" type="xml">
-          
-            <xpath expr="//list" position="inside">
-                <field name="alert_quantity" />
-                <field name="qty_available" />
+
+            <!-- Colonnes -->
+
+            <xpath
+                expr="//field[@name='standard_price']"
+                position="after"
+            >
+
+                <field
+                    name="discount_display"
+                    widget="badge"
+                    decoration-warning="discount_percent &gt; 0"
+                    invisible="discount_percent == 0"
+                    optional="show"
+                />
+
+                <field
+                    name="alert_quantity"
+                    string="Seuil Alerte"
+                    optional="show"
+                />
+
+                <field
+                    name="optimal_quantity"
+                    string="Stock Optimal"
+                    optional="show"
+                />
+
             </xpath>
-            <xpath expr="//list" position="attributes">
-                <attribute name="decoration-danger"><![CDATA[
-                    qty_available <= alert_quantity and alert_quantity >= 0
-                ]]></attribute>
+
+            <!-- Mise en évidence stock faible -->
+
+            <xpath
+                expr="//list"
+                position="attributes"
+            >
+
+            <attribute name="decoration-danger">
+                qty_available == 0 or (alert_quantity &gt;= 0 and qty_available &lt;= alert_quantity)
+            </attribute>
+
             </xpath>
+
         </field>
+
     </record>
 
 </odoo>

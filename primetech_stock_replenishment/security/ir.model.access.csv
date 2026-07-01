@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_stock_replenishment_user,stock.replenishment.user,model_pt_stock_replenishment,primetech_stock_replenishment.group_stock_replenishment_user,1,1,1,0
+
+access_stock_replenishment_line_user,stock.replenishment.line.user,model_pt_stock_replenishment_line,primetech_stock_replenishment.group_stock_replenishment_user,1,1,1,0
+
+access_stock_replenishment_manager,stock.replenishment.manager,model_pt_stock_replenishment,primetech_stock_replenishment.group_stock_replenishment_manager,1,1,1,1
+
+access_stock_replenishment_line_manager,stock.replenishment.line.manager,model_pt_stock_replenishment_line,primetech_stock_replenishment.group_stock_replenishment_manager,1,1,1,1

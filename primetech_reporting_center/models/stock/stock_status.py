@@ -318,6 +318,33 @@ class StockStatusReport(
             )
 
             # =====================================
+            # EMPLACEMENTS + QUANTITES
+            # =====================================
+
+            locations = []
+
+            for location in quants.mapped("location_id"):
+
+                location_quants = quants.filtered(
+                    lambda q:
+                    q.location_id.id == location.id
+                )
+
+                location_qty = sum(
+                    location_quants.mapped(
+                        "quantity"
+                    )
+                )
+
+                locations.append(
+                    f"{location.display_name}:{location_qty:,.0f}"
+                )
+
+            locations = "\n".join(
+                sorted(locations)
+            )
+
+            # =====================================
             # ETAT STOCK
             # =====================================
 

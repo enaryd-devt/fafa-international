@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record
+        id="action_stock_replenishment_report"
+        model="ir.actions.report"
+    >
+
+        <field name="name">Bon de Réapprovisionnement</field>
+
+        <field name="model">pt.stock.replenishment</field>
+
+        <field name="report_type">qweb-pdf</field>
+
+        <field name="report_name">primetech_stock_replenishment.stock_replenishment_report</field>
+
+        <field name="report_file">primetech_stock_replenishment.stock_replenishment_report</field>
+
+        <field name="binding_model_id"
+               ref="model_pt_stock_replenishment"/>
+
+        <field name="binding_type">report</field>
+
+    </record>
+
+</odoo>

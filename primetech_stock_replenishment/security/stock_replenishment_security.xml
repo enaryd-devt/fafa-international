@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- UTILISATEUR -->
+    <!-- ===================================================== -->
+
+    <record
+        id="group_stock_replenishment_user"
+        model="res.groups"
+    >
+
+        <field name="name">Réapprovisionnement Utilisateur</field>
+
+        <field
+            name="category_id"
+            ref="base.module_category_inventory"
+        />
+
+    </record>
+
+    <!-- ===================================================== -->
+    <!-- MANAGER -->
+    <!-- ===================================================== -->
+
+    <record
+        id="group_stock_replenishment_manager"
+        model="res.groups"
+    >
+
+        <field name="name">Réapprovisionnement Manager</field>
+
+        <field
+            name="category_id"
+            ref="base.module_category_inventory"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[
+                (4, ref('primetech_stock_replenishment.group_stock_replenishment_user'))
+            ]"
+        />
+
+    </record>
+
+</odoo>

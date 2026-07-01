@@ -294,7 +294,7 @@
                                 padding:6px;
                             "
                         >
-                            Emplacement
+                            Emplacements
                         </th>
 
                         <th
@@ -437,11 +437,7 @@
                                 "
                             >
 
-                                <t
-                                    t-esc="
-                                        line['location']
-                                    "
-                                />
+                                <t t-esc="line['location']"/>
 
                             </td>
 

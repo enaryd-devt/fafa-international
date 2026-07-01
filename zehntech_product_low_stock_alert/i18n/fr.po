@@ -25,6 +25,15 @@ msgstr ""
 msgid "Alert Quantity"
 msgstr "Quantité d'alerte"
 
+
+#. module: zehntech_product_low_stock_alert
+#: model:ir.model.fields,field_description:zehntech_product_low_stock_alert.field_product_category__alert_quantity
+#: model:ir.model.fields,field_description:zehntech_product_low_stock_alert.field_product_product__alert_quantity
+#: model:ir.model.fields,field_description:zehntech_product_low_stock_alert.field_product_template__alert_quantity
+#: model_terms:ir.ui.view,arch_db:zehntech_product_low_stock_alert.view_product_tree_low_stock
+msgid "Optimal Quantity"
+msgstr "Quantité optimale"
+
 #. module: zehntech_product_low_stock_alert
 #: model:ir.model.fields,field_description:zehntech_product_low_stock_alert.field_product_product__color_field
 #: model:ir.model.fields,field_description:zehntech_product_low_stock_alert.field_product_template__color_field

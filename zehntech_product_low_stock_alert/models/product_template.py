@@ -7,11 +7,22 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     # =====================================================
+    # DISCOUNT
+    # =====================================================
+
+    has_discount = fields.Boolean(
+        string="Remise possible",
+        compute="_compute_has_discount",
+        inverse="_inverse_has_discount",
+        store=True,
+    )
+    
+    # =====================================================
     # STOCK ALERT
     # =====================================================
 
     alert_quantity = fields.Float(
-        string="Alert Quantity",
+        string="Alerte",
         compute="_compute_alert_quantity",
         inverse="_inverse_alert_quantity",
         store=False
@@ -23,6 +34,18 @@ class ProductTemplate(models.Model):
     )
 
     # =====================================================
+    # OPTIMAL STOCK
+    # =====================================================
+
+    optimal_quantity = fields.Float(
+        string="Optimale+",
+        compute="_compute_optimal_quantity",
+        inverse="_inverse_optimal_quantity",
+        store=False
+    )
+
+
+    # =====================================================
     # COLOR LOW STOCK
     # =====================================================
 
@@ -31,6 +54,7 @@ class ProductTemplate(models.Model):
         compute='_compute_color_field',
         store=False
     )
+
 
     # =====================================================
     # LOT EXPIRATION ALERT (KANBAN)
@@ -51,6 +75,26 @@ class ProductTemplate(models.Model):
         compute="_compute_margin_amount",
         store=False
     )
+
+    # =====================================================
+    # DISCOUNT
+    # =====================================================
+
+    @api.depends('product_variant_ids.has_discount')
+    def _compute_has_discount(self):
+        for template in self:
+            template.has_discount = (
+                template.product_variant_ids[0].has_discount
+                if template.product_variant_ids
+                else False
+            )
+
+    def _inverse_has_discount(self):
+        for template in self:
+            if template.product_variant_ids:
+                template.product_variant_ids.write({
+                    'has_discount': template.has_discount
+                })
 
     @api.depends('list_price', 'standard_price')
     def _compute_margin_amount(self):
@@ -85,6 +129,26 @@ class ProductTemplate(models.Model):
         for template in self:
             if template.product_variant_ids:
                 template.product_variant_ids[0].alert_quantity = template.alert_quantity
+
+    # =====================================================
+    # OPTIMAL QUANTITY
+    # =====================================================
+
+    @api.depends('product_variant_ids.optimal_quantity')
+    def _compute_optimal_quantity(self):
+        for template in self:
+            template.optimal_quantity = (
+                template.product_variant_ids[0].optimal_quantity
+                if template.product_variant_ids
+                else 0.0
+            )
+
+    def _inverse_optimal_quantity(self):
+        for template in self:
+            if template.product_variant_ids:
+                template.product_variant_ids.write({
+                    'optimal_quantity': template.optimal_quantity
+                })
 
     # =====================================================
     # LOT EXPIRATION ALERT (AMÉLIORÉ)
