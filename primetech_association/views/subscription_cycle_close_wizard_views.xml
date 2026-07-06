@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- ASSISTANT DE CLÔTURE DU CYCLE                        -->
+    <!-- ===================================================== -->
+
+    <record
+        id="view_association_subscription_cycle_close_wizard_form"
+        model="ir.ui.view">
+
+        <field name="name">association.subscription.cycle.close.wizard.form</field>
+
+        <field name="model">association.subscription.cycle.close.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Clôture du cycle">
+
+                <sheet>
+
+                    <!-- ===================================== -->
+                    <!-- CHAMPS TECHNIQUES                     -->
+                    <!-- ===================================== -->
+
+                    <field
+                        name="currency_id"
+                        invisible="1"
+                    />
+
+                    <field
+                        name="company_id"
+                        invisible="1"
+                    />
+
+                    <field
+                        name="allocation_complete"
+                        invisible="1"
+                    />
+
+                    <!-- ===================================== -->
+                    <!-- TITRE                                 -->
+                    <!-- ===================================== -->
+
+                    <div class="oe_title">
+
+                        <h1>
+                            Clôture du cycle
+                        </h1>
+
+                        <h3 class="text-muted">
+
+                            <field
+                                name="period_id"
+                                readonly="1"
+                                nolabel="1"
+                            />
+
+                        </h3>
+
+                    </div>
+
+                    <!-- ===================================== -->
+                    <!-- INFORMATIONS DU CYCLE                 -->
+                    <!-- ===================================== -->
+
+                    <group>
+
+                        <group string="Cycle">
+
+                            <field
+                                name="subscription_id"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="period_id"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                        <group string="Recouvrement">
+
+                            <field
+                                name="member_count"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="paid_member_count"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="partial_member_count"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="unpaid_member_count"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="recovery_rate"
+                                widget="percentage"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                    </group>
+
+                    <!-- ===================================== -->
+                    <!-- SITUATION FINANCIÈRE                  -->
+                    <!-- ===================================== -->
+
+                    <separator
+                        string="Situation financière du cycle"
+                    />
+
+                    <group>
+
+                        <group>
+
+                            <field
+                                name="expected_amount"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="collected_amount"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                        <group>
+
+                            <field
+                                name="allocated_amount"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="available_amount"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                    </group>
+
+                    <!-- ===================================== -->
+                    <!-- INFORMATION                           -->
+                    <!-- ===================================== -->
+
+                    <div
+                        class="alert alert-info"
+                        role="alert">
+
+                        <strong>
+                            Traitement de la cagnotte
+                        </strong>
+
+                        <br/>
+
+                        Avant de terminer le cycle,
+                        indiquez la destination de la
+                        cagnotte disponible.
+
+                        <br/>
+
+                        Le cycle sera verrouillé uniquement
+                        après le traitement complet
+                        de la cagnotte.
+
+                    </div>
+
+                    <!-- ===================================== -->
+                    <!-- DÉCISION                              -->
+                    <!-- ===================================== -->
+
+                    <separator
+                        string="Décision de clôture"
+                    />
+
+                    <group>
+
+                        <field
+                            name="has_beneficiaries"
+                            widget="radio"
+                            options="{'horizontal': true}"
+                        />
+
+                    </group>
+
+                    <!-- ===================================== -->
+                    <!-- GESTION DES BÉNÉFICIAIRES             -->
+                    <!-- ===================================== -->
+
+                    <group
+                        string="Gestion des attributions"
+                        invisible="
+                            has_beneficiaries != 'yes'
+                        ">
+
+                        <!-- ================================= -->
+                        <!-- MESSAGE                           -->
+                        <!-- ================================= -->
+
+                        <div
+                            class="alert alert-primary"
+                            role="alert">
+
+                            <strong>
+                                Attribution de la cagnotte
+                            </strong>
+
+                            <br/>
+
+                            Ajoutez les bénéficiaires et
+                            indiquez le montant attribué
+                            à chacun.
+
+                        </div>
+
+                        <!-- ================================= -->
+                        <!-- TABLEAU DES ATTRIBUTIONS           -->
+                        <!-- ================================= -->
+
+                        <field
+                            name="allocation_line_ids"
+                            nolabel="1">
+
+                            <list
+                                editable="bottom"
+                                create="true"
+                                delete="true">
+
+                                <field
+                                    name="currency_id"
+                                    column_invisible="True"
+                                />
+
+                                <field
+                                    name="beneficiary_id"
+                                    string="Bénéficiaire"
+                                />
+
+                                <field
+                                    name="amount"
+                                    string="Montant attribué"
+                                    sum="Total attribué"
+                                />
+
+                                <field
+                                    name="allocation_method"
+                                    string="Mode d'attribution"
+                                />
+
+                                <field
+                                    name="decision_note"
+                                    string="Observation"
+                                    optional="show"
+                                />
+
+                            </list>
+
+                        </field>
+
+                        <!-- ================================= -->
+                        <!-- RÉSUMÉ DE L'AFFECTATION            -->
+                        <!-- ================================= -->
+
+                        <group>
+
+                            <group string="Cagnotte">
+
+                                <field
+                                    name="available_amount"
+                                    readonly="1"
+                                />
+
+                            </group>
+
+                            <group string="Résumé de l'affectation">
+
+                                <field
+                                    name="wizard_allocated_amount"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="remaining_amount"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="fund_id"
+                                    string="Compte du reliquat"
+                                    invisible="
+                                        remaining_amount &lt;= 0
+                                    "
+                                    required="
+                                        has_beneficiaries == 'yes'
+                                        and
+                                        remaining_amount &gt; 0
+                                    "
+                                />
+
+                            </group>
+
+                        </group>
+
+                        <!-- ================================= -->
+                        <!-- RELIQUAT                           -->
+                        <!-- ================================= -->
+
+                        <div
+                            class="alert alert-warning"
+                            role="alert"
+                            invisible="
+                                remaining_amount &lt;= 0
+                            ">
+
+                            <strong>
+                                Un reliquat reste disponible.
+                            </strong>
+
+                            <br/>
+
+                            Le montant restant sera
+                            automatiquement approvisionné
+                            sur le compte financier
+                            sélectionné.
+
+                        </div>
+
+                        <!-- ================================= -->
+                        <!-- AFFECTATION COMPLÈTE               -->
+                        <!-- ================================= -->
+
+                        <div
+                            class="alert alert-success"
+                            role="alert"
+                            invisible="
+                                remaining_amount &gt; 0
+                            ">
+
+                            <strong>
+                                La cagnotte est entièrement
+                                attribuée.
+                            </strong>
+
+                            <br/>
+
+                            Aucun approvisionnement
+                            supplémentaire de trésorerie
+                            ne sera créé.
+
+                        </div>
+
+                    </group>
+
+                    <!-- ===================================== -->
+                    <!-- APPROVISIONNEMENT TRÉSORERIE          -->
+                    <!-- ===================================== -->
+
+                    <group
+                        string="Approvisionnement de la trésorerie"
+                        invisible="
+                            has_beneficiaries != 'no'
+                        ">
+
+                        <!-- ================================= -->
+                        <!-- INFORMATION                       -->
+                        <!-- ================================= -->
+
+                        <div
+                            class="alert alert-info"
+                            role="alert">
+
+                            <strong>
+                                Aucun bénéficiaire n'est prévu.
+                            </strong>
+
+                            <br/>
+
+                            La totalité de la cagnotte
+                            disponible sera transférée
+                            vers le compte financier
+                            sélectionné.
+
+                        </div>
+
+                        <!-- ================================= -->
+                        <!-- DESTINATION                       -->
+                        <!-- ================================= -->
+
+                        <group>
+
+                            <group string="Montant">
+
+                                <field
+                                    name="treasury_amount"
+                                    readonly="1"
+                                />
+
+                            </group>
+
+                            <group string="Compte financier">
+
+                                <field
+                                    name="fund_id"
+                                    required="
+                                        has_beneficiaries == 'no'
+                                    "
+                                />
+
+                            </group>
+
+                        </group>
+
+                        <!-- ================================= -->
+                        <!-- CONFIRMATION VISUELLE              -->
+                        <!-- ================================= -->
+
+                        <div
+                            class="alert alert-warning"
+                            role="alert">
+
+                            <strong>
+                                Attention
+                            </strong>
+
+                            <br/>
+
+                            La confirmation créera un
+                            mouvement financier d'entrée
+                            validé sur le compte sélectionné.
+
+                            <br/>
+
+                            Le cycle sera ensuite terminé
+                            et verrouillé.
+
+                        </div>
+
+                    </group>
+
+                </sheet>
+
+                <!-- ========================================= -->
+                <!-- PIED DU WIZARD                            -->
+                <!-- ========================================= -->
+
+                <footer>
+
+                    <button
+                        name="action_confirm_close"
+                        string="Confirmer et terminer le cycle"
+                        type="object"
+                        class="btn-primary"
+                        invisible="
+                            not has_beneficiaries
+                        "
+                    />
+
+                    <button
+                        string="Annuler"
+                        special="cancel"
+                        class="btn-secondary"
+                    />
+
+                </footer>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- ACTION                                               -->
+    <!-- ===================================================== -->
+
+    <record
+        id="action_association_subscription_cycle_close_wizard"
+        model="ir.actions.act_window">
+
+        <field name="name">Clôture du cycle</field>
+
+        <field name="res_model">association.subscription.cycle.close.wizard</field>
+
+        <field name="view_mode">form</field>
+
+        <field
+            name="view_id"
+            ref="view_association_subscription_cycle_close_wizard_form"
+        />
+
+        <field name="target">new</field>
+
+    </record>
+
+</odoo>

@@ -1,0 +1,1116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- VUE RECHERCHE                                             -->
+    <!-- ========================================================= -->
+
+    <record id="view_payment_search" model="ir.ui.view">
+        <field name="name">association.payment.search</field>
+        <field name="model">association.payment</field>
+        <field name="arch" type="xml">
+
+            <search string="Rechercher un paiement">
+
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="member_code"/>
+                <field name="payment_date"/>
+                <field name="payment_method"/>
+                <field name="payment_reference"/>
+                <field name="company_id"/>
+
+                <separator/>
+
+                <filter
+                    name="filter_draft"
+                    string="Brouillons"
+                    domain="[('state', '=', 'draft')]"/>
+
+                <filter
+                    name="filter_confirmed"
+                    string="Confirmés"
+                    domain="[('state', '=', 'confirmed')]"/>
+
+                <filter
+                    name="filter_cancelled"
+                    string="Annulés"
+                    domain="[('state', '=', 'cancelled')]"/>
+
+                <separator/>
+
+                <filter
+                    name="filter_cash"
+                    string="Espèces"
+                    domain="[('payment_method', '=', 'cash')]"/>
+
+                <filter
+                    name="filter_bank"
+                    string="Virements bancaires"
+                    domain="[('payment_method', '=', 'bank')]"/>
+
+                <filter
+                    name="filter_cheque"
+                    string="Chèques"
+                    domain="[('payment_method', '=', 'cheque')]"/>
+
+                <filter
+                    name="filter_mobile_money"
+                    string="Mobile Money"
+                    domain="[('payment_method', '=', 'mobile_money')]"/>
+
+                <separator/>
+
+                <group expand="0" string="Regrouper par">
+
+                    <filter
+                        name="group_member"
+                        string="Membre"
+                        context="{'group_by': 'member_id'}"/>
+
+                    <filter
+                        name="group_payment_method"
+                        string="Mode de paiement"
+                        context="{'group_by': 'payment_method'}"/>
+
+                    <filter
+                        name="group_state"
+                        string="Statut"
+                        context="{'group_by': 'state'}"/>
+
+                    <filter
+                        name="group_payment_date"
+                        string="Mois de paiement"
+                        context="{'group_by': 'payment_date:month'}"/>
+
+                    <filter
+                        name="group_company"
+                        string="Filiale"
+                        context="{'group_by': 'company_id'}"/>
+
+                </group>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- VUE LISTE                                                 -->
+    <!-- ========================================================= -->
+
+    <record id="view_payment_list" model="ir.ui.view">
+        <field name="name">association.payment.list</field>
+        <field name="model">association.payment</field>
+        <field name="arch" type="xml">
+
+            <list
+                string="Paiements"
+                decoration-info="state == 'draft'"
+                decoration-success="state == 'confirmed'"
+                decoration-muted="state == 'cancelled'">
+
+                <field name="name"/>
+
+                <field
+                    name="payment_date"
+                    string="Date"/>
+
+                <field
+                    name="member_code"
+                    string="Code membre"
+                    optional="show"/>
+
+                <field
+                    name="member_id"
+                    string="Membre"/>
+
+                <field
+                    name="category_id"
+                    optional="hide"/>
+
+                <field
+                    name="payment_method"
+                    widget="badge"/>
+
+                <field
+                    name="payment_reference"
+                    optional="show"/>
+
+                <field
+                    name="amount"
+                    sum="Total paiements"/>
+
+                <field
+                    name="allocated_amount"
+                    sum="Total affecté"/>
+
+                <field
+                    name="remaining_amount"
+                    sum="Total non affecté"/>
+
+                <field
+                    name="line_count"
+                    string="Affectations"
+                    optional="hide"/>
+
+                <field
+                    name="state"
+                    widget="badge"/>
+
+                <field
+                    name="company_id"
+                    string="Filiale"
+                    groups="base.group_multi_company"
+                    optional="hide"/>
+
+            </list>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- VUE FORMULAIRE                                            -->
+    <!-- ========================================================= -->
+
+    <record id="view_payment_form" model="ir.ui.view">
+        <field name="name">association.payment.form</field>
+        <field name="model">association.payment</field>
+        <field name="arch" type="xml">
+
+            <form string="Paiement">
+
+                <!-- ================================================= -->
+                <!-- ACTIONS                                           -->
+                <!-- ================================================= -->
+
+                <header>
+
+                    <button
+                        name="action_confirm"
+                        type="object"
+                        string="Encaisser"
+                        icon="fa-money"
+                        class="btn-primary"
+                        invisible="state != 'draft'"/>
+
+                    <button
+                        name="action_cancel"
+                        type="object"
+                        string="Annuler"
+                        icon="fa-ban"
+                        class="btn-secondary"
+                        invisible="state == 'cancelled'"/>
+
+                    <button
+                        name="action_reset_draft"
+                        type="object"
+                        string="Remettre en brouillon"
+                        icon="fa-undo"
+                        class="btn-secondary"
+                        invisible="state != 'cancelled'"/>
+
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="draft,confirmed,cancelled"/>
+
+                </header>
+
+
+                <!-- ================================================= -->
+                <!-- FICHE                                             -->
+                <!-- ================================================= -->
+
+                <sheet>
+
+                    <!-- ================================================= -->
+                    <!-- SMART BUTTON                                     -->
+                    <!-- ================================================= -->
+
+                    <div
+                        class="oe_button_box"
+                        name="button_box">
+
+                        <button
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            type="object"
+                            name="action_view_payment_lines">
+
+                            <field
+                                name="line_count"
+                                widget="statinfo"
+                                string="Affectations"/>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- EN-TÊTE DU PAIEMENT                               -->
+                    <!-- ================================================= -->
+
+                    <div class="d-flex align-items-start mb-4">
+
+                        <div class="flex-grow-1">
+
+                            <div class="oe_title">
+
+                                <label
+                                    for="name"
+                                    class="o_form_label"/>
+
+                                <h1>
+
+                                    <field
+                                        name="name"
+                                        readonly="1"/>
+
+                                </h1>
+
+                            </div>
+
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <field
+                                    name="payment_method"
+                                    widget="badge"/>
+
+                                <span class="badge rounded-pill text-bg-light border">
+
+                                    <i class="fa fa-calendar me-1"/>
+
+                                    <field name="payment_date"
+                                        readonly="state != 'draft'"/>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHOTO MEMBRE -->
+
+                        <div
+                            class="ms-4 text-center"
+                            style="width: 140px; min-width: 140px;">
+
+                            <field
+                                name="member_image_128"
+                                widget="image"
+                                class="oe_avatar"
+                                options="{'size': [128, 128]}"
+                                style="width: 128px !important; height: 128px !important; object-fit: cover;"/>
+
+                            <div class="mt-2 text-muted small">
+
+                                <i class="fa fa-id-card-o me-1"/>
+
+                                <field
+                                    name="member_code"
+                                    readonly="1"/>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- KPI                                               -->
+                    <!-- ================================================= -->
+
+                    <div class="row mb-4">
+
+                        <!-- MONTANT PAIEMENT -->
+
+                        <div class="col-lg-4 col-md-6 mb-3">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+
+                                    <i class="fa fa-money me-1"/>
+
+                                    Montant du paiement
+
+                                </div>
+
+                                <div class="fs-3 fw-bold mt-2">
+
+                                    <field
+                                        name="amount"
+                                        widget="monetary"
+                                        options="{'currency_field': 'currency_id'}"
+                                        readonly="state != 'draft'"
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- MONTANT AFFECTÉ -->
+
+                        <div class="col-lg-4 col-md-6 mb-3">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+
+                                    <i class="fa fa-check-circle me-1"/>
+
+                                    Montant affecté
+
+                                </div>
+
+                                <div class="fs-3 fw-bold mt-2">
+
+                                    <field
+                                        name="allocated_amount"
+                                        widget="monetary"
+                                        options="{'currency_field': 'currency_id'}"/>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NON AFFECTÉ -->
+
+                        <div class="col-lg-4 col-md-6 mb-3">
+
+                            <div class="border rounded p-3 h-100">
+
+                                <div class="text-muted small">
+
+                                    <i class="fa fa-exclamation-circle me-1"/>
+
+                                    Montant non affecté
+
+                                </div>
+
+                                <div class="fs-3 fw-bold mt-2">
+
+                                    <field
+                                        name="remaining_amount"
+                                        widget="monetary"
+                                        options="{'currency_field': 'currency_id'}"/>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- INFORMATIONS                                      -->
+                    <!-- ================================================= -->
+
+                    <group>
+
+                        <group string="Informations du membre">
+
+                            <field
+                                name="member_id"
+                                readonly="state != 'draft'"
+                                options="{'no_create': True}"/>
+
+                            <field
+                                name="member_code"
+                                readonly="1"/>
+
+                            <field
+                                name="category_id"
+                                readonly="1"/>
+
+                            <field
+                                name="function_id"
+                                readonly="1"/>
+
+                        </group>
+
+
+                        <group string="Informations du paiement">
+
+                            <field
+                                name="payment_date"
+                                readonly="state != 'draft'"/>
+
+                            <field
+                                name="payment_method"
+                                readonly="state != 'draft'"/>
+
+                            <field
+                                name="payment_reference"
+                                readonly="state != 'draft'"
+                                placeholder="Référence bancaire, Mobile Money, chèque..."/>
+
+                            <field
+                                name="company_id"
+                                string="Filiale"
+                                readonly="state != 'draft'"
+                                groups="base.group_multi_company"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ================================================= -->
+                    <!-- DESCRIPTION                                       -->
+                    <!-- ================================================= -->
+
+                    <group>
+
+                        <field
+                            name="description"
+                            placeholder="Description du paiement..."
+                            readonly="state != 'draft'"/>
+
+                    </group>
+
+
+                    <!-- ================================================= -->
+                    <!-- ONGLETS                                           -->
+                    <!-- ================================================= -->
+
+                    <notebook>
+
+                        <!-- ========================================================= -->
+                        <!-- AFFECTATION DU PAIEMENT                                   -->
+                        <!-- ========================================================= -->
+
+                        <page
+                            string="Affectation du paiement"
+                            name="payment_allocation">
+
+                            <field
+                                name="line_ids"
+                                readonly="state == 'confirmed'"
+                                context="{
+                                    'default_payment_id': id
+                                }">
+
+                                <!-- ================================================= -->
+                                <!-- LISTE DES AFFECTATIONS                            -->
+                                <!-- ================================================= -->
+
+                                <list
+                                    editable="bottom"
+                                    create="1"
+                                    delete="1">
+
+                                    <!-- ============================================= -->
+                                    <!-- COTISATION                                    -->
+                                    <!-- ============================================= -->
+
+                                    <field
+                                        name="subscription_id"
+                                        string="Cotisation"
+                                        readonly="1"
+                                    />
+
+                                    <!-- ============================================= -->
+                                    <!-- SITUATION                                     -->
+                                    <!-- ============================================= -->
+
+                                    <field
+                                        name="amount_due"
+                                        string="Montant dû"
+                                        readonly="1"
+                                    />
+
+                                    <field
+                                        name="amount_already_paid"
+                                        string="Déjà payé"
+                                        readonly="1"
+                                    />
+
+                                    <!-- ============================================= -->
+                                    <!-- PAIEMENT                                      -->
+                                    <!-- ============================================= -->
+
+                                    <field
+                                        name="amount_paid"
+                                        string="Montant affecté"
+                                        sum="Total affecté"
+                                    />
+
+                                    <field
+                                        name="balance_after_payment"
+                                        string="Reste"
+                                        readonly="1"
+                                    />
+
+                                    <!-- ============================================= -->
+                                    <!-- PÉNALITÉ                                      -->
+                                    <!-- ============================================= -->
+
+                                    <field
+                                        name="penalty_amount"
+                                        string="Pénalité"
+                                        optional="show"
+                                        sum="Total pénalités"
+                                    />
+
+                                    <field
+                                        name="total_with_penalty"
+                                        string="Total"
+                                        sum="Total encaissé"
+                                        readonly="1"
+                                    />
+
+                                    <!-- ============================================= -->
+                                    <!-- ÉTAT                                          -->
+                                    <!-- ============================================= -->
+
+                                    <field
+                                        name="allocation_state"
+                                        string="État"
+                                        widget="badge"
+                                        readonly="1"
+                                        decoration-muted="allocation_state == 'draft'"
+                                        decoration-warning="allocation_state == 'partial'"
+                                        decoration-success="allocation_state == 'confirmed'"
+                                        decoration-danger="allocation_state == 'cancelled'"
+                                    />
+
+                                </list>
+
+                                <!-- ================================================= -->
+                                <!-- FORMULAIRE LIGNE                                  -->
+                                <!-- ================================================= -->
+
+                                <form string="Affectation du paiement">
+
+                                    <sheet>
+
+                                        <!-- ========================================= -->
+                                        <!-- EN-TÊTE                                  -->
+                                        <!-- ========================================= -->
+
+                                        <div class="oe_title">
+
+                                            <label
+                                                for="subscription_line_id"
+                                                string="Cotisation"
+                                            />
+
+                                            <h2>
+
+                                            <field
+                                                name="subscription_line_id"
+                                                domain="[
+                                                    ('member_id', '=', member_id),
+                                                    ('subscription_id.state', 'in', ['confirmed', 'running'])
+                                                ]"
+                                                options="{'no_create': True, 'no_create_edit': True}"/>
+
+                                            </h2>
+
+                                        </div>
+
+                                        <!-- ========================================= -->
+                                        <!-- INFORMATIONS                              -->
+                                        <!-- ========================================= -->
+
+                                        <group>
+
+                                            <group string="Cotisation">
+
+                                                <field
+                                                    name="subscription_id"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="member_id"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="member_code"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="payment_date"
+                                                    readonly="1"
+                                                />
+
+                                            </group>
+
+                                            <group string="État">
+
+                                                <field
+                                                    name="allocation_state"
+                                                    widget="badge"
+                                                    readonly="1"
+                                                    decoration-muted="allocation_state == 'draft'"
+                                                    decoration-warning="allocation_state == 'partial'"
+                                                    decoration-success="allocation_state == 'confirmed'"
+                                                    decoration-danger="allocation_state == 'cancelled'"
+                                                />
+
+                                                <field
+                                                    name="is_late"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="late_days"
+                                                    readonly="1"
+                                                    invisible="not is_late"
+                                                />
+
+                                            </group>
+
+                                        </group>
+
+                                        <!-- ========================================= -->
+                                        <!-- SITUATION DE LA COTISATION                -->
+                                        <!-- ========================================= -->
+
+                                        <separator string="Situation de la cotisation"/>
+
+                                        <group>
+
+                                            <group>
+
+                                                <field
+                                                    name="amount_due"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="amount_already_paid"
+                                                    readonly="1"
+                                                />
+
+                                            </group>
+
+                                            <group>
+
+                                                <field
+                                                    name="balance_before_payment"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="balance_after_payment"
+                                                    readonly="1"
+                                                />
+
+                                            </group>
+
+                                        </group>
+
+                                        <!-- ========================================= -->
+                                        <!-- PAIEMENT                                  -->
+                                        <!-- ========================================= -->
+
+                                        <separator string="Paiement"/>
+
+                                        <group>
+
+                                            <group>
+
+                                                <field
+                                                    name="amount_paid"
+                                                    string="Montant payé"
+                                                />
+
+                                            </group>
+
+                                            <group>
+
+                                                <field
+                                                    name="balance_after_payment"
+                                                    string="Reste après paiement"
+                                                    readonly="1"
+                                                />
+
+                                            </group>
+
+                                        </group>
+
+                                        <!-- ========================================= -->
+                                        <!-- PÉNALITÉ DE RETARD                        -->
+                                        <!-- ========================================= -->
+
+                                        <separator
+                                            string="Pénalité de retard"
+                                            invisible="not is_late"
+                                        />
+
+                                        <group invisible="not is_late">
+
+                                            <group>
+
+                                                <field
+                                                    name="late_days"
+                                                    string="Nombre de jours de retard"
+                                                    readonly="1"
+                                                />
+
+                                                <field
+                                                    name="penalty_amount"
+                                                    string="Pénalité appliquée"
+                                                />
+
+                                            </group>
+
+                                            <group>
+
+                                                <field
+                                                    name="total_with_penalty"
+                                                    string="Total à encaisser"
+                                                    readonly="1"
+                                                />
+
+                                            </group>
+
+                                        </group>
+
+                                        <!-- ========================================= -->
+                                        <!-- NOTES                                     -->
+                                        <!-- ========================================= -->
+
+                                        <notebook>
+
+                                            <page
+                                                string="Notes"
+                                                name="notes">
+
+                                                <field
+                                                    name="note"
+                                                    placeholder="Ajouter une note sur cette affectation de paiement..."
+                                                />
+
+                                            </page>
+
+                                        </notebook>
+
+                                    </sheet>
+
+                                </form>
+
+                            </field>
+
+                        </page>
+
+
+                        <!-- ================================================= -->
+                        <!-- DÉTAILS                                           -->
+                        <!-- ================================================= -->
+
+                        <page
+                            string="Détails"
+                            name="payment_details">
+
+                            <group>
+
+                                <group string="Paiement">
+
+                                    <field
+                                        name="name"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="payment_date"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="payment_method"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="payment_reference"
+                                        readonly="1"/>
+
+                                </group>
+
+
+                                <group string="Totaux">
+
+                                    <field
+                                        name="amount"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="allocated_amount"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="remaining_amount"
+                                        readonly="1"/>
+
+                                    <field
+                                        name="line_count"
+                                        readonly="1"/>
+
+                                </group>
+
+                            </group>
+
+                        </page>
+
+
+                        <!-- ================================================= -->
+                        <!-- NOTES                                             -->
+                        <!-- ================================================= -->
+
+                        <page
+                            string="Notes internes"
+                            name="payment_notes">
+
+                            <field
+                                name="note"
+                                placeholder="Ajouter une note interne..."/>
+
+                        </page>
+
+                    </notebook>
+
+                </sheet>
+
+
+                <!-- ================================================= -->
+                <!-- CHATTER                                           -->
+                <!-- ================================================= -->
+
+                <chatter/>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- VUE KANBAN                                                -->
+    <!-- ========================================================= -->
+
+    <record id="view_payment_kanban" model="ir.ui.view">
+        <field name="name">association.payment.kanban</field>
+        <field name="model">association.payment</field>
+        <field name="arch" type="xml">
+
+            <kanban
+                default_group_by="state"
+                class="o_kanban_small_column">
+
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="member_code"/>
+                <field name="member_image_128"/>
+                <field name="payment_date"/>
+                <field name="payment_method"/>
+                <field name="amount"/>
+                <field name="allocated_amount"/>
+                <field name="remaining_amount"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="color"/>
+
+                <templates>
+
+                    <t t-name="card">
+
+                        <div class="oe_kanban_global_click">
+
+                            <!-- MEMBRE -->
+
+                            <div class="d-flex align-items-start mb-3">
+
+                                <div
+                                    class="me-3"
+                                    style="width: 64px; min-width: 64px;">
+
+                                    <field
+                                        name="member_image_128"
+                                        widget="image"
+                                        options="{'size': [64, 64]}"
+                                        style="width: 64px !important; height: 64px !important; object-fit: cover; border-radius: 50%;"/>
+
+                                </div>
+
+
+                                <div class="flex-grow-1">
+
+                                    <strong class="fs-5">
+
+                                        <field name="member_id"/>
+
+                                    </strong>
+
+                                    <div class="text-muted small">
+
+                                        <i class="fa fa-id-card-o me-1"/>
+
+                                        <field name="member_code"/>
+
+                                    </div>
+
+                                </div>
+
+
+                                <field
+                                    name="state"
+                                    widget="badge"/>
+
+                            </div>
+
+
+                            <!-- RÉFÉRENCE -->
+
+                            <div class="small mb-2">
+
+                                <i class="fa fa-hashtag me-2"/>
+
+                                <field name="name"/>
+
+                            </div>
+
+
+                            <!-- DATE -->
+
+                            <div class="small mb-2">
+
+                                <i class="fa fa-calendar me-2"/>
+
+                                <field name="payment_date"/>
+
+                            </div>
+
+
+                            <!-- MODE -->
+
+                            <div class="mb-3">
+
+                                <field
+                                    name="payment_method"
+                                    widget="badge"/>
+
+                            </div>
+
+
+                            <!-- TOTAUX -->
+
+                            <div class="border-top pt-3">
+
+                                <div class="d-flex justify-content-between mb-1">
+
+                                    <span class="text-muted">
+                                        Montant
+                                    </span>
+
+                                    <strong>
+
+                                        <field
+                                            name="amount"
+                                            widget="monetary"
+                                            options="{'currency_field': 'currency_id'}"/>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="d-flex justify-content-between mb-1">
+
+                                    <span class="text-muted">
+                                        Affecté
+                                    </span>
+
+                                    <strong>
+
+                                        <field
+                                            name="allocated_amount"
+                                            widget="monetary"
+                                            options="{'currency_field': 'currency_id'}"/>
+
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="d-flex justify-content-between">
+
+                                    <span class="text-muted">
+                                        Non affecté
+                                    </span>
+
+                                    <strong>
+
+                                        <field
+                                            name="remaining_amount"
+                                            widget="monetary"
+                                            options="{'currency_field': 'currency_id'}"/>
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </t>
+
+                </templates>
+
+            </kanban>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- ACTION                                                    -->
+    <!-- ========================================================= -->
+
+    <record id="action_payment" model="ir.actions.act_window">
+
+        <field name="name">Paiements</field>
+
+        <field name="res_model">association.payment</field>
+
+        <field name="view_mode">list,kanban,form</field>
+
+        <field
+            name="search_view_id"
+            ref="view_payment_search"/>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                Enregistrez votre premier paiement
+            </p>
+
+            <p>
+                Enregistrez les paiements des membres,
+                affectez-les aux cotisations et suivez
+                automatiquement les soldes.
+            </p>
+
+        </field>
+
+    </record>
+
+</odoo>
