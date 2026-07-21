@@ -1537,6 +1537,33 @@ class AssociationMeeting(models.Model):
         return True
 
 
+    def action_pay_subscription(self):
+
+        self.ensure_one()
+
+        if not self.subscription_line_id:
+            raise ValidationError(
+                _("Aucune cotisation n'est associée.")
+            )
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Paiement depuis la réunion"),
+            "res_model":
+                "association.subscription.payment.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_origin":
+                    "meeting",
+
+                "default_subscription_line_id":
+                    self.subscription_line_id.id,
+
+                "default_meeting_id":
+                    self.meeting_id.id,
+            },
+        }
     # ==========================================================
     # ENCAISSER TOUTES LES LIGNES SAISIES
     # ==========================================================

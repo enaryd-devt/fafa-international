@@ -244,12 +244,106 @@ class AssociationSubscription(models.Model):
     )
 
     # ==========================================================
+    # GESTION DES PÉNALITÉS
+    # ==========================================================
+
+    penalty_enabled = fields.Boolean(
+        string="Activer les pénalités",
+        default=False,
+    )
+
+    penalty_grace_days = fields.Integer(
+        string="Délai de grâce (jours)",
+        default=0,
+        help=(
+            "Nombre de jours accordés après la date "
+            "d'échéance avant l'application de la pénalité."
+        ),
+    )
+
+    penalty_type = fields.Selection(
+        selection=[
+            ("fixed", "Montant fixe"),
+            ("percentage", "Pourcentage"),
+        ],
+        string="Type de pénalité",
+        default="fixed",
+    )
+
+    penalty_amount = fields.Monetary(
+        string="Montant de la pénalité",
+        currency_field="currency_id",
+        default=0.0,
+    )
+
+    penalty_rate = fields.Float(
+        string="Taux de pénalité (%)",
+        default=0.0,
+    )
+
+    # ==========================================================
+    # COMPTE DE VERSEMENT
+    # ==========================================================
+
+    receipt_account_id = fields.Many2one(
+        comodel_name="association.fund",
+        string="Compte de versement",
+        domain="["
+            "('company_id', '=', company_id), "
+            "('active', '=', True)"
+            "]",
+        tracking=True,
+        copy=False,
+        help=(
+            "Compte financier dans lequel seront versés "
+            "les encaissements de cette cotisation."
+        ),
+    )
+
+    # ==========================================================
     # NOTES
     # ==========================================================
 
     note = fields.Html(
         string="Notes internes",
     )
+
+    # ==========================================================
+    # CONTRÔLE DES PÉNALITÉS
+    # ==========================================================
+
+    @api.constrains(
+        "penalty_grace_days",
+        "penalty_amount",
+        "penalty_rate",
+    )
+    def _check_penalty_values(self):
+
+        for record in self:
+
+            if record.penalty_grace_days < 0:
+                raise ValidationError(
+                    _(
+                        "Le délai de grâce ne peut pas "
+                        "être négatif."
+                    )
+                )
+
+            if record.penalty_amount < 0:
+                raise ValidationError(
+                    _(
+                        "Le montant de la pénalité ne peut pas "
+                        "être négatif."
+                    )
+                )
+
+            if record.penalty_rate < 0:
+                raise ValidationError(
+                    _(
+                        "Le taux de pénalité ne peut pas "
+                        "être négatif."
+                    )
+                )
 
     # ==========================================================
     # CONTRAINTES SQL
@@ -507,6 +601,8 @@ class AssociationSubscription(models.Model):
 
         return True
 
+   
+   
     # ==========================================================
     # CONFIRMER
     # ==========================================================

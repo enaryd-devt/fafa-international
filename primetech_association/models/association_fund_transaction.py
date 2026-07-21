@@ -155,6 +155,13 @@ class AssociationFundTransaction(models.Model):
         string="Notes internes",
     )
 
+    payment_id = fields.Many2one(
+        comodel_name="association.payment",
+        string="Paiement membre",
+        ondelete="restrict",
+        index=True,
+        readonly=True,
+    )
     # ==========================================================
     # CONTRAINTES SQL
     # ==========================================================

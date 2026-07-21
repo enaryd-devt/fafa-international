@@ -93,8 +93,10 @@ Gestion financière
         "views/fund_views.xml",
         "views/fund_transaction_views.xml",
 
-        "views/payment_surplus_wizard_views.xml",
+        "views/member_category_views.xml",
+        "views/member_function_views.xml",
 
+        "views/subscription_payment_wizard_views.xml",
 
         "views/member_account_views.xml",
         "views/member_account_transaction_views.xml",
@@ -117,6 +119,8 @@ Gestion financière
             "primetech_association/static/src/dashboard/association_dashboard.js",
             "primetech_association/static/src/dashboard/association_dashboard.xml",
             "primetech_association/static/src/dashboard/association_dashboard.scss",
+
+            "primetech_association/static/src/js/refresh_subscription_table.js",
         ],
     },
 

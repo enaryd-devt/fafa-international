@@ -104,6 +104,39 @@ class AssociationSubscriptionPeriod(models.Model):
     )
 
     # ==========================================================
+    # DÉLAI ET PÉNALITÉ
+    # ==========================================================
+
+    penalty_deadline = fields.Date(
+        string="Date limite avant pénalité",
+        compute="_compute_penalty_deadline",
+        store=True,
+    )
+
+    penalty_amount = fields.Monetary(
+        string="Pénalité",
+        currency_field="currency_id",
+        default=0.0,
+        readonly=True,
+    )
+
+    penalty_applied = fields.Boolean(
+        string="Pénalité appliquée",
+        default=False,
+        readonly=True,
+    )
+
+    penalty_date = fields.Date(
+        string="Date d'application de la pénalité",
+        readonly=True,
+    )
+
+    penalty_reason = fields.Char(
+        string="Motif de la pénalité",
+        readonly=True,
+    )
+
+    # ==========================================================
     # ÉTAT
     # ==========================================================
 
@@ -419,9 +452,131 @@ class AssociationSubscriptionPeriod(models.Model):
                     )
                 )
 
+    
     # ==========================================================
-    # DÉMARRER
+    # DATE LIMITE AVANT PÉNALITÉ
     # ==========================================================
+
+    @api.depends(
+        "due_date",
+        "subscription_id.penalty_grace_days",
+    )
+    def _compute_penalty_deadline(self):
+
+        for record in self:
+
+            record.penalty_deadline = False
+
+            if not record.due_date:
+                continue
+
+            grace_days = (
+                record.subscription_id.penalty_grace_days
+                or 0
+            )
+
+            record.penalty_deadline = (
+                record.due_date
+                + timedelta(days=grace_days)
+            )
+
+    # ==========================================================
+    # APPLIQUER LA PÉNALITÉ
+    # ==========================================================
+
+    def _apply_late_penalty(self):
+
+        today = fields.Date.context_today(self)
+
+        for record in self:
+
+            subscription = record.subscription_id
+
+            # ======================================================
+            # PÉNALITÉ DÉSACTIVÉE
+            # ======================================================
+
+            if not subscription.penalty_enabled:
+                continue
+
+            # ======================================================
+            # DÉJÀ APPLIQUÉE
+            # ======================================================
+
+            if record.penalty_applied:
+                continue
+
+            # ======================================================
+            # PAS DE DATE LIMITE
+            # ======================================================
+
+            if not record.penalty_deadline:
+                continue
+
+            # ======================================================
+            # DÉLAI NON DÉPASSÉ
+            # ======================================================
+
+            if today <= record.penalty_deadline:
+                continue
+
+            # ======================================================
+            # CYCLE DÉJÀ PAYÉ
+            # ======================================================
+
+            if record.payment_state == "paid":
+                continue
+
+            # ======================================================
+            # CALCUL DE LA PÉNALITÉ
+            # ======================================================
+
+            penalty_amount = 0.0
+
+            if subscription.penalty_type == "fixed":
+
+                penalty_amount = (
+                    subscription.penalty_amount
+                    or 0.0
+                )
+
+            elif subscription.penalty_type == "percentage":
+
+                penalty_amount = (
+                    (record.amount_due or 0.0)
+                    * (subscription.penalty_rate or 0.0)
+                    / 100.0
+                )
+
+            # ======================================================
+            # AUCUNE PÉNALITÉ
+            # ======================================================
+
+            if penalty_amount <= 0:
+                continue
+
+            # ======================================================
+            # APPLICATION
+            # ======================================================
+
+            record.write(
+                {
+                    "penalty_amount":
+                        penalty_amount,
+
+                    "penalty_applied":
+                        True,
+
+                    "penalty_date":
+                        today,
+
+                    "penalty_reason":
+                        _(
+                            "Pénalité de retard appliquée "
+                            "après dépassement du délai de grâce."
+                        ),
+                }
+            )
 
     def action_start(self):
 

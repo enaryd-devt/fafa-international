@@ -389,20 +389,22 @@
                                    mb-2">
 
                             <span
-                                class="badge
-                                       rounded-pill
-                                       text-bg-light
-                                       border
-                                       px-3
-                                       py-2">
+                                class="badge rounded-pill text-bg-light border px-2 py-1
+                                    d-inline-flex align-items-center gap-1"
+                                style="width: fit-content;
+                                    max-width: 100%;
+                                    white-space: nowrap;">
 
                                 <i
-                                    class="fa fa-hashtag me-1"
-                                    title="Référence"/>
+                                    class="fa fa-hashtag"
+                                    title="Référence"
+                                />
 
                                 <field
                                     name="name"
-                                    readonly="1"/>
+                                    readonly="1"
+                                    class="text-truncate"
+                                />
 
                             </span>
 
@@ -423,129 +425,103 @@
                     </div>
 
 
-                    <!-- ================================================= -->
-                    <!-- TABLEAU SYNTHÉTIQUE                               -->
-                    <!-- ================================================= -->
+                        <!-- ========================================================= -->
+                        <!-- SYNTHÈSE COMPACTE                                         -->
+                        <!-- ========================================================= -->
 
-                    <div
-                        class="row g-3 mt-2 mb-4">
+                        <div class="border rounded-3 px-3 py-2 mt-1 mb-2">
 
-                        <!-- CONVOQUÉS -->
+                            <div class="row g-0 align-items-center text-center">
 
-                        <div class="col-6 col-md-4 col-lg-2">
+                                <!-- CONVOQUÉS -->
 
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
+                                <div class="col-4 col-md-2 border-end">
 
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
+                                    <div class="text-muted small">
+                                        Convoqués
+                                    </div>
 
-                                    Convoqués
+                                    <div class="fs-5 fw-bold lh-sm">
+                                        <field name="invited_count"/>
+                                    </div>
 
                                 </div>
 
-                                <div class="fs-3 fw-bold">
 
-                                    <field name="invited_count"/>
+                                <!-- PRÉSENTS -->
 
-                                </div>
+                                <div class="col-4 col-md-2 border-end">
 
-                            </div>
+                                    <div class="text-muted small">
+                                        Présents
+                                    </div>
 
-                        </div>
-
-
-                        <!-- PRÉSENTS -->
-
-                        <div class="col-6 col-md-4 col-lg-2">
-
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
-
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
-
-                                    Présents
+                                    <div class="fs-5 fw-bold text-success lh-sm">
+                                        <field name="present_count"/>
+                                    </div>
 
                                 </div>
 
-                                <div class="fs-3 fw-bold text-success">
 
-                                    <field name="present_count"/>
+                                <!-- ABSENTS -->
 
-                                </div>
+                                <div class="col-4 col-md-2 border-end">
 
-                            </div>
+                                    <div class="text-muted small">
+                                        Absents
+                                    </div>
 
-                        </div>
-
-
-                        <!-- RETARDS -->
-
-                        <div class="col-6 col-md-4 col-lg-2">
-
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
-
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
-
-                                    Retards
+                                    <div class="fs-5 fw-bold text-danger lh-sm">
+                                        <field name="absent_count"/>
+                                    </div>
 
                                 </div>
 
-                                <div class="fs-3 fw-bold text-warning">
 
-                                    <field name="late_count"/>
+                                <!-- RETARDS -->
 
-                                </div>
+                                <div class="col-4 col-md-2 border-end">
 
-                            </div>
+                                    <div class="text-muted small">
+                                        Retards
+                                    </div>
 
-                        </div>
-
-
-                        <!-- ABSENTS -->
-
-                        <div class="col-6 col-md-4 col-lg-2">
-
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
-
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
-
-                                    Absents
+                                    <div class="fs-5 fw-bold text-warning lh-sm">
+                                        <field name="late_count"/>
+                                    </div>
 
                                 </div>
 
-                                <div class="fs-3 fw-bold text-danger">
 
-                                    <field name="absent_count"/>
+                                <!-- JUSTIFIÉS -->
+
+                                <div class="col-4 col-md-2 border-end">
+
+                                    <div class="text-muted small">
+                                        Justifiés
+                                    </div>
+
+                                    <div class="fs-5 fw-bold lh-sm">
+                                        <field name="excused_count"/>
+                                    </div>
+
+                                </div>
+
+
+                                <!-- TAUX DE PRÉSENCE -->
+
+                                <div class="col-4 col-md-2">
+
+                                    <div class="text-muted small">
+                                        Présence
+                                    </div>
+
+                                    <div class="fs-5 fw-bold lh-sm">
+                                        <field
+                                            name="attendance_percentage"
+                                            widget="percentage"
+                                        />
+                                    </div>
 
                                 </div>
 
@@ -554,263 +530,217 @@
                         </div>
 
 
-                        <!-- JUSTIFIÉS -->
-
-                        <div class="col-6 col-md-4 col-lg-2">
-
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
-
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
-
-                                    Justifiés
-
-                                </div>
-
-                                <div class="fs-3 fw-bold">
-
-                                    <field name="excused_count"/>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- PRÉSENCE -->
-
-                        <div class="col-6 col-md-4 col-lg-2">
-
-                            <div
-                                class="border
-                                       rounded-3
-                                       p-3
-                                       h-100
-                                       text-center">
-
-                                <div
-                                    class="text-muted
-                                           small
-                                           mb-1">
-
-                                    Taux présence
-
-                                </div>
-
-                                <div class="fs-3 fw-bold">
-
-                                    <field
-                                        name="attendance_percentage"
-                                        widget="percentage"/>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ================================================= -->
-                    <!-- QUORUM                                            -->
-                    <!-- ================================================= -->
-
-                    <div
-                        class="alert alert-success"
-                        role="alert"
-                        invisible="not quorum_reached">
+                        <!-- ========================================================= -->
+                        <!-- QUORUM COMPACT                                            -->
+                        <!-- ========================================================= -->
 
                         <div
-                            class="d-flex
-                                   align-items-center
-                                   justify-content-between">
+                            class="d-flex align-items-center justify-content-between
+                                border rounded-3 px-3 py-2 mb-2
+                                text-success"
+                            invisible="not quorum_reached"
+                        >
 
-                            <div>
+                            <div class="d-flex align-items-center gap-2">
+
+                                <i
+                                    class="fa fa-check-circle"
+                                    title="Quorum atteint"
+                                />
 
                                 <strong>
-
-                                    <i
-                                        class="fa fa-check-circle me-2"
-                                        title="Quorum atteint"/>
-
                                     Quorum atteint
-
                                 </strong>
 
-                                <div class="small mt-1">
-
-                                    La séance peut valablement être ouverte.
-
-                                </div>
+                                <span class="text-muted small d-none d-md-inline">
+                                    — La séance peut être ouverte
+                                </span>
 
                             </div>
 
-                            <div class="text-end">
-
-                                <strong>
-
-                                    <field name="quorum_count"/>
-
-                                </strong>
-
-                                membre(s) minimum
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        class="alert alert-warning"
-                        role="alert"
-                        invisible="quorum_reached or not quorum_required">
-
-                        <div
-                            class="d-flex
-                                   align-items-center
-                                   justify-content-between">
-
-                            <div>
-
-                                <strong>
-
-                                    <i
-                                        class="fa fa-exclamation-triangle me-2"
-                                        title="Quorum non atteint"/>
-
-                                    Quorum non atteint
-
-                                </strong>
-
-                                <div class="small mt-1">
-
-                                    Le nombre minimum de participants
-                                    n'est pas encore atteint.
-
-                                </div>
-
-                            </div>
-
-                            <div class="text-end">
+                            <div class="small">
 
                                 Minimum :
 
                                 <strong>
-
                                     <field name="quorum_count"/>
-
                                 </strong>
 
                             </div>
 
                         </div>
 
-                    </div>
+
+                        <div
+                            class="d-flex align-items-center justify-content-between
+                                border rounded-3 px-3 py-2 mb-2
+                                text-warning"
+                            invisible="quorum_reached or not quorum_required"
+                        >
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <i
+                                    class="fa fa-exclamation-triangle"
+                                    title="Quorum non atteint"
+                                />
+
+                                <strong>
+                                    Quorum non atteint
+                                </strong>
+
+                                <span class="text-muted small d-none d-md-inline">
+                                    — Participants insuffisants
+                                </span>
+
+                            </div>
+
+                            <div class="small">
+
+                                Minimum :
+
+                                <strong>
+                                    <field name="quorum_count"/>
+                                </strong>
+
+                            </div>
+
+                        </div>
 
 
-                    <!-- ================================================= -->
-                    <!-- INFORMATIONS PRINCIPALES                          -->
-                    <!-- ================================================= -->
+                        <!-- ========================================================= -->
+                        <!-- INFORMATIONS COMPACTES                                    -->
+                        <!-- ========================================================= -->
 
-                    <group>
+                        <div class="row g-3 mt-0 mb-2">
 
-                        <group string="Réunion">
+                            <!-- RÉUNION -->
 
-                            <field
-                                name="meeting_type"
-                                readonly="state != 'draft'"
-                            />
+                            <div class="col-12 col-lg-4">
 
-                            <field
-                                name="meeting_date"
-                                readonly="state != 'draft'"
-                            />
+                                <div class="border rounded-3 px-3 py-2 h-100">
 
-                            <field
-                                name="location"
-                                readonly="state != 'draft'"
-                            />
+                                    <div class="fw-bold small text-muted mb-2">
 
-                            <field
-                                name="company_id"
-                                readonly="state != 'draft'"
-                            />
+                                        <i class="fa fa-calendar me-1"/>
 
-                        </group>
+                                        Réunion
 
+                                    </div>
 
-                        <group string="Horaires">
+                                    <group>
 
-                            <field
-                                name="start_time"
-                                readonly="state not in ('draft', 'convoked')"
-                            />
+                                        <field
+                                            name="meeting_type"
+                                            readonly="state != 'draft'"
+                                        />
 
-                            <field
-                                name="actual_start_time"
-                                readonly="state == 'closed'"
-                            />
+                                        <field
+                                            name="meeting_date"
+                                            readonly="state != 'draft'"
+                                        />
 
+                                        <field
+                                            name="location"
+                                            readonly="state != 'draft'"
+                                        />
 
-                            <field
-                                name="end_time"
-                                readonly="state == 'closed'"
-                            />
+                                    </group>
 
-                            <field
-                                name="actual_end_time"
-                                string="Heure effective de clôture"
-                                readonly="state == 'closed'"
-                            />
+                                </div>
+
+                            </div>
 
 
+                            <!-- HORAIRES -->
+
+                            <div class="col-12 col-lg-4">
+
+                                <div class="border rounded-3 px-3 py-2 h-100">
+
+                                    <div class="fw-bold small text-muted mb-2">
+
+                                        <i class="fa fa-clock-o me-1"/>
+
+                                        Horaires
+
+                                    </div>
+
+                                    <group>
+
+                                        <field
+                                            name="start_time"
+                                            readonly="state not in ('draft', 'convoked')"
+                                        />
+
+                                        <field
+                                            name="actual_start_time"
+                                            readonly="state == 'closed'"
+                                        />
+
+                                        <field
+                                            name="end_time"
+                                            readonly="state == 'closed'"
+                                        />
+
+                                        <field
+                                            name="actual_end_time"
+                                            string="Clôture effective"
+                                            readonly="state == 'closed'"
+                                        />
+
+                                    </group>
+
+                                </div>
+
+                            </div>
 
 
-                        </group>
+                            <!-- RESPONSABLES -->
 
-                    </group>
+                            <div class="col-12 col-lg-4">
+
+                                <div class="border rounded-3 px-3 py-2 h-100">
+
+                                    <div class="fw-bold small text-muted mb-2">
+
+                                        <i class="fa fa-users me-1"/>
+
+                                        Responsables
+
+                                    </div>
+
+                                    <group>
+
+                                        <field
+                                            name="chairperson_id"
+                                            domain="[('company_id', '=', company_id)]"
+                                            readonly="state == 'closed'"
+                                            options="{'no_create': true}"
+                                        />
+
+                                        <field
+                                            name="secretary_id"
+                                            domain="[('company_id', '=', company_id)]"
+                                            readonly="state == 'closed'"
+                                            options="{'no_create': true}"
+                                        />
+
+                                        <field
+                                            name="company_id"
+                                            readonly="state != 'draft'"
+                                            groups="base.group_multi_company"
+                                        />
+
+                                    </group>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
 
-                    <!-- ================================================= -->
-                    <!-- RESPONSABLES                                      -->
-                    <!-- ================================================= -->
-
-                    <group string="Responsables de séance">
-
-                        <group>
-
-                            <field
-                                name="chairperson_id"
-                                domain="[('company_id', '=', company_id)]"
-                                readonly="state == 'closed'"
-                                options="{'no_create': true}"
-                            />
-
-                        </group>
-
-                        <group>
-
-                            <field
-                                name="secretary_id"
-                                domain="[('company_id', '=', company_id)]"
-                                readonly="state == 'closed'"
-                                options="{'no_create': true}"
-                            />
-
-                        </group>
-
-                    </group>
 
 
                     <!-- ================================================= -->
@@ -1378,55 +1308,80 @@
                                             }"
                                             readonly="1"/>
 
-                                        <field
-                                            name="member_account_balance"
-                                            string="Compte"
-                                            widget="monetary"
-                                            options="{
-                                                'currency_field': 'currency_id'
-                                            }"
-                                            readonly="1"
-                                            optional="show"/>
 
-                                        <field
-                                            name="amount_received"
-                                            string="Montant reçu"
-                                            widget="monetary"
-                                            options="{
-                                                'currency_field': 'currency_id'
-                                            }"
-                                            readonly="payment_state == 'paid'"/>
+                                            <!-- ===================================================== -->
+                                            <!-- SITUATION DE LA COTISATION                            -->
+                                            <!-- ===================================================== -->
 
-                                        <field
-                                            name="payment_state"
-                                            string="État"
-                                            widget="badge"
-                                            readonly="1"
-                                            decoration-success="payment_state == 'paid'"
-                                            decoration-warning="payment_state == 'partial'"
-                                            decoration-danger="payment_state == 'not_paid'"/>
+                                            <field
+                                                name="amount_due"
+                                                string="Montant dû"
+                                                widget="monetary"
+                                                options="{'currency_field': 'currency_id'}"
+                                                readonly="1"/>
 
-                                        <button
-                                            name="action_create_payment"
-                                            type="object"
-                                            string="Payer"
-                                            icon="fa-money"
-                                            class="btn-primary"
-                                            invisible="
-                                                amount_received &lt;= 0
-                                                or payment_state == 'paid'
-                                            "/>
+                                            <field
+                                                name="amount_paid"
+                                                string="Déjà payé"
+                                                widget="monetary"
+                                                options="{'currency_field': 'currency_id'}"
+                                                readonly="1"/>
 
-                                        <button
-                                            name="action_pay_from_member_account"
-                                            type="object"
-                                            string="Compte"
-                                            icon="fa-university"
-                                            class="btn-secondary"
-                                            invisible="
-                                                amount_received &gt; 0
-                                                or payment_state == 'paid'
-                                            "/>
+                                            <field
+                                                name="balance"
+                                                string="Reste"
+                                                widget="monetary"
+                                                options="{'currency_field': 'currency_id'}"
+                                                readonly="1"/>
+
+                                            <field
+                                                name="member_account_balance"
+                                                string="Solde membre"
+                                                widget="monetary"
+                                                options="{'currency_field': 'currency_id'}"
+                                                readonly="1"
+                                                optional="show"/>
+
+                                            <field
+                                                name="payment_state"
+                                                string="État"
+                                                widget="badge"
+                                                readonly="1"
+                                                decoration-success="payment_state == 'paid'"
+                                                decoration-warning="payment_state == 'partial'"
+                                                decoration-danger="payment_state == 'not_paid'"/>
+
+                                            <!-- ===================================================== -->
+                                            <!-- PAIEMENT DEPUIS LA RÉUNION                            -->
+                                            <!-- ===================================================== -->
+
+                                            <button
+                                                name="action_create_payment"
+                                                type="object"
+                                                string="Payer"
+                                                icon="fa-money"
+                                                class="btn-primary"
+                                                invisible="
+                                                    payment_state == 'paid'
+                                                    or balance &lt;= 0
+                                                "/>
+
+                                            <!-- ===================================================== -->
+                                            <!-- PAIEMENT DEPUIS LE COMPTE MEMBRE                      -->
+                                            <!-- ===================================================== -->
+
+                                            <button
+                                                name="action_pay_from_member_account"
+                                                type="object"
+                                                string="Compte membre"
+                                                icon="fa-university"
+                                                class="btn-secondary"
+                                                invisible="
+                                                    payment_state == 'paid'
+                                                    or balance &lt;= 0
+                                                "/>
+
+
 
                                         <field
                                             name="currency_id"

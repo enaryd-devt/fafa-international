@@ -174,7 +174,8 @@ class AssociationPayment(models.Model):
     state = fields.Selection(
         selection=[
             ("draft", "Brouillon"),
-            ("confirmed", "Confirmé"),
+            ("collected", "Encaissé"),
+            ("confirmed", "Validé"),
             ("cancelled", "Annulé"),
         ],
         string="Statut",
@@ -213,6 +214,87 @@ class AssociationPayment(models.Model):
         copy=False,
         index=True,
     )
+    
+    # ==========================================================
+    # ORIGINE DU PAIEMENT
+    # ==========================================================
+
+    payment_source = fields.Selection(
+        selection=[
+            ("external", "Versement du membre"),
+            ("member_account", "Compte membre"),
+        ],
+        string="Origine du paiement",
+        required=True,
+        default="external",
+        tracking=True,
+    )
+
+    member_account_id = fields.Many2one(
+        comodel_name="association.member.account",
+        string="Compte membre",
+        domain="[('member_id', '=', member_id)]",
+        tracking=True,
+    )
+
+    member_account_balance = fields.Monetary(
+        string="Solde du compte membre",
+        currency_field="currency_id",
+        compute="_compute_member_account_balance",
+    )
+
+    # ==========================================================
+    # COMPTE DE VERSEMENT
+    # ==========================================================
+
+    receipt_account_id = fields.Many2one(
+        comodel_name="association.fund",
+        string="Compte de versement",
+        domain="[('active', '=', True), ('company_id', '=', company_id)]",
+        tracking=True,
+        index=True,
+    )
+
+    receipt_account_type = fields.Selection(
+        related="receipt_account_id.fund_type",
+        string="Type de compte",
+        readonly=True,
+    )
+
+    receipt_account_balance = fields.Monetary(
+        related="receipt_account_id.current_balance",
+        string="Solde du compte",
+        currency_field="currency_id",
+        readonly=True,
+    )
+
+    # ==========================================================
+    # AFFECTATION
+    # ==========================================================
+
+    has_allocations = fields.Boolean(
+        string="Affecter à des cotisations",
+        default=False,
+        tracking=True,
+    )
+
+    # ==========================================================
+    # SURPLUS
+    # ==========================================================
+
+    surplus_processed = fields.Boolean(
+        string="Surplus traité",
+        default=False,
+        copy=False,
+    )
+
+    refund_amount = fields.Monetary(
+        string="Montant remboursé",
+        currency_field="currency_id",
+        default=0.0,
+        readonly=True,
+        copy=False,
+    )
     # ==========================================================
     # NOTES
     # ==========================================================
@@ -220,6 +302,112 @@ class AssociationPayment(models.Model):
     note = fields.Html(
         string="Notes internes",
     )
+
+    # ==========================================================
+    # CRÉATION DU MOUVEMENT DU COMPTE DE VERSEMENT
+    # ==========================================================
+
+    def _create_receipt_fund_transaction(self):
+
+        Transaction = self.env[
+            "association.fund.transaction"
+        ]
+
+        for record in self:
+
+            if record.payment_source != "external":
+                continue
+
+            if not record.receipt_account_id:
+                raise ValidationError(
+                    _(
+                        "Vous devez sélectionner "
+                        "un compte de versement."
+                    )
+                )
+
+            existing_transaction = Transaction.search(
+                [
+                    (
+                        "payment_id",
+                        "=",
+                        record.id,
+                    ),
+                    (
+                        "transaction_type",
+                        "=",
+                        "in",
+                    ),
+                ],
+                limit=1,
+            )
+
+            if existing_transaction:
+                continue
+
+            transaction = Transaction.create(
+                {
+                    "fund_id": record.receipt_account_id.id,
+                    "transaction_type": "in",
+                    "amount": record.amount,
+                    "transaction_date": record.payment_date,
+                    "description": _(
+                        "Encaissement paiement %s - %s"
+                    )
+                    % (
+                        record.name,
+                        record.member_id.display_name,
+                    ),
+                    "company_id": record.company_id.id,
+                    "payment_id": record.id,
+                }
+            )
+
+            transaction.action_validate()
+
+        return True
+
+    # ==========================================================
+    # SOLDE DU COMPTE MEMBRE
+    # ==========================================================
+
+    @api.depends(
+        "member_id",
+        "member_account_id",
+    )
+    def _compute_member_account_balance(self):
+
+        for record in self:
+
+            record.member_account_balance = 0.0
+
+            account = record.member_account_id
+
+            if not account and record.member_id:
+
+                account = self.env[
+                    "association.member.account"
+                ].search(
+                    [
+                        (
+                            "member_id",
+                            "=",
+                            record.member_id.id,
+                        ),
+                        (
+                            "company_id",
+                            "=",
+                            record.company_id.id,
+                        ),
+                    ],
+                    limit=1,
+                )
+
+            if account:
+
+                record.member_account_balance = (
+                    account.balance or 0.0
+                )
 
     # ==========================================================
     # CONTRAINTES SQL
@@ -248,17 +436,283 @@ class AssociationPayment(models.Model):
         "line_ids.amount_paid",
     )
     def _compute_payment_totals(self):
+
         for record in self:
+
             allocated_amount = sum(
-                record.line_ids.mapped("amount_paid")
+                record.line_ids.mapped(
+                    "amount_paid"
+                )
             )
 
-            record.line_count = len(record.line_ids)
-            record.allocated_amount = allocated_amount
-            record.remaining_amount = (
-                record.amount - allocated_amount
+            record.line_count = len(
+                record.line_ids
             )
 
+            record.allocated_amount = (
+                allocated_amount
+            )
+
+            record.remaining_amount = max(
+                (record.amount or 0.0)
+                - allocated_amount,
+                0.0,
+            )
+
+    # ==========================================================
+    # ONCHANGE - MEMBRE
+    # ==========================================================
+
+    @api.onchange("member_id")
+    def _onchange_member_id(self):
+
+        for record in self:
+
+            record.line_ids = [
+                (5, 0, 0)
+            ]
+
+            record.member_account_id = False
+            record.receipt_account_id = False
+
+            if not record.member_id:
+                continue
+
+            record.company_id = (
+                record.member_id.company_id
+            )
+
+            account = self.env[
+                "association.member.account"
+            ].search(
+                [
+                    (
+                        "member_id",
+                        "=",
+                        record.member_id.id,
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        record.member_id.company_id.id,
+                    ),
+                ],
+                limit=1,
+            )
+
+            if account:
+
+                record.member_account_id = account
+
+
+    # ==========================================================
+    # ONCHANGE - ORIGINE DU PAIEMENT
+    # ==========================================================
+
+    @api.onchange("payment_source")
+    def _onchange_payment_source(self):
+
+        for record in self:
+
+            # --------------------------------------------------
+            # VERSEMENT EXTERNE
+            # --------------------------------------------------
+
+            if record.payment_source == "external":
+
+                record.member_account_id = False
+
+                # L'utilisateur choisira le compte financier
+                # qui reçoit réellement le versement.
+                record.receipt_account_id = False
+
+                continue
+
+            # --------------------------------------------------
+            # COMPTE MEMBRE
+            # --------------------------------------------------
+
+            if record.payment_source == "member_account":
+
+                # Aucun compte de trésorerie ne doit être utilisé.
+                record.receipt_account_id = False
+
+                # Une cotisation depuis le compte membre
+                # doit obligatoirement être affectée.
+                record.has_allocations = True
+
+                # Recherche automatique du compte du membre.
+                account = False
+
+                if record.member_id:
+
+                    account = self.env[
+                        "association.member.account"
+                    ].search(
+                        [
+                            (
+                                "member_id",
+                                "=",
+                                record.member_id.id,
+                            ),
+                            (
+                                "company_id",
+                                "=",
+                                record.company_id.id,
+                            ),
+                        ],
+                        limit=1,
+                    )
+
+                record.member_account_id = account
+
+                continue
+
+            # --------------------------------------------------
+            # AUCUNE ORIGINE
+            # --------------------------------------------------
+
+            record.receipt_account_id = False
+            record.member_account_id = False
+            record.has_allocations = False
+    # ==========================================================
+    # ONCHANGE - AFFECTATIONS
+    # ==========================================================
+
+    @api.onchange("has_allocations")
+    def _onchange_has_allocations(self):
+
+        for record in self:
+
+            if not record.has_allocations:
+
+                record.line_ids = [
+                    (5, 0, 0)
+                ]
+
+
+    # ==========================================================
+    # CONTRÔLE DE L'ORIGINE DU PAIEMENT
+    # ==========================================================
+
+    def _check_payment_source_values(self):
+
+        for record in self:
+
+            if record.payment_source == "external":
+
+                if not record.receipt_account_id:
+
+                    raise ValidationError(
+                        _(
+                            "Vous devez sélectionner "
+                            "le compte de versement."
+                        )
+                    )
+
+            elif (
+                record.payment_source
+                == "member_account"
+            ):
+
+                if not record.member_account_id:
+
+                    raise ValidationError(
+                        _(
+                            "Aucun compte membre "
+                            "n'est disponible."
+                        )
+                    )
+
+                if record.receipt_account:
+
+                    raise ValidationError(
+                        _(
+                            "Un paiement depuis le compte "
+                            "membre ne peut pas utiliser "
+                            "un compte de trésorerie."
+                        )
+                    )
+
+                if (
+                    record.member_account_id.balance
+                    < record.amount
+                ):
+
+                    raise ValidationError(
+                        _(
+                            "Solde du compte membre "
+                            "insuffisant.\n\n"
+                            "Disponible : %(balance).2f "
+                            "%(currency)s"
+                        )
+                        % {
+                            "balance":
+                                record.member_account_id.balance,
+
+                            "currency":
+                                record.currency_id.name
+                                or "",
+                        }
+                    )
+                
+    # ==========================================================
+    # DÉBITER LE COMPTE MEMBRE
+    # ==========================================================
+
+    def _debit_member_account(self):
+
+        for record in self:
+
+            if (
+                record.payment_source
+                != "member_account"
+            ):
+                continue
+
+            account = record.member_account_id
+
+            if not account:
+
+                raise ValidationError(
+                    _("Compte membre introuvable.")
+                )
+
+            transaction = self.env[
+                "association.member.account.transaction"
+            ].create(
+                {
+                    "account_id":
+                        account.id,
+
+                    "transaction_type":
+                        "debit",
+
+                    "amount":
+                        record.amount,
+
+                    "transaction_date":
+                        record.payment_date,
+
+                    "description":
+                        _(
+                            "Paiement %(payment)s"
+                        )
+                        % {
+                            "payment":
+                                record.name,
+                        },
+                }
+            )
+
+            if hasattr(
+                transaction,
+                "action_confirm",
+            ):
+
+                transaction.action_confirm()
+    
+    
     # ==========================================================
     # INVALIDATION DES COTISATIONS ET CYCLES
     # ==========================================================
@@ -444,20 +898,237 @@ class AssociationPayment(models.Model):
                 )
 
     # ==========================================================
-    # ACTION - GÉNÉRER LES COTISATIONS
+    # CRÉDITER ET VALIDER LE COMPTE MEMBRE
+    # ==========================================================
+
+    def _credit_member_account(
+        self,
+        amount,
+        description=False,
+    ):
+
+        self.ensure_one()
+
+        amount = amount or 0.0
+
+        # ======================================================
+        # CONTRÔLE DU MONTANT
+        # ======================================================
+
+        if amount <= 0:
+            return False
+
+        if not self.member_id:
+            raise ValidationError(
+                _(
+                    "Aucun membre n'est associé "
+                    "au paiement."
+                )
+            )
+
+        # ======================================================
+        # MODÈLES
+        # ======================================================
+
+        Account = self.env[
+            "association.member.account"
+        ]
+
+        Transaction = self.env[
+            "association.member.account.transaction"
+        ]
+
+        # ======================================================
+        # RECHERCHE DU COMPTE MEMBRE
+        # ======================================================
+
+        account = Account.search(
+            [
+                (
+                    "member_id",
+                    "=",
+                    self.member_id.id,
+                ),
+                (
+                    "company_id",
+                    "=",
+                    self.company_id.id,
+                ),
+            ],
+            limit=1,
+        )
+
+        # ======================================================
+        # CRÉATION DU COMPTE SI NÉCESSAIRE
+        # ======================================================
+
+        if not account:
+
+            account = Account.create(
+                {
+                    "member_id":
+                        self.member_id.id,
+
+                    "company_id":
+                        self.company_id.id,
+                }
+            )
+
+        # ======================================================
+        # ÉVITER LE DOUBLE CRÉDIT
+        # ======================================================
+
+        existing_transaction = Transaction.search(
+            [
+                (
+                    "account_id",
+                    "=",
+                    account.id,
+                ),
+                (
+                    "payment_id",
+                    "=",
+                    self.id,
+                ),
+                (
+                    "transaction_type",
+                    "=",
+                    "credit",
+                ),
+            ],
+            limit=1,
+        )
+
+        if existing_transaction:
+
+            return existing_transaction
+
+        # ======================================================
+        # CRÉATION DU MOUVEMENT DE CRÉDIT
+        # ======================================================
+
+        transaction = Transaction.create(
+            {
+                "account_id":
+                    account.id,
+
+                "transaction_type":
+                    "credit",
+
+                "amount":
+                    amount,
+
+                "transaction_date":
+                    fields.Datetime.now(),
+
+                "payment_id":
+                    self.id,
+
+                "description":
+                    description
+                    or _(
+                        "Approvisionnement depuis "
+                        "le paiement %(payment)s"
+                    )
+                    % {
+                        "payment":
+                            self.display_name,
+                    },
+            }
+        )
+
+        # ======================================================
+        # VALIDATION RÉELLE DU MOUVEMENT
+        #
+        # ON UTILISE LE WORKFLOW DISPONIBLE
+        # SUR LE MODÈLE DE TRANSACTION
+        # ======================================================
+
+        if hasattr(
+            transaction,
+            "action_validate",
+        ):
+
+            transaction.action_validate()
+
+        elif hasattr(
+            transaction,
+            "action_post",
+        ):
+
+            transaction.action_post()
+
+        elif hasattr(
+            transaction,
+            "action_confirm",
+        ):
+
+            transaction.action_confirm()
+
+        # ======================================================
+        # VÉRIFICATION DU MOUVEMENT
+        # ======================================================
+
+        transaction.invalidate_recordset()
+
+        # ======================================================
+        # ACTUALISATION DU COMPTE
+        # ======================================================
+
+        account.invalidate_recordset()
+
+        if "balance" in account._fields:
+
+            account.invalidate_recordset(
+                [
+                    "balance",
+                ]
+            )
+
+            account.modified(
+                [
+                    "balance",
+                ]
+            )
+
+        # ======================================================
+        # ACTUALISATION DU MEMBRE
+        # ======================================================
+
+        self.member_id.invalidate_recordset()
+
+        if "balance" in self.member_id._fields:
+
+            self.member_id.invalidate_recordset(
+                [
+                    "balance",
+                ]
+            )
+
+        return transaction
+    
+    # ==========================================================
+    # ACTION - CHARGER LES COTISATIONS DISPONIBLES
     # ==========================================================
 
     def action_generate_subscription_lines(self):
+
         SubscriptionLine = self.env[
             "association.subscription.line"
         ]
 
+        Period = self.env[
+            "association.subscription.period"
+        ]
+
         for record in self:
+
             if record.state != "draft":
                 raise UserError(
                     _(
-                        "Les cotisations peuvent uniquement être "
-                        "chargées sur un paiement en brouillon."
+                        "Les cotisations peuvent uniquement "
+                        "être chargées sur un paiement "
+                        "en brouillon."
                     )
                 )
 
@@ -466,11 +1137,42 @@ class AssociationPayment(models.Model):
                     _("Veuillez sélectionner un membre.")
                 )
 
-            existing_subscription_line_ids = set(
-                record.line_ids.mapped(
-                    "subscription_line_id"
+            # ======================================================
+            # CYCLES RÉELLEMENT OUVERTS
+            # ======================================================
+
+            running_periods = Period.search(
+                [
+                    (
+                        "state",
+                        "=",
+                        "running",
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        record.company_id.id,
+                    ),
+                ]
+            )
+
+            running_subscription_ids = (
+                running_periods.mapped(
+                    "subscription_id"
                 ).ids
             )
+
+            if not running_subscription_ids:
+                raise UserError(
+                    _(
+                        "Aucune cotisation ne possède "
+                        "actuellement un cycle ouvert."
+                    )
+                )
+
+            # ======================================================
+            # COTISATIONS AUXQUELLES LE MEMBRE APPARTIENT
+            # ======================================================
 
             subscription_lines = SubscriptionLine.search(
                 [
@@ -480,49 +1182,76 @@ class AssociationPayment(models.Model):
                         record.member_id.id,
                     ),
                     (
+                        "subscription_id",
+                        "in",
+                        running_subscription_ids,
+                    ),
+                    (
                         "subscription_id.company_id",
                         "=",
                         record.company_id.id,
                     ),
-                    (
-                        "subscription_id.state",
-                        "in",
-                        ["confirmed", "running"],
-                    ),
-                    (
-                        "balance",
-                        ">",
-                        0,
-                    ),
-                ],
-                order="due_date asc, id asc",
+                ]
+            )
+
+            # ======================================================
+            # CONSERVER UNIQUEMENT LES COTISATIONS NON SOLDÉES
+            # POUR LE CYCLE OUVERT
+            # ======================================================
+
+            available_lines = (
+                subscription_lines.filtered(
+                    lambda line: (
+                        line.balance or 0.0
+                    ) > 0
+                )
+            )
+
+            existing_subscription_line_ids = set(
+                record.line_ids.mapped(
+                    "subscription_line_id"
+                ).ids
             )
 
             new_lines = []
 
-            for subscription_line in subscription_lines:
+            for subscription_line in available_lines:
+
                 if (
                     subscription_line.id
-                    not in existing_subscription_line_ids
+                    in existing_subscription_line_ids
                 ):
-                    new_lines.append(
-                        (
-                            0,
-                            0,
-                            {
-                                "subscription_line_id":
-                                    subscription_line.id,
-                                "amount_paid": 0.0,
-                            },
-                        )
+                    continue
+
+                new_lines.append(
+                    (
+                        0,
+                        0,
+                        {
+                            "subscription_line_id":
+                                subscription_line.id,
+
+                            "subscription_id":
+                                subscription_line.subscription_id.id,
+
+                            "amount_paid":
+                                0.0,
+                        },
                     )
+                )
 
             if not new_lines:
                 raise UserError(
                     _(
-                        "Aucune cotisation impayée ou partiellement "
-                        "payée n'a été trouvée pour ce membre."
+                        "Aucune cotisation disponible n'a été "
+                        "trouvée pour le membre %(member)s.\n\n"
+                        "Le membre doit appartenir à la cotisation "
+                        "et la cotisation doit posséder un cycle ouvert."
                     )
+                    % {
+                        "member":
+                            record.member_id.display_name,
+                    }
                 )
 
             record.write({
@@ -531,9 +1260,16 @@ class AssociationPayment(models.Model):
 
             record.message_post(
                 body=_(
-                    "%s cotisation(s) chargée(s) pour le membre."
+                    "%(count)s cotisation(s) avec cycle ouvert "
+                    "chargée(s) pour %(member)s."
                 )
-                % len(new_lines)
+                % {
+                    "count":
+                        len(new_lines),
+
+                    "member":
+                        record.member_id.display_name,
+                }
             )
 
         return True
@@ -572,13 +1308,53 @@ class AssociationPayment(models.Model):
             lines = record.line_ids.sorted(
                 key=lambda line: (
                     (
-                        line.subscription_line_id.current_period_id.due_date
-                        if line.subscription_line_id.current_period_id
+                        line.subscription_id.current_period_id.due_date
+                        if line.subscription_id.current_period_id
                         else fields.Date.today()
                     ),
                     line.id or 0,
                 )
             )
+
+            # ==========================================================
+            # APPLIQUER LA PÉNALITÉ DU CYCLE
+            # ==========================================================
+
+            member_period = self.env[
+                "association.subscription.period"
+            ].search(
+                [
+                    (
+                        "subscription_line_id",
+                        "=",
+                        subscription_line.id,
+                    ),
+                    (
+                        "period_start_date",
+                        "=",
+                        period.period_start_date,
+                    ),
+                    (
+                        "period_end_date",
+                        "=",
+                        period.period_end_date,
+                    ),
+                ],
+                limit=1,
+            )
+
+            if member_period:
+
+                member_period._apply_late_penalty()
+
+                member_period.invalidate_recordset(
+                    [
+                        "penalty_amount",
+                        "amount_paid",
+                        "balance",
+                        "payment_state",
+                    ]
+                )
 
             for line in lines:
                 balance_to_pay = max(
@@ -607,16 +1383,17 @@ class AssociationPayment(models.Model):
 
         return True
 
+    
     # ==========================================================
-    # ACTION - CONFIRMER
+    # ACTION - ENCAISSER
     # ==========================================================
 
-    def action_confirm(self):
+    def action_collect(self):
 
         for record in self:
 
             # ======================================================
-            # CONTRÔLE DE L'ÉTAT
+            # CONTRÔLES
             # ======================================================
 
             if record.state != "draft":
@@ -624,12 +1401,80 @@ class AssociationPayment(models.Model):
                 raise UserError(
                     _(
                         "Seul un paiement en brouillon "
-                        "peut être confirmé."
+                        "peut être encaissé."
+                    )
+                )
+
+            if not record.member_id:
+
+                raise ValidationError(
+                    _("Veuillez sélectionner un membre.")
+                )
+
+            if record.amount <= 0:
+
+                raise ValidationError(
+                    _(
+                        "Le montant reçu doit être "
+                        "strictement supérieur à zéro."
                     )
                 )
 
             # ======================================================
-            # CONTRÔLE DU MONTANT
+            # PASSAGE ENCAISSÉ
+            #
+            # IMPORTANT :
+            # AUCUN IMPACT COTISATION
+            # AUCUN IMPACT COMPTE MEMBRE
+            # ======================================================
+
+            record.write(
+                {
+                    "state": "collected",
+                }
+            )
+
+            record.message_post(
+                body=_(
+                    "Encaissement enregistré.<br/>"
+                    "Montant reçu : %(amount).2f %(currency)s.<br/>"
+                    "Le paiement est en attente de validation."
+                )
+                % {
+                    "amount":
+                        record.amount,
+
+                    "currency":
+                        record.currency_id.name or "",
+                }
+            )
+
+        return True    
+    
+    # ==========================================================
+    # ACTION - VALIDER LE PAIEMENT
+    # ==========================================================
+
+    def action_confirm(self):
+
+        for record in self:
+
+            # ======================================================
+            # CONTRÔLE ÉTAT
+            # SEUL UN PAIEMENT ENCAISSÉ PEUT ÊTRE VALIDÉ
+            # ======================================================
+
+            if record.state != "collected":
+
+                raise UserError(
+                    _(
+                        "Seul un paiement encaissé "
+                        "peut être validé."
+                    )
+                )
+
+            # ======================================================
+            # CONTRÔLE MONTANT
             # ======================================================
 
             if record.amount <= 0:
@@ -642,57 +1487,88 @@ class AssociationPayment(models.Model):
                 )
 
             # ======================================================
+            # LIGNES DE COTISATION CHOISIES
+            # ======================================================
+
+            subscription_lines = (
+                record.line_ids
+                .mapped("subscription_line_id")
+                .filtered(lambda line: line)
+            )
+
+            # ======================================================
+            # MONTANT AFFECTÉ
+            # ======================================================
+
+            allocated_amount = sum(
+                record.line_ids.mapped(
+                    "amount_paid"
+                )
+            )
+
+            # ======================================================
+            # CONTRÔLE DU MONTANT AFFECTÉ
+            # ======================================================
+
+            if allocated_amount < 0:
+
+                raise ValidationError(
+                    _(
+                        "Le montant affecté ne peut pas "
+                        "être négatif."
+                    )
+                )
+
+            if allocated_amount > record.amount:
+
+                raise ValidationError(
+                    _(
+                        "Le montant affecté aux cotisations "
+                        "ne peut pas dépasser le montant "
+                        "du paiement."
+                    )
+                )
+
+            # ======================================================
             # CONTRÔLE DES AFFECTATIONS
             # ======================================================
 
-            if not record.line_ids:
+            if record.has_allocations:
 
-                raise ValidationError(
-                    _(
-                        "Le paiement doit être affecté "
-                        "à au moins une cotisation."
+                if not record.line_ids:
+
+                    raise ValidationError(
+                        _(
+                            "Vous avez choisi d'affecter "
+                            "le paiement à des cotisations, "
+                            "mais aucune cotisation "
+                            "n'a été sélectionnée."
+                        )
+                    )
+
+                invalid_lines = (
+                    record.line_ids.filtered(
+                        lambda line: (
+                            not line.subscription_line_id
+                            or
+                            (line.amount_paid or 0.0) <= 0
+                        )
                     )
                 )
 
-            # ======================================================
-            # CONTRÔLE DU CYCLE
-            # ======================================================
+                if invalid_lines:
 
-            period = record.subscription_period_id
-
-            if not period:
-
-                raise ValidationError(
-                    _(
-                        "Aucun cycle de cotisation n'est "
-                        "associé au paiement."
+                    raise ValidationError(
+                        _(
+                            "Chaque ligne d'affectation doit "
+                            "contenir une cotisation et un "
+                            "montant strictement supérieur "
+                            "à zéro."
+                        )
                     )
-                )
-
-            if period.state != "running":
-
-                raise ValidationError(
-                    _(
-                        "Le cycle %(cycle)s n'est pas en cours."
-                    )
-                    % {
-                        "cycle":
-                            period.display_name,
-                    }
-                )
 
             # ======================================================
-            # MONTANT REÇU
-            # ======================================================
-
-            received_amount = (
-                record.amount or 0.0
-            )
-
-            total_allocated = 0.0
-
-            # ======================================================
-            # CALCUL DU MONTANT RÉELLEMENT DÛ
+            # CONTRÔLE DES COTISATIONS
             # ======================================================
 
             for line in record.line_ids:
@@ -701,86 +1577,57 @@ class AssociationPayment(models.Model):
                     line.subscription_line_id
                 )
 
-                # ==================================================
-                # CONTRÔLE DE LA LIGNE DE COTISATION
-                # ==================================================
-
                 if not subscription_line:
+                    continue
 
-                    raise ValidationError(
-                        _(
-                            "Une ligne de paiement n'est "
-                            "affectée à aucune cotisation."
-                        )
-                    )
-
-                # ==================================================
-                # CONTRÔLE DE LA COTISATION
-                # ==================================================
-
-                if not subscription_line.subscription_id:
-
-                    raise ValidationError(
-                        _(
-                            "Aucune cotisation n'est associée "
-                            "à la ligne du membre %(member)s."
-                        )
-                        % {
-                            "member":
-                                subscription_line.member_id.display_name,
-                        }
-                    )
-
-                # ==================================================
-                # CONTRÔLE DU CYCLE DE LA COTISATION
-                # ==================================================
-
-                current_period = (
-                    subscription_line
-                    .subscription_id
-                    .current_period_id
+                subscription = (
+                    subscription_line.subscription_id
                 )
 
-                if not current_period:
+                period = (
+                    subscription.current_period_id
+                )
+
+                # ==================================================
+                # CONTRÔLE DU CYCLE
+                # ==================================================
+
+                if not period:
 
                     raise ValidationError(
                         _(
                             "Aucun cycle courant n'est ouvert "
-                            "pour la cotisation %(subscription)s."
+                            "pour la cotisation "
+                            "%(subscription)s."
                         )
                         % {
                             "subscription":
-                                subscription_line
-                                .subscription_id
-                                .display_name,
+                                subscription.display_name,
                         }
                     )
 
-                if current_period != period:
+                if period.state != "running":
 
                     raise ValidationError(
                         _(
-                            "Le paiement est associé au cycle "
-                            "%(payment_cycle)s alors que la cotisation "
-                            "du membre %(member)s utilise actuellement "
-                            "le cycle %(current_cycle)s."
+                            "Le cycle %(cycle)s de la "
+                            "cotisation %(subscription)s "
+                            "n'est pas en cours."
                         )
                         % {
-                            "payment_cycle":
+                            "cycle":
                                 period.display_name,
 
-                            "member":
-                                subscription_line
-                                .member_id
-                                .display_name,
-
-                            "current_cycle":
-                                current_period.display_name,
+                            "subscription":
+                                subscription.display_name,
                         }
                     )
 
                 # ==================================================
-                # AUTRES PAIEMENTS CONFIRMÉS DU MÊME CYCLE
+                # PAIEMENTS DÉJÀ VALIDÉS DU CYCLE
+                #
+                # IMPORTANT :
+                # Le paiement actuel est exclu.
                 # ==================================================
 
                 other_payment_lines = (
@@ -796,16 +1643,19 @@ class AssociationPayment(models.Model):
                             payment_line.payment_id.id
                             != record.id
                             and
-                            payment_line
-                            .payment_id
-                            .subscription_period_id
-                            == period
+                            payment_line.payment_id.payment_date
+                            and
+                            payment_line.payment_id.payment_date
+                            >= period.period_start_date
+                            and
+                            payment_line.payment_id.payment_date
+                            <= period.period_end_date
                         )
                     )
                 )
 
                 # ==================================================
-                # MONTANT DÉJÀ PAYÉ SUR LE CYCLE
+                # TOTAL DÉJÀ PAYÉ
                 # ==================================================
 
                 already_paid = sum(
@@ -815,169 +1665,288 @@ class AssociationPayment(models.Model):
                 )
 
                 # ==================================================
-                # MONTANT DÛ
+                # MONTANT TOTAL DÛ
+                #
+                # amount_due contient maintenant :
+                #
+                # COTISATION
+                # +
+                # PÉNALITÉ
                 # ==================================================
 
-                amount_due = (
+                total_due = (
                     subscription_line.amount_due
                     or 0.0
                 )
 
                 # ==================================================
-                # RESTE À PAYER DU CYCLE
+                # RESTE RÉEL AVANT LE PAIEMENT ACTUEL
                 # ==================================================
 
                 remaining_amount = max(
-                    amount_due - already_paid,
+                    total_due - already_paid,
                     0.0,
                 )
 
                 # ==================================================
-                # MONTANT DEMANDÉ SUR LA LIGNE
+                # COTISATION DÉJÀ RÉGLÉE
                 # ==================================================
 
-                requested_amount = max(
-                    line.amount_paid or 0.0,
-                    0.0,
-                )
+                if remaining_amount <= 0:
+
+                    raise ValidationError(
+                        _(
+                            "La cotisation %(subscription)s "
+                            "est déjà réglée pour le cycle "
+                            "%(cycle)s."
+                        )
+                        % {
+                            "subscription":
+                                subscription.display_name,
+
+                            "cycle":
+                                period.display_name,
+                        }
+                    )
 
                 # ==================================================
-                # MONTANT RÉELLEMENT AFFECTABLE
+                # CONTRÔLE DU MONTANT AFFECTÉ
                 # ==================================================
 
-                allocated_amount = min(
-                    requested_amount,
-                    remaining_amount,
-                )
+                if (
+                    line.amount_paid or 0.0
+                ) > remaining_amount:
 
-                # ==================================================
-                # MISE À JOUR DE L'AFFECTATION
-                # ==================================================
+                    raise ValidationError(
+                        _(
+                            "Le montant affecté à %(member)s "
+                            "dépasse le reste à payer.\n\n"
+                            "Cotisation : %(subscription)s\n"
+                            "Montant dû : "
+                            "%(total_due).2f %(currency)s\n"
+                            "Déjà payé : "
+                            "%(already_paid).2f %(currency)s\n"
+                            "Reste à payer : "
+                            "%(balance).2f %(currency)s"
+                        )
+                        % {
+                            "member":
+                                subscription_line
+                                .member_id
+                                .display_name,
 
-                if line.amount_paid != allocated_amount:
+                            "subscription":
+                                subscription.display_name,
 
-                    line.amount_paid = allocated_amount
+                            "total_due":
+                                total_due,
 
-                total_allocated += allocated_amount
+                            "already_paid":
+                                already_paid,
+
+                            "balance":
+                                remaining_amount,
+
+                            "currency":
+                                record.currency_id.name
+                                or "",
+                        }
+                    )
+
+            # ======================================================
+            # CONTRÔLE ORIGINE DU PAIEMENT
+            #
+            # - externe
+            # - compte membre
+            # ======================================================
+
+            record._check_payment_source_values()
 
             # ======================================================
             # CALCUL DU SURPLUS
             # ======================================================
 
             surplus_amount = max(
-                received_amount - total_allocated,
+                (record.amount or 0.0)
+                - allocated_amount,
                 0.0,
             )
 
             # ======================================================
-            # OUVERTURE DE L'ASSISTANT DE SURPLUS
+            # TRAITEMENT DU SURPLUS
+            #
+            # Si le paiement comporte des affectations
+            # et qu'un reste existe, le wizard doit obligatoirement
+            # déterminer sa destination.
             # ======================================================
 
             if (
-                surplus_amount > 0
-                and not self.env.context.get(
-                    "surplus_processed"
-                )
+                record.has_allocations
+                and surplus_amount > 0
+                and not record.surplus_processed
             ):
 
-                wizard = self.env[
-                    "association.payment.surplus.wizard"
-                ].create({
-                    "payment_id":
-                        record.id,
-
-                    "member_id":
-                        record.member_id.id,
-
-                    "received_amount":
-                        received_amount,
-
-                    "allocated_amount":
-                        total_allocated,
-
-                    "surplus_amount":
-                        surplus_amount,
-                })
-
                 return {
-                    "type":
-                        "ir.actions.act_window",
-
-                    "name":
-                        _("Gestion du surplus"),
-
+                    "type": "ir.actions.act_window",
+                    "name": _("Traitement du surplus"),
                     "res_model":
                         "association.payment.surplus.wizard",
+                    "view_mode": "form",
+                    "target": "new",
+                    "context": {
+                        "default_payment_id":
+                            record.id,
 
-                    "res_id":
-                        wizard.id,
-
-                    "view_mode":
-                        "form",
-
-                    "target":
-                        "new",
+                        "default_surplus_amount":
+                            surplus_amount,
+                    },
                 }
 
             # ======================================================
-            # CONTRÔLE FINAL DE L'AFFECTATION
+            # CRÉATION DU MOUVEMENT DU COMPTE DE VERSEMENT
+            #
+            # Cette méthode doit gérer uniquement les versements
+            # externes destinés à un compte financier.
             # ======================================================
 
-            if total_allocated <= 0:
-
-                raise ValidationError(
-                    _(
-                        "Aucun montant n'a pu être affecté "
-                        "au cycle %(cycle)s."
-                    )
-                    % {
-                        "cycle":
-                            period.display_name,
-                    }
-                )
+            record._create_receipt_fund_transaction()
 
             # ======================================================
-            # CONFIRMATION DU PAIEMENT
+            # VALIDATION DU PAIEMENT
+            #
+            # À PARTIR D'ICI LE PAIEMENT DEVIENT COMPTABILISÉ
+            # DANS LES COTISATIONS.
             # ======================================================
 
-            record.write({
-                "state": "confirmed",
-            })
-
-            # ======================================================
-            # INVALIDATION DES LIGNES DE COTISATION
-            # ======================================================
-
-            record._invalidate_subscription_lines()
-
-            # ======================================================
-            # MESSAGE DE SUIVI
-            # ======================================================
-
-            record.message_post(
-                body=_(
-                    "Le paiement a été confirmé.<br/>"
-                    "Cycle : %(cycle)s<br/>"
-                    "Montant reçu : %(received).2f %(currency)s<br/>"
-                    "Montant affecté : %(allocated).2f %(currency)s"
-                )
-                % {
-                    "cycle":
-                        period.display_name,
-
-                    "received":
-                        received_amount,
-
-                    "allocated":
-                        total_allocated,
-
-                    "currency":
-                        record.currency_id.name or "",
+            record.write(
+                {
+                    "state": "confirmed",
                 }
             )
 
-        return True
+            # ======================================================
+            # PAIEMENT DEPUIS LE COMPTE MEMBRE
+            #
+            # Le membre paie ses cotisations uniquement depuis
+            # son compte membre.
+            # ======================================================
 
+            if (
+                record.payment_source
+                == "member_account"
+            ):
+
+                record._debit_member_account()
+
+            # ======================================================
+            # VERSEMENT EXTERNE SANS AFFECTATION
+            #
+            # Aucun règlement de cotisation.
+            # Le montant approvisionne directement le compte membre.
+            # ======================================================
+
+            if (
+                record.payment_source == "external"
+                and not record.has_allocations
+            ):
+
+                record._credit_member_account(
+                    record.amount
+                )
+
+            # ======================================================
+            # ACTUALISATION DES LIGNES DE COTISATION
+            #
+            # Le paiement est maintenant CONFIRMED.
+            # Le compute peut donc le prendre en compte.
+            # ======================================================
+
+            if subscription_lines:
+
+                subscription_lines.invalidate_recordset(
+                    [
+                        "amount_due",
+                        "amount_paid",
+                        "balance",
+                        "payment_state",
+                        "payment_date",
+                    ]
+                )
+
+                subscription_lines.modified(
+                    [
+                        "amount_due",
+                        "amount_paid",
+                        "balance",
+                        "payment_state",
+                        "payment_date",
+                    ]
+                )
+
+            # ======================================================
+            # IMPORTANT
+            # NE PAS RECRÉDITER AUTOMATIQUEMENT LE SURPLUS
+            #
+            # Le surplus a déjà été traité par le wizard :
+            #
+            # - compte membre
+            # - compte financier
+            # - remboursement
+            #
+            # L'ancien bloc :
+            #
+            # if surplus_amount > 0:
+            #     record._credit_member_account(surplus_amount)
+            #
+            # EST SUPPRIMÉ.
+            #
+            # Sinon le surplus serait crédité deux fois.
+            # ======================================================
+
+            # ======================================================
+            # MESSAGE
+            # ======================================================
+
+            message = _(
+                "Le paiement a été validé."
+            )
+
+            if record.has_allocations:
+
+                message += _(
+                    "<br/>Montant affecté aux cotisations : "
+                    "%(amount).2f %(currency)s"
+                ) % {
+                    "amount":
+                        allocated_amount,
+
+                    "currency":
+                        record.currency_id.name
+                        or "",
+                }
+
+            if surplus_amount > 0:
+
+                message += _(
+                    "<br/>Surplus traité : "
+                    "%(amount).2f %(currency)s"
+                ) % {
+                    "amount":
+                        surplus_amount,
+
+                    "currency":
+                        record.currency_id.name
+                        or "",
+                }
+
+            record.message_post(
+                body=message
+            )
+
+        return True 
+        
+    
+    
     # ==========================================================
     # ACTION - ANNULER
     # ==========================================================

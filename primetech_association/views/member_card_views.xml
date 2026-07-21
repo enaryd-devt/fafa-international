@@ -571,13 +571,13 @@
                         class="btn-primary"
                         invisible="state != 'blocked'"/>
                     
-                        <button
-                            name="%(action_report_member_card)d"
-                            type="action"
-                            string="Imprimer"
-                            icon="fa-print"
-                            class="btn-secondary"
-                            invisible="state not in ('active', 'expired', 'blocked')"/>
+                    <button
+                        name="action_print_member_card"
+                        type="object"
+                        string="Imprimer"
+                        icon="fa-print"
+                        class="btn-secondary"
+                        invisible="state not in ('active', 'expired', 'blocked')"/>
 
                     <button
                         name="action_expire"

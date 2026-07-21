@@ -10,100 +10,172 @@
 #
 ##############################################################################
 
-from odoo import fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class AssociationMemberCategory(models.Model):
     _name = "association.member.category"
-    _description = "Association Member Category"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
-    _order = "sequence, name"
+    _description = "Catégorie de membre"
+    _order = "sequence, name, id"
+    _rec_name = "name"
 
     # ==========================================================
-    # TECHNICAL
+    # TECHNIQUE
     # ==========================================================
 
     active = fields.Boolean(
-        string="Active",
+        string="Actif",
         default=True,
-        tracking=True,
     )
 
     sequence = fields.Integer(
-        string="Sequence",
+        string="Séquence",
         default=10,
     )
 
     company_id = fields.Many2one(
-        "res.company",
-        string="Company",
+        comodel_name="res.company",
+        string="Filiale",
+        required=True,
         default=lambda self: self.env.company,
-    )
-
-    color = fields.Integer(
-        string="Color",
+        index=True,
+        ondelete="cascade",
     )
 
     # ==========================================================
-    # INFORMATION
+    # IDENTIFICATION
     # ==========================================================
 
     name = fields.Char(
-        string="Category",
+        string="Catégorie",
         required=True,
-        tracking=True,
+        index=True,
         translate=True,
     )
 
-    code = fields.Char(
-        string="Code",
-        tracking=True,
-    )
-
-    description = fields.Text(
-        string="Description",
-    )
-
     # ==========================================================
-    # SETTINGS
-    # ==========================================================
-
-    is_default = fields.Boolean(
-        string="Default Category",
-        default=False,
-    )
-
-    # ==========================================================
-    # RELATIONS
+    # MEMBRES
     # ==========================================================
 
     member_ids = fields.One2many(
-        "association.member",
-        "category_id",
-        string="Members",
+        comodel_name="association.member",
+        inverse_name="category_id",
+        string="Membres",
+        readonly=True,
     )
 
     member_count = fields.Integer(
-        string="Members",
+        string="Nombre de membres",
         compute="_compute_member_count",
     )
 
     # ==========================================================
-    # NOTES
+    # CALCULS
     # ==========================================================
 
-    note = fields.Html(
-        string="Notes",
-    )
-
-    # ==========================================================
-    # COMPUTE
-    # ==========================================================
-
+    @api.depends("member_ids")
     def _compute_member_count(self):
-        """
-        Placeholder.
-        The real implementation will be completed in V1.
-        """
-        for record in self:
-            record.member_count = len(record.member_ids)
+        for category in self:
+            category.member_count = len(category.member_ids)
+
+    # ==========================================================
+    # CONTRAINTES
+    # ==========================================================
+
+    @api.constrains(
+        "name",
+        "company_id",
+    )
+    def _check_unique_name(self):
+
+        for category in self:
+
+            if not category.name:
+                continue
+
+            domain = [
+                (
+                    "name",
+                    "=ilike",
+                    category.name.strip(),
+                ),
+                (
+                    "company_id",
+                    "=",
+                    category.company_id.id,
+                ),
+                (
+                    "id",
+                    "!=",
+                    category.id,
+                ),
+            ]
+
+            existing_category = self.search(
+                domain,
+                limit=1,
+            )
+
+            if existing_category:
+
+                raise ValidationError(
+                    _(
+                        "La catégorie '%(category)s' existe "
+                        "déjà pour la filiale '%(company)s'."
+                    )
+                    % {
+                        "category": category.name,
+                        "company": category.company_id.display_name,
+                    }
+                )
+
+    # ==========================================================
+    # CRUD
+    # ==========================================================
+
+    @api.model_create_multi
+    def create(self, vals_list):
+
+        for vals in vals_list:
+
+            if vals.get("name"):
+                vals["name"] = vals["name"].strip()
+
+        return super().create(vals_list)
+
+    def write(self, vals):
+
+        if vals.get("name"):
+            vals["name"] = vals["name"].strip()
+
+        return super().write(vals)
+
+    # ==========================================================
+    # ACTIONS
+    # ==========================================================
+
+    def action_view_members(self):
+
+        self.ensure_one()
+
+        action = self.env[
+            "ir.actions.actions"
+        ]._for_xml_id(
+            "primetech_association.action_association_member"
+        )
+
+        action["domain"] = [
+            (
+                "category_id",
+                "=",
+                self.id,
+            )
+        ]
+
+        action["context"] = {
+            "default_category_id": self.id,
+            "default_company_id": self.company_id.id,
+        }
+
+        return action

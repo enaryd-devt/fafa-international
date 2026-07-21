@@ -79,8 +79,11 @@ class AssociationFund(models.Model):
     fund_type = fields.Selection(
         selection=[
             ("bank", "Compte bancaire"),
-            ("cash", "Caisse"),
+            ("cash", "Compte caisse"),
             ("mobile_money", "Mobile Money"),
+            ("cca", "CCA"),
+            ("fund", "Compte fonds"),
+            ("insurance", "Compte assurance"),
             ("other", "Autre compte financier"),
         ],
         string="Type de compte",

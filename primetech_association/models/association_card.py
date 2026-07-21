@@ -686,3 +686,25 @@ class AssociationCard(models.Model):
                 "default_company_id": self.company_id.id,
             },
         }
+    # ==========================================================
+    # ACTION - IMPRIMER LA CARTE MEMBRE
+    # ==========================================================
+
+    def action_print_member_card(self):
+        self.ensure_one()
+
+        report_action = self.env.ref(
+            "primetech_association.action_report_member_card",
+            raise_if_not_found=False,
+        )
+
+        if not report_action:
+            raise UserError(
+                _(
+                    "Le rapport de carte membre n'est pas "
+                    "disponible. Vérifiez la configuration "
+                    "du rapport."
+                )
+            )
+
+        return report_action.report_action(self)

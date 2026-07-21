@@ -10,6 +10,8 @@
 #
 ##############################################################################
 
+
+from datetime import timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -138,18 +140,21 @@ class AssociationSubscriptionLine(models.Model):
         string="Montant dû",
         currency_field="currency_id",
         compute="_compute_current_cycle_payment",
+        store=True,
     )
 
     amount_paid = fields.Monetary(
         string="Montant payé",
         currency_field="currency_id",
         compute="_compute_current_cycle_payment",
+        store=True,
     )
 
     balance = fields.Monetary(
         string="Reste à payer",
         currency_field="currency_id",
         compute="_compute_current_cycle_payment",
+        store=True,
     )
 
     payment_state = fields.Selection(
@@ -160,17 +165,35 @@ class AssociationSubscriptionLine(models.Model):
         ],
         string="État du paiement",
         compute="_compute_current_cycle_payment",
+        store=True,
+        index=True,
     )
 
     payment_date = fields.Date(
         string="Date du dernier paiement",
         compute="_compute_current_cycle_payment",
+        store=True,
     )
 
     amount_received = fields.Monetary(
         string="Montant reçu",
         currency_field="currency_id",
         default=0.0,
+        copy=False,
+    )
+
+
+    # ==========================================================
+    # COMPTE DE VERSEMENT
+    # ==========================================================
+
+    receipt_account_id = fields.Many2one(
+        comodel_name="association.fund",
+        string="Compte de versement",
+        domain="["
+            "('company_id', '=', company_id), "
+            "('active', '=', True)"
+            "]",
         copy=False,
     )
 
@@ -196,6 +219,38 @@ class AssociationSubscriptionLine(models.Model):
     )
 
     # ==========================================================
+    # PÉNALITÉ DU MEMBRE
+    # ==========================================================
+
+    penalty_amount = fields.Monetary(
+        string="Pénalité",
+        currency_field="currency_id",
+        default=0.0,
+        readonly=True,
+    )
+
+    penalty_applied = fields.Boolean(
+        string="Pénalité appliquée",
+        default=False,
+        readonly=True,
+    )
+
+    penalty_date = fields.Date(
+        string="Date de pénalité",
+        readonly=True,
+    )
+
+    penalty_reason = fields.Char(
+        string="Motif de pénalité",
+        readonly=True,
+    )
+
+    penalty_deadline = fields.Date(
+        string="Date limite",
+        compute="_compute_penalty_deadline",
+    )
+
+    # ==========================================================
     # NOTES
     # ==========================================================
 
@@ -216,19 +271,32 @@ class AssociationSubscriptionLine(models.Model):
         ),
     ]
 
-    # ==========================================================
-    # PAIEMENTS DU CYCLE COURANT
-    # ==========================================================
-
     @api.depends(
         "subscription_id.amount",
         "subscription_id.current_period_id",
+        "subscription_id.current_period_id.period_start_date",
+        "subscription_id.current_period_id.period_end_date",
+        "payment_line_ids",
         "payment_line_ids.amount_paid",
+        "payment_line_ids.payment_id",
         "payment_line_ids.payment_id.state",
-        "payment_line_ids.payment_id.subscription_period_id",
         "payment_line_ids.payment_id.payment_date",
+        "payment_line_ids.payment_id.subscription_period_id",
     )
     def _compute_current_cycle_payment(self):
+
+        PaymentLine = self.env[
+            "association.payment.line"
+        ]
+
+        Payment = self.env[
+            "association.payment"
+        ]
+
+        has_subscription_period = (
+            "subscription_period_id"
+            in Payment._fields
+        )
 
         for record in self:
 
@@ -236,56 +304,145 @@ class AssociationSubscriptionLine(models.Model):
             amount_paid = 0.0
             payment_date = False
 
-            period = (
-                record.subscription_id.current_period_id
+            subscription = record.subscription_id
+
+            # ======================================================
+            # RECHERCHE DU CYCLE RÉELLEMENT ACTIF
+            # ======================================================
+
+            period = self.env[
+                "association.subscription.period"
+            ].search(
+                [
+                    (
+                        "subscription_id",
+                        "=",
+                        subscription.id,
+                    ),
+                    (
+                        "state",
+                        "=",
+                        "running",
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        record.company_id.id,
+                    ),
+                ],
+                order="sequence desc, id desc",
+                limit=1,
             )
 
-            if period:
+            # ======================================================
+            # AUCUN CYCLE ACTIF
+            # ======================================================
 
-                amount_due = (
-                    record.subscription_id.amount or 0.0
-                )
+            if not period:
 
-                # ==================================================
-                # PAIEMENTS DU CYCLE COURANT UNIQUEMENT
-                # ==================================================
+                record.amount_due = 0.0
+                record.amount_paid = 0.0
+                record.balance = 0.0
+                record.payment_date = False
+                record.payment_state = "not_paid"
 
-                payment_lines = (
-                    record.payment_line_ids.filtered(
-                        lambda line: (
-                            line.payment_id
-                            and
-                            line.payment_id.state == "confirmed"
-                            and
-                            line.payment_id.subscription_period_id
-                            == period
-                        )
+                continue
+
+            # ======================================================
+            # MONTANT DÛ
+            # ======================================================
+
+            amount_due = (
+                subscription.amount or 0.0
+            )
+
+            # ======================================================
+            # DOMAINE DE RECHERCHE DES AFFECTATIONS
+            # ======================================================
+
+            domain = [
+                (
+                    "subscription_line_id",
+                    "=",
+                    record.id,
+                ),
+                (
+                    "payment_id.state",
+                    "=",
+                    "confirmed",
+                ),
+            ]
+
+            # ======================================================
+            # FILTRAGE PAR CYCLE RÉEL
+            # ======================================================
+
+            if has_subscription_period:
+
+                domain.append(
+                    (
+                        "payment_id.subscription_period_id",
+                        "=",
+                        period.id,
                     )
                 )
 
-                amount_paid = sum(
-                    payment_lines.mapped(
-                        "amount_paid"
-                    )
-                )
+            else:
 
-                payment_dates = [
-                    payment_date
-                    for payment_date
-                    in payment_lines.mapped(
-                        "payment_id.payment_date"
-                    )
-                    if payment_date
-                ]
-
-                payment_date = (
-                    max(payment_dates)
-                    if payment_dates
-                    else False
+                domain.extend(
+                    [
+                        (
+                            "payment_id.payment_date",
+                            ">=",
+                            period.period_start_date,
+                        ),
+                        (
+                            "payment_id.payment_date",
+                            "<=",
+                            period.period_end_date,
+                        ),
+                    ]
                 )
 
             # ======================================================
-            # SOLDE
+            # RECHERCHE DIRECTE
+            # ======================================================
+
+            payment_lines = PaymentLine.search(
+                domain
+            )
+
+            # ======================================================
+            # MONTANT PAYÉ
+            # ======================================================
+
+            amount_paid = sum(
+                payment_lines.mapped(
+                    "amount_paid"
+                )
+            )
+
+            # ======================================================
+            # DATE DU DERNIER PAIEMENT
+            # ======================================================
+
+            payment_dates = [
+                payment.payment_date
+                for payment
+                in payment_lines.mapped(
+                    "payment_id"
+                )
+                if payment.payment_date
+            ]
+
+            if payment_dates:
+
+                payment_date = max(
+                    payment_dates
+                )
+
+            # ======================================================
+            # RESTE À PAYER
             # ======================================================
 
             balance = max(
@@ -293,27 +450,260 @@ class AssociationSubscriptionLine(models.Model):
                 0.0,
             )
 
+            # ======================================================
+            # AFFECTATION
+            # ======================================================
+
             record.amount_due = amount_due
+
             record.amount_paid = amount_paid
+
             record.balance = balance
+
             record.payment_date = payment_date
 
             # ======================================================
-            # ÉTAT
+            # ÉTAT DU PAIEMENT
             # ======================================================
 
             if amount_paid <= 0:
 
-                record.payment_state = "not_paid"
+                record.payment_state = (
+                    "not_paid"
+                )
 
             elif amount_paid < amount_due:
 
-                record.payment_state = "partial"
+                record.payment_state = (
+                    "partial"
+                )
 
             else:
 
-                record.payment_state = "paid"
-   
+                record.payment_state = (
+                    "paid"
+                )
+
+    def _refresh_after_payment(self):
+
+        lines = self.exists()
+
+        if not lines:
+            return True
+
+        # ======================================================
+        # FLUSH COMPLET
+        # ======================================================
+
+        self.env.flush_all()
+
+        # ======================================================
+        # INVALIDATION DU CACHE
+        # ======================================================
+
+        lines.invalidate_recordset()
+
+        # ======================================================
+        # RECALCUL DES LIGNES
+        # ======================================================
+
+        lines._compute_current_cycle_payment()
+
+        # ======================================================
+        # CHAMPS RECALCULÉS
+        # ======================================================
+
+        modified_fields = [
+            field_name
+            for field_name in (
+                "amount_due",
+                "amount_paid",
+                "balance",
+                "payment_state",
+                "payment_date",
+            )
+            if field_name in lines._fields
+        ]
+
+        if modified_fields:
+
+            lines.modified(
+                modified_fields
+            )
+
+        # ======================================================
+        # COTISATIONS PARENTES
+        # ======================================================
+
+        subscriptions = lines.mapped(
+            "subscription_id"
+        ).exists()
+
+        if subscriptions:
+
+            subscriptions.invalidate_recordset()
+
+            if hasattr(
+                subscriptions,
+                "_compute_statistics",
+            ):
+
+                subscriptions._compute_statistics()
+
+            if hasattr(
+                subscriptions,
+                "_compute_payment_count",
+            ):
+
+                subscriptions._compute_payment_count()
+
+        # ======================================================
+        # CYCLES ACTIFS
+        # ======================================================
+
+        periods = self.env[
+            "association.subscription.period"
+        ].search(
+            [
+                (
+                    "subscription_id",
+                    "in",
+                    subscriptions.ids,
+                ),
+                (
+                    "state",
+                    "=",
+                    "running",
+                ),
+            ]
+        )
+
+        if periods:
+
+            periods.invalidate_recordset()
+
+            for method_name in (
+                "_compute_financial_amounts",
+                "_compute_payment_statistics",
+                "_compute_statistics",
+            ):
+
+                if hasattr(
+                    periods,
+                    method_name,
+                ):
+
+                    getattr(
+                        periods,
+                        method_name,
+                    )()
+
+        # ======================================================
+        # FLUSH FINAL
+        # ======================================================
+
+        self.env.flush_all()
+
+        return True
+
+    # ==========================================================
+    # DATE LIMITE DE PAIEMENT
+    # ==========================================================
+
+    @api.depends(
+        "subscription_id.current_period_id.due_date",
+        "subscription_id.penalty_grace_days",
+    )
+    def _compute_penalty_deadline(self):
+
+        for line in self:
+
+            line.penalty_deadline = False
+
+            period = (
+                line.subscription_id.current_period_id
+            )
+
+            if not period or not period.due_date:
+                continue
+
+            grace_days = (
+                line.subscription_id.penalty_grace_days
+                or 0
+            )
+
+            line.penalty_deadline = (
+                period.due_date
+                + timedelta(days=grace_days)
+            )
+        
+
+    # ==========================================================
+    # APPLIQUER LA PÉNALITÉ
+    # ==========================================================
+
+    def _apply_late_penalty(self):
+
+        today = fields.Date.context_today(self)
+
+        for line in self:
+
+            subscription = line.subscription_id
+
+            if not subscription.penalty_enabled:
+                continue
+
+            if line.penalty_applied:
+                continue
+
+            if not line.penalty_deadline:
+                continue
+
+            if today <= line.penalty_deadline:
+                continue
+
+            if line.payment_state == "paid":
+                continue
+
+            penalty_amount = 0.0
+
+            if subscription.penalty_type == "fixed":
+
+                penalty_amount = (
+                    subscription.penalty_amount
+                    or 0.0
+                )
+
+            elif subscription.penalty_type == "percentage":
+
+                penalty_amount = (
+                    (line.amount_due or 0.0)
+                    * (subscription.penalty_rate or 0.0)
+                    / 100.0
+                )
+
+            if penalty_amount <= 0:
+                continue
+
+            line.write(
+                {
+                    "penalty_amount":
+                        penalty_amount,
+
+                    "penalty_applied":
+                        True,
+
+                    "penalty_date":
+                        today,
+
+                    "penalty_reason":
+                        _(
+                            "Pénalité appliquée après "
+                            "dépassement du délai de grâce."
+                        ),
+                }
+            )
+
     # ==========================================================
     # SOLDE DU COMPTE MEMBRE
     # ==========================================================
@@ -435,27 +825,71 @@ class AssociationSubscriptionLine(models.Model):
             )
 
         return period
+
+
+
+    def action_create_payment(self):
+
+        self.ensure_one()
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Paiement de cotisation"),
+            "res_model":
+                "association.subscription.payment.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_origin":
+                    "subscription",
+
+                "default_subscription_line_id":
+                    self.id,
+            },
+        }   
     # ==========================================================
-    # CRÉER UN PAIEMENT DE COTISATION
+    # PAYER DEPUIS LE COMPTE MEMBRE
     # ==========================================================
 
-    def _create_subscription_payment(
-        self,
-        amount_received,
-        payment_method="cash",
-        payment_reference=False,
-    ):
+    def action_pay_from_member_account(self):
         self.ensure_one()
+
+        MemberAccount = self.env[
+            "association.member.account"
+        ]
+
+        AccountTransaction = self.env[
+            "association.member.account.transaction"
+        ]
+
+        Payment = self.env[
+            "association.payment"
+        ]
+
+        PaymentLine = self.env[
+            "association.payment.line"
+        ]
+
+        Period = self.env[
+            "association.subscription.period"
+        ]
 
         # ======================================================
         # CONTRÔLES
         # ======================================================
 
+        if not self.exists():
+            raise ValidationError(
+                _(
+                    "La ligne de cotisation n'existe plus."
+                )
+            )
+
         if not self.member_id:
             raise ValidationError(
                 _(
                     "Aucun membre n'est associé "
-                    "à cette cotisation."
+                    "à cette ligne de cotisation."
                 )
             )
 
@@ -467,198 +901,97 @@ class AssociationSubscriptionLine(models.Model):
                 )
             )
 
-        if amount_received <= 0:
-            raise ValidationError(
-                _(
-                    "Le montant reçu doit être "
-                    "strictement supérieur à zéro."
-                )
-            )
-
         # ======================================================
         # CYCLE COURANT
         # ======================================================
 
-        period = self._check_payment_cycle()
+        period = self.subscription_id.current_period_id
+
+        if (
+            not period
+            or period.state != "running"
+        ):
+
+            period = Period.search(
+                [
+                    (
+                        "subscription_id",
+                        "=",
+                        self.subscription_id.id,
+                    ),
+                    (
+                        "state",
+                        "=",
+                        "running",
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        self.company_id.id,
+                    ),
+                ],
+                order="sequence desc, id desc",
+                limit=1,
+            )
+
+        if not period:
+            raise ValidationError(
+                _(
+                    "Aucun cycle en cours n'a été trouvé "
+                    "pour la cotisation %(subscription)s."
+                )
+                % {
+                    "subscription":
+                        self.subscription_id.display_name,
+                }
+            )
 
         # ======================================================
-        # RESTE À PAYER DU CYCLE COURANT
+        # RECALCUL AVANT PAIEMENT
         # ======================================================
 
-        current_balance = max(
+        self.env.flush_all()
+
+        self.invalidate_recordset(
+            [
+                "payment_line_ids",
+                "amount_due",
+                "amount_paid",
+                "balance",
+                "payment_state",
+                "payment_date",
+            ]
+        )
+
+        self._compute_current_cycle_payment()
+
+        # ======================================================
+        # MONTANT À PAYER
+        # ======================================================
+
+        amount_to_pay = max(
             self.balance or 0.0,
             0.0,
         )
 
-        if current_balance <= 0:
+        if amount_to_pay <= 0:
             raise ValidationError(
                 _(
-                    "La cotisation du membre %(member)s "
-                    "est déjà entièrement payée pour "
-                    "le cycle %(cycle)s."
+                    "La cotisation de %(member)s est déjà "
+                    "entièrement payée pour le cycle %(period)s."
                 )
                 % {
                     "member":
                         self.member_id.display_name,
 
-                    "cycle":
+                    "period":
                         period.display_name,
                 }
             )
 
         # ======================================================
-        # MONTANT À AFFECTER
+        # COMPTE MEMBRE
         # ======================================================
-
-        amount_to_allocate = min(
-            amount_received,
-            current_balance,
-        )
-
-        # ======================================================
-        # CRÉATION DU PAIEMENT
-        # ======================================================
-
-        payment = self.env[
-            "association.payment"
-        ].create({
-            "member_id":
-                self.member_id.id,
-
-            "subscription_period_id":
-                period.id,
-
-            "payment_date":
-                fields.Date.context_today(self),
-
-            "amount":
-                amount_received,
-
-            "payment_method":
-                payment_method,
-
-            "payment_reference":
-                payment_reference
-                or _(
-                    "Encaissement %(subscription)s - %(cycle)s"
-                )
-                % {
-                    "subscription":
-                        self.subscription_id.display_name,
-
-                    "cycle":
-                        period.display_name,
-                },
-
-            "company_id":
-                self.company_id.id,
-        })
-
-        # ======================================================
-        # AFFECTATION
-        # ======================================================
-
-        self.env[
-            "association.payment.line"
-        ].create({
-            "payment_id":
-                payment.id,
-
-            "subscription_line_id":
-                self.id,
-
-            "amount_paid":
-                amount_to_allocate,
-        })
-
-        # ======================================================
-        # CONFIRMATION
-        # ======================================================
-
-        action = payment.action_confirm()
-
-        return {
-            "type": "payment",
-            "payment": payment,
-            "action": action,
-        }
-    # ==========================================================
-    # ACTION - ENCAISSER
-    # ==========================================================
-
-    def action_create_payment(self):
-        self.ensure_one()
-
-        amount_received = (
-            self.amount_received or 0.0
-        )
-
-        if amount_received <= 0:
-            raise ValidationError(
-                _(
-                    "Veuillez saisir un montant reçu "
-                    "supérieur à zéro."
-                )
-            )
-
-        result = self._create_subscription_payment(
-            amount_received=amount_received,
-            payment_method="cash",
-            payment_reference=_(
-                "Encaissement cotisation %(subscription)s"
-            )
-            % {
-                "subscription":
-                    self.subscription_id.display_name,
-            },
-        )
-
-        action = result.get("action")
-
-        # ======================================================
-        # ACTION RETOURNÉE PAR LE PAIEMENT
-        # ======================================================
-
-        if isinstance(action, dict):
-            return action
-
-        # ======================================================
-        # PAIEMENT CONFIRMÉ
-        # ======================================================
-
-        self.amount_received = 0.0
-
-        self.invalidate_recordset([
-            "amount_paid",
-            "balance",
-            "payment_state",
-            "payment_date",
-        ])
-
-        self.modified([
-            "amount_paid",
-            "balance",
-            "payment_state",
-            "payment_date",
-        ])
-
-        return False
-    # ==========================================================
-    # PAYER DEPUIS LE COMPTE MEMBRE
-    # ==========================================================
-
-    def action_pay_from_member_account(self):
-        self.ensure_one()
-
-        self._check_payment_cycle()
-
-        MemberAccount = self.env[
-            "association.member.account"
-        ]
-
-        AccountTransaction = self.env[
-            "association.member.account.transaction"
-        ]
 
         member_account = MemberAccount.search(
             [
@@ -672,6 +1005,11 @@ class AssociationSubscriptionLine(models.Model):
                     "=",
                     self.company_id.id,
                 ),
+                (
+                    "active",
+                    "=",
+                    True,
+                ),
             ],
             limit=1,
         )
@@ -680,79 +1018,468 @@ class AssociationSubscriptionLine(models.Model):
             raise ValidationError(
                 _(
                     "Le membre %(member)s ne possède pas "
-                    "de compte financier."
+                    "de compte financier actif."
                 )
                 % {
-                    "member": self.member_id.display_name,
+                    "member":
+                        self.member_id.display_name,
                 }
             )
+
+        # ======================================================
+        # SOLDE DU COMPTE
+        # ======================================================
+
+        member_account.invalidate_recordset(
+            [
+                "balance",
+                "total_credit",
+                "total_debit",
+            ]
+        )
 
         available_balance = (
             member_account.balance or 0.0
         )
 
-        if available_balance < self.balance:
+        if available_balance < amount_to_pay:
             raise ValidationError(
                 _(
                     "Solde du compte membre insuffisant.\n\n"
                     "Disponible : %(available).2f %(currency)s\n"
-                    "Montant requis : %(required).2f %(currency)s."
+                    "Montant requis : %(required).2f %(currency)s"
                 )
                 % {
-                    "available": available_balance,
-                    "required": self.balance,
-                    "currency": self.currency_id.name or "",
+                    "available":
+                        available_balance,
+
+                    "required":
+                        amount_to_pay,
+
+                    "currency":
+                        self.currency_id.name or "",
                 }
             )
 
-        amount_to_pay = self.balance
+        # ======================================================
+        # DATE DU PAIEMENT
+        # ======================================================
 
-        result = self._create_subscription_payment(
-            amount_received=amount_to_pay,
-            payment_method="bank",
-            payment_reference=_(
-                "Paiement depuis le compte du membre"
-            ),
+        payment_date = fields.Date.context_today(self)
+
+        if (
+            period.period_start_date
+            and payment_date < period.period_start_date
+        ):
+            payment_date = period.period_start_date
+
+        if (
+            period.period_end_date
+            and payment_date > period.period_end_date
+        ):
+            payment_date = period.period_end_date
+
+        # ======================================================
+        # CRÉATION DU PAIEMENT
+        #
+        # IMPORTANT :
+        # LA LIGNE D'AFFECTATION EST CRÉÉE DIRECTEMENT
+        # DANS line_ids
+        # ======================================================
+
+        payment = Payment.create(
+            {
+                "member_id":
+                    self.member_id.id,
+
+                "payment_date":
+                    payment_date,
+
+                "amount":
+                    amount_to_pay,
+
+                "payment_source":
+                    "member_account",
+
+                "member_account_id":
+                    member_account.id,
+
+                "has_allocations":
+                    True,
+
+                "payment_method":
+                    "bank",
+
+                "payment_reference":
+                    _(
+                        "Paiement compte membre - "
+                        "%(subscription)s - %(period)s"
+                    )
+                    % {
+                        "subscription":
+                            self.subscription_id.display_name,
+
+                        "period":
+                            period.display_name,
+                    },
+
+                "company_id":
+                    self.company_id.id,
+
+                # ==================================================
+                # CRÉATION DIRECTE DE L'AFFECTATION
+                # ==================================================
+
+                "line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "subscription_line_id":
+                                self.id,
+
+                            "subscription_id":
+                                self.subscription_id.id,
+
+                            "amount_paid":
+                                amount_to_pay,
+                        },
+                    ),
+                ],
+            }
         )
 
-        if result["type"] == "surplus":
+        # ======================================================
+        # FLUSH DU PAIEMENT ET DES LIGNES
+        # ======================================================
+
+        self.env.flush_all()
+
+        # ======================================================
+        # RÉCUPÉRATION DE LA LIGNE DEPUIS LE PAIEMENT
+        #
+        # NE PLUS FAIRE PaymentLine.search(...)
+        # ======================================================
+
+        payment.invalidate_recordset(
+            [
+                "line_ids",
+            ]
+        )
+
+        payment_lines = payment.line_ids
+
+        if not payment_lines:
             raise ValidationError(
                 _(
-                    "Un paiement depuis le compte membre "
-                    "ne peut pas générer de surplus."
+                    "Erreur technique : aucune ligne "
+                    "d'affectation n'a été créée sur le paiement."
                 )
             )
 
-        payment = result["payment"]
+        # ======================================================
+        # RECHERCHE DANS LES LIGNES DU PAIEMENT
+        # ======================================================
 
-        transaction = AccountTransaction.create({
-            "account_id": member_account.id,
-            "transaction_type": "debit",
-            "amount": amount_to_pay,
-            "transaction_date": fields.Datetime.now(),
-            "payment_id": payment.id,
-            "description": _(
-                "Paiement du cycle %(cycle)s - %(subscription)s"
+        payment_line = payment_lines.filtered(
+            lambda line:
+                line.subscription_line_id.id == self.id
+        )[:1]
+
+        if not payment_line:
+            raise ValidationError(
+                _(
+                    "Erreur technique : la ligne d'affectation "
+                    "créée n'est pas reliée à la cotisation "
+                    "du membre."
+                )
             )
-            % {
-                "cycle":
-                    self.subscription_id.current_period_id.display_name,
-                "subscription":
-                    self.subscription_id.display_name,
-            },
-        })
 
-        if hasattr(transaction, "action_validate"):
+        if (
+            payment_line.amount_paid or 0.0
+        ) <= 0:
+            raise ValidationError(
+                _(
+                    "Erreur technique : le montant affecté "
+                    "à la cotisation est nul."
+                )
+            )
+
+        # ======================================================
+        # CONFIRMATION DIRECTE DU PAIEMENT
+        #
+        # NE PAS APPELER action_confirm()
+        # ======================================================
+
+        payment.write(
+            {
+                "state":
+                    "confirmed",
+            }
+        )
+
+        self.env.flush_all()
+
+        # ======================================================
+        # DÉBIT DU COMPTE MEMBRE
+        # ======================================================
+
+        transaction_values = {
+            "account_id":
+                member_account.id,
+
+            "transaction_type":
+                "debit",
+
+            "amount":
+                amount_to_pay,
+
+            "transaction_date":
+                fields.Datetime.now(),
+
+            "payment_id":
+                payment.id,
+
+            "description":
+                _(
+                    "Paiement du cycle %(period)s - "
+                    "%(subscription)s"
+                )
+                % {
+                    "period":
+                        period.display_name,
+
+                    "subscription":
+                        self.subscription_id.display_name,
+                },
+        }
+
+        # ======================================================
+        # CHAMPS OPTIONNELS
+        # ======================================================
+
+        if (
+            "origin_type"
+            in AccountTransaction._fields
+        ):
+            transaction_values[
+                "origin_type"
+            ] = "subscription_payment"
+
+        if (
+            "origin_model"
+            in AccountTransaction._fields
+        ):
+            transaction_values[
+                "origin_model"
+            ] = payment._name
+
+        if (
+            "origin_res_id"
+            in AccountTransaction._fields
+        ):
+            transaction_values[
+                "origin_res_id"
+            ] = payment.id
+
+        if (
+            "origin_reference"
+            in AccountTransaction._fields
+        ):
+            transaction_values[
+                "origin_reference"
+            ] = payment.name
+
+        transaction = AccountTransaction.create(
+            transaction_values
+        )
+
+        # ======================================================
+        # VALIDATION DU MOUVEMENT
+        # ======================================================
+
+        if hasattr(
+            transaction,
+            "action_validate",
+        ):
             transaction.action_validate()
 
-        elif hasattr(transaction, "action_post"):
+        elif hasattr(
+            transaction,
+            "action_post",
+        ):
             transaction.action_post()
 
-        elif hasattr(transaction, "action_confirm"):
+        elif hasattr(
+            transaction,
+            "action_confirm",
+        ):
             transaction.action_confirm()
 
-        return False
+        # ======================================================
+        # FLUSH
+        # ======================================================
 
+        self.env.flush_all()
+
+        # ======================================================
+        # RAFRAÎCHISSEMENT DE LA LIGNE PAYÉE
+        # ======================================================
+
+        subscription_line = self.browse(
+            self.id
+        ).exists()
+
+        subscription_line._refresh_after_payment()
+
+        # ======================================================
+        # COTISATION
+        # ======================================================
+
+        subscription = self.subscription_id
+
+        subscription_fields = [
+            field_name
+            for field_name in (
+                "line_count",
+                "paid_member_count",
+                "partial_member_count",
+                "unpaid_member_count",
+                "total_amount_due",
+                "total_amount_paid",
+                "total_balance",
+                "progress_percent",
+                "payment_count",
+            )
+            if field_name in subscription._fields
+        ]
+
+        if subscription_fields:
+
+            subscription.invalidate_recordset(
+                subscription_fields
+            )
+
+        # ======================================================
+        # RECALCUL DES STATISTIQUES
+        # ======================================================
+
+        if hasattr(
+            subscription,
+            "_compute_statistics",
+        ):
+            subscription._compute_statistics()
+
+        if hasattr(
+            subscription,
+            "_compute_payment_count",
+        ):
+            subscription._compute_payment_count()
+
+        # ======================================================
+        # CYCLE
+        # ======================================================
+
+        period_fields = [
+            field_name
+            for field_name in (
+                "collected_amount",
+                "allocated_amount",
+                "available_amount",
+                "member_count",
+                "paid_member_count",
+                "partial_member_count",
+                "unpaid_member_count",
+                "recovery_rate",
+                "beneficiary_count",
+            )
+            if field_name in period._fields
+        ]
+
+        if period_fields:
+
+            period.invalidate_recordset(
+                period_fields
+            )
+
+        # ======================================================
+        # RECALCUL DU CYCLE
+        # ======================================================
+
+        for method_name in (
+            "_compute_financial_amounts",
+            "_compute_payment_statistics",
+            "_compute_statistics",
+        ):
+
+            if hasattr(
+                period,
+                method_name,
+            ):
+
+                getattr(
+                    period,
+                    method_name,
+                )()
+
+        # ======================================================
+        # COMPTE MEMBRE
+        # ======================================================
+
+        member_account.invalidate_recordset(
+            [
+                "balance",
+                "total_credit",
+                "total_debit",
+            ]
+        )
+
+        self.env.flush_all()
+
+        # ======================================================
+        # MESSAGE
+        # ======================================================
+
+        subscription.message_post(
+            body=_(
+                "Paiement de %(amount).2f %(currency)s "
+                "effectué depuis le compte membre de "
+                "%(member)s pour le cycle %(period)s."
+            )
+            % {
+                "amount":
+                    amount_to_pay,
+
+                "currency":
+                    self.currency_id.name or "",
+
+                "member":
+                    self.member_id.display_name,
+
+                "period":
+                    period.display_name,
+            }
+        )
+
+        # ======================================================
+        # ACTUALISATION DU TABLEAU DES MEMBRES UNIQUEMENT
+        # ======================================================
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "primetech_refresh_subscription_table",
+            "params": {
+                "subscription_id":
+                    self.subscription_id.id,
+
+                "subscription_line_id":
+                    self.id,
+
+                "field_name":
+                    "line_ids",
+            },
+        }
+    
     # ==========================================================
     # CREATE
     # ==========================================================

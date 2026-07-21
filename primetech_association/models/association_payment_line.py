@@ -77,33 +77,50 @@ class AssociationPaymentLine(models.Model):
     )
 
     # ==========================================================
-    # AFFECTATION
+    # COTISATIONS ÉLIGIBLES
+    # ==========================================================
+
+    eligible_subscription_ids = fields.Many2many(
+        comodel_name="association.subscription",
+        string="Cotisations disponibles",
+        compute="_compute_eligible_subscription_ids",
+    )
+
+
+    # ==========================================================
+    # COTISATION CHOISIE PAR L'UTILISATEUR
+    # ==========================================================
+
+    subscription_id = fields.Many2one(
+        comodel_name="association.subscription",
+        string="Cotisation",
+        ondelete="restrict",
+        index=True,
+        domain="[('id', 'in', eligible_subscription_ids)]",
+    )
+
+
+    # ==========================================================
+    # LIGNE TECHNIQUE DU MEMBRE
     # ==========================================================
 
     subscription_line_id = fields.Many2one(
         comodel_name="association.subscription.line",
         string="Ligne de cotisation",
-        required=True,
         ondelete="restrict",
         index=True,
-    )
-
-    subscription_id = fields.Many2one(
-        related="subscription_line_id.subscription_id",
-        string="Cotisation",
-        store=True,
-        readonly=True,
+        copy=False,
     )
 
     member_id = fields.Many2one(
-        related="subscription_line_id.member_id",
+        related="payment_id.member_id",
         string="Membre",
         store=True,
         readonly=True,
     )
 
     member_code = fields.Char(
-        related="subscription_line_id.member_code",
+        related="payment_id.member_id.member_code",
         string="Code membre",
         store=True,
         readonly=True,
@@ -194,8 +211,451 @@ class AssociationPaymentLine(models.Model):
         string="Notes internes",
     )
 
+
     # ==========================================================
-    # CALCUL DES MONTANTS
+    # CALCUL DES COTISATIONS ÉLIGIBLES
+    # ==========================================================
+
+    @api.depends(
+        "payment_id",
+        "payment_id.member_id",
+        "payment_id.company_id",
+    )
+    def _compute_eligible_subscription_ids(self):
+
+        SubscriptionLine = self.env[
+            "association.subscription.line"
+        ]
+
+        Period = self.env[
+            "association.subscription.period"
+        ]
+
+        for record in self:
+
+            # ======================================================
+            # INITIALISATION
+            # ======================================================
+
+            record.eligible_subscription_ids = False
+
+            payment = record.payment_id
+
+            if not payment:
+                continue
+
+            if not payment.member_id:
+                continue
+
+            if not payment.company_id:
+                continue
+
+            # ======================================================
+            # RECHERCHER UNIQUEMENT LES CYCLES OUVERTS
+            # ======================================================
+
+            running_periods = Period.search(
+                [
+                    (
+                        "state",
+                        "=",
+                        "running",
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        payment.company_id.id,
+                    ),
+                ]
+            )
+
+            if not running_periods:
+                continue
+
+            # ======================================================
+            # COTISATIONS AYANT UN CYCLE OUVERT
+            # ======================================================
+
+            running_subscription_ids = (
+                running_periods
+                .mapped("subscription_id")
+                .ids
+            )
+
+            if not running_subscription_ids:
+                continue
+
+            # ======================================================
+            # LIGNES DE COTISATION DU MEMBRE
+            #
+            # RÈGLE :
+            #
+            # 1. LE MEMBRE APPARTIENT À LA COTISATION
+            # 2. LA COTISATION A UN CYCLE OUVERT
+            # 3. MÊME FILIALE
+            # ======================================================
+
+            subscription_lines = SubscriptionLine.search(
+                [
+                    (
+                        "member_id",
+                        "=",
+                        payment.member_id.id,
+                    ),
+                    (
+                        "subscription_id",
+                        "in",
+                        running_subscription_ids,
+                    ),
+                    (
+                        "subscription_id.company_id",
+                        "=",
+                        payment.company_id.id,
+                    ),
+                ]
+            )
+
+            if not subscription_lines:
+                continue
+
+            # ======================================================
+            # EXCLURE LES COTISATIONS DÉJÀ CHOISIES
+            # DANS LE MÊME PAIEMENT
+            # ======================================================
+
+            selected_subscription_ids = (
+                payment.line_ids
+                .filtered(
+                    lambda line: (
+                        line != record
+                        and line.subscription_id
+                    )
+                )
+                .mapped("subscription_id")
+                .ids
+            )
+
+            eligible_lines = subscription_lines.filtered(
+                lambda line: (
+                    line.subscription_id.id
+                    not in selected_subscription_ids
+                )
+            )
+
+            # ======================================================
+            # RÉSULTAT
+            # ======================================================
+
+            record.eligible_subscription_ids = (
+                eligible_lines.mapped(
+                    "subscription_id"
+                )
+            )
+    # ==========================================================
+    # RÉSOLUTION DE LA LIGNE DE COTISATION
+    # ==========================================================
+
+    def _resolve_subscription_line(self):
+
+        SubscriptionLine = self.env[
+            "association.subscription.line"
+        ]
+
+        for record in self:
+
+            if not record.subscription_id:
+                record.subscription_line_id = False
+                continue
+
+            if not record.payment_id.member_id:
+                record.subscription_line_id = False
+                continue
+
+            subscription_line = SubscriptionLine.search(
+                [
+                    (
+                        "subscription_id",
+                        "=",
+                        record.subscription_id.id,
+                    ),
+                    (
+                        "member_id",
+                        "=",
+                        record.payment_id.member_id.id,
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        record.payment_id.company_id.id,
+                    ),
+                ],
+                limit=1,
+            )
+
+            if not subscription_line:
+                raise ValidationError(
+                    _(
+                        "Le membre %(member)s n'est pas inscrit "
+                        "à la cotisation %(subscription)s."
+                    )
+                    % {
+                        "member":
+                            record.payment_id.member_id.display_name,
+
+                        "subscription":
+                            record.subscription_id.display_name,
+                    }
+                )
+
+            record.subscription_line_id = (
+                subscription_line
+            )
+
+        return True
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+
+        records = super().create(vals_list)
+
+        records._resolve_subscription_line()
+
+        return records
+
+
+    def write(self, vals):
+
+        result = super().write(vals)
+
+        if (
+            "subscription_id" in vals
+            or "payment_id" in vals
+        ):
+            self._resolve_subscription_line()
+
+        return result
+    
+    # ==========================================================
+    # ONCHANGE - COTISATION
+    # ==========================================================
+
+    @api.onchange("subscription_id")
+    def _onchange_subscription_id(self):
+
+        SubscriptionLine = self.env[
+            "association.subscription.line"
+        ]
+
+        Period = self.env[
+            "association.subscription.period"
+        ]
+
+        for record in self:
+
+            # ======================================================
+            # RÉINITIALISATION
+            # ======================================================
+
+            record.subscription_line_id = False
+            record.amount_paid = 0.0
+
+            if not record.subscription_id:
+                continue
+
+            payment = record.payment_id
+
+            if not payment:
+                continue
+
+            if not payment.member_id:
+                continue
+
+            # ======================================================
+            # CONTRÔLER LE CYCLE OUVERT
+            # ======================================================
+
+            running_period = Period.search(
+                [
+                    (
+                        "subscription_id",
+                        "=",
+                        record.subscription_id.id,
+                    ),
+                    (
+                        "state",
+                        "=",
+                        "running",
+                    ),
+                    (
+                        "company_id",
+                        "=",
+                        payment.company_id.id,
+                    ),
+                ],
+                order="sequence desc, id desc",
+                limit=1,
+            )
+
+            if not running_period:
+
+                subscription_name = (
+                    record.subscription_id.display_name
+                )
+
+                record.subscription_id = False
+
+                return {
+                    "warning": {
+                        "title":
+                            _("Cycle fermé"),
+
+                        "message":
+                            _(
+                                "La cotisation %(subscription)s "
+                                "ne possède aucun cycle ouvert."
+                            )
+                            % {
+                                "subscription":
+                                    subscription_name,
+                            },
+                    }
+                }
+
+            # ======================================================
+            # RECHERCHER LA LIGNE DU MEMBRE
+            # ======================================================
+
+            subscription_line = SubscriptionLine.search(
+                [
+                    (
+                        "subscription_id",
+                        "=",
+                        record.subscription_id.id,
+                    ),
+                    (
+                        "member_id",
+                        "=",
+                        payment.member_id.id,
+                    ),
+                    (
+                        "subscription_id.company_id",
+                        "=",
+                        payment.company_id.id,
+                    ),
+                ],
+                limit=1,
+            )
+
+            if not subscription_line:
+
+                subscription_name = (
+                    record.subscription_id.display_name
+                )
+
+                member_name = (
+                    payment.member_id.display_name
+                )
+
+                record.subscription_id = False
+
+                return {
+                    "warning": {
+                        "title":
+                            _("Membre non inscrit"),
+
+                        "message":
+                            _(
+                                "Le membre %(member)s "
+                                "n'appartient pas à la cotisation "
+                                "%(subscription)s."
+                            )
+                            % {
+                                "member":
+                                    member_name,
+
+                                "subscription":
+                                    subscription_name,
+                            },
+                    }
+                }
+
+            # ======================================================
+            # LIEN TECHNIQUE
+            # ======================================================
+
+            record.subscription_line_id = (
+                subscription_line
+            )
+
+            # ======================================================
+            # MONTANT RESTANT DU CYCLE COURANT
+            # ======================================================
+
+            confirmed_lines = (
+                subscription_line.payment_line_ids.filtered(
+                    lambda payment_line: (
+                        payment_line.payment_id
+                        and
+                        payment_line.payment_id.state
+                        == "confirmed"
+                        and
+                        payment_line.payment_id.payment_date
+                        and
+                        running_period.period_start_date
+                        <= payment_line.payment_id.payment_date
+                        <= running_period.period_end_date
+                    )
+                )
+            )
+
+            already_paid = sum(
+                confirmed_lines.mapped(
+                    "amount_paid"
+                )
+            )
+
+            amount_due = (
+                record.subscription_id.amount
+                or 0.0
+            )
+
+            balance = max(
+                amount_due - already_paid,
+                0.0,
+            )
+
+            # ======================================================
+            # MONTANT DISPONIBLE SUR LE PAIEMENT
+            # ======================================================
+
+            other_allocations = sum(
+                payment.line_ids
+                .filtered(
+                    lambda line: line != record
+                )
+                .mapped("amount_paid")
+            )
+
+            available_amount = max(
+                (
+                    payment.amount or 0.0
+                )
+                - other_allocations,
+                0.0,
+            )
+
+            # ======================================================
+            # AFFECTATION AUTOMATIQUE
+            # ======================================================
+
+            record.amount_paid = min(
+                balance,
+                available_amount,
+            )
+    
+    # ==========================================================
+    # CALCUL DES MONTANTS DE L'AFFECTATION
     # ==========================================================
 
     @api.depends(
@@ -203,64 +663,77 @@ class AssociationPaymentLine(models.Model):
         "subscription_line_id.amount_due",
         "subscription_line_id.payment_line_ids.amount_paid",
         "subscription_line_id.payment_line_ids.payment_id.state",
-        "subscription_line_id.payment_line_ids.payment_id.subscription_period_id",
         "amount_paid",
         "payment_id.state",
-        "payment_id.subscription_period_id",
     )
     def _compute_payment_amounts(self):
 
         for record in self:
 
-            amount_due = record.amount_due or 0.0
+            # ======================================================
+            # INITIALISATION OBLIGATOIRE
+            # ======================================================
+
+            record.amount_already_paid = 0.0
+            record.balance_before_payment = 0.0
+            record.balance_after_payment = 0.0
+
+            # ======================================================
+            # PAS ENCORE DE LIGNE TECHNIQUE
+            # ======================================================
 
             if not record.subscription_line_id:
-
-                record.amount_already_paid = 0.0
-                record.balance_before_payment = amount_due
-                record.balance_after_payment = amount_due
-
                 continue
 
-            current_period = (
-                record.payment_id.subscription_period_id
+            subscription_line = record.subscription_line_id
+
+            # ======================================================
+            # MONTANT DÛ DU CYCLE COURANT
+            # ======================================================
+
+            amount_due = (
+                subscription_line.amount_due
+                or 0.0
             )
 
             # ======================================================
-            # PAIEMENTS CONFIRMÉS DU MÊME CYCLE
+            # PAIEMENTS DÉJÀ CONFIRMÉS
             # ======================================================
 
             confirmed_lines = (
-                record.subscription_line_id
-                .payment_line_ids
-                .filtered(
+                subscription_line.payment_line_ids.filtered(
                     lambda line: (
-                        line.payment_id
-                        and
                         line.payment_id.state == "confirmed"
-                        and
-                        line.id != record.id
-                        and
-                        line.payment_id.subscription_period_id
-                        == current_period
+                        and line != record
                     )
                 )
             )
 
             amount_already_paid = sum(
-                confirmed_lines.mapped(
-                    "amount_paid"
-                )
+                confirmed_lines.mapped("amount_paid")
             )
+
+            # ======================================================
+            # RESTE AVANT LE PAIEMENT COURANT
+            # ======================================================
 
             balance_before = max(
                 amount_due - amount_already_paid,
                 0.0,
             )
 
+            # ======================================================
+            # MONTANT DE LA LIGNE COURANTE
+            # ======================================================
+
             current_amount = (
-                record.amount_paid or 0.0
+                record.amount_paid
+                or 0.0
             )
+
+            # ======================================================
+            # AFFECTATION
+            # ======================================================
 
             record.amount_already_paid = (
                 amount_already_paid
@@ -274,26 +747,144 @@ class AssociationPaymentLine(models.Model):
                 balance_before - current_amount,
                 0.0,
             )
+
     # ==========================================================
-    # CALCUL DU RETARD
+    # COTISATIONS ÉLIGIBLES À L'AFFECTATION
+    # ==========================================================
+
+    @api.depends(
+        "payment_id",
+        "payment_id.member_id",
+        "payment_id.company_id",
+        "payment_id.line_ids",
+        "payment_id.line_ids.subscription_line_id",
+    )
+    def _compute_eligible_subscription_line_ids(self):
+
+        SubscriptionLine = self.env[
+            "association.subscription.line"
+        ]
+
+        for record in self:
+
+            # ======================================================
+            # INITIALISATION
+            # ======================================================
+
+            record.eligible_subscription_line_ids = False
+
+            payment = record.payment_id
+
+            if not payment or not payment.member_id:
+                continue
+
+            # ======================================================
+            # RECHERCHE DES COTISATIONS DU MEMBRE
+            # ======================================================
+
+            subscription_lines = SubscriptionLine.search([
+                (
+                    "member_id",
+                    "=",
+                    payment.member_id.id,
+                ),
+                (
+                    "company_id",
+                    "=",
+                    payment.company_id.id,
+                ),
+            ])
+
+            # ======================================================
+            # FORCER LE RECALCUL DE LA SITUATION DU CYCLE COURANT
+            # ======================================================
+
+            if subscription_lines:
+
+                subscription_lines.invalidate_recordset([
+                    "amount_due",
+                    "amount_paid",
+                    "balance",
+                    "payment_state",
+                ])
+
+            # ======================================================
+            # CONSERVER UNIQUEMENT LES IMPAYÉES / PARTIELLES
+            # ======================================================
+
+            eligible_lines = subscription_lines.filtered(
+                lambda line: (
+                    line.subscription_id
+                    and line.subscription_id.current_period_id
+                    and line.payment_state in (
+                        "not_paid",
+                        "partial",
+                    )
+                    and (line.balance or 0.0) > 0.0
+                )
+            )
+
+            # ======================================================
+            # EXCLURE LES COTISATIONS DÉJÀ AJOUTÉES AU PAIEMENT
+            # ======================================================
+
+            already_selected_ids = (
+                payment.line_ids
+                .filtered(
+                    lambda line:
+                        line != record
+                        and line.subscription_line_id
+                )
+                .mapped("subscription_line_id")
+                .ids
+            )
+
+            eligible_lines = eligible_lines.filtered(
+                lambda line:
+                    line.id not in already_selected_ids
+            )
+
+            # ======================================================
+            # RÉSULTAT
+            # ======================================================
+
+            record.eligible_subscription_line_ids = (
+                eligible_lines
+            )
+    
+    
+    
+    # ==========================================================
+    # CALCUL DU RETARD ET DE LA PÉNALITÉ
     # ==========================================================
 
     @api.depends(
         "payment_id.payment_date",
         "payment_id.state",
+        "payment_id.subscription_period_id",
         "subscription_line_id",
         "subscription_line_id.subscription_id",
         "subscription_line_id.subscription_id.period_ids",
         "subscription_line_id.subscription_id.period_ids.state",
         "subscription_line_id.subscription_id.period_ids.due_date",
         "subscription_line_id.subscription_id.period_ids.sequence",
+        "amount_paid",
     )
     def _compute_penalty_information(self):
 
         for record in self:
 
+            # ======================================================
+            # INITIALISATION OBLIGATOIRE DE TOUS LES CHAMPS COMPUTE
+            # ======================================================
+
             record.is_late = False
+            record.late_days = 0
             record.penalty_amount = 0.0
+
+            # ======================================================
+            # LIGNE DE COTISATION
+            # ======================================================
 
             subscription_line = (
                 record.subscription_line_id
@@ -302,6 +893,10 @@ class AssociationPaymentLine(models.Model):
             if not subscription_line:
                 continue
 
+            # ======================================================
+            # COTISATION
+            # ======================================================
+
             subscription = (
                 subscription_line.subscription_id
             )
@@ -309,104 +904,140 @@ class AssociationPaymentLine(models.Model):
             if not subscription:
                 continue
 
+            # ======================================================
+            # DATE DU PAIEMENT
+            # ======================================================
+
             payment_date = (
                 record.payment_id.payment_date
                 or fields.Date.context_today(record)
             )
 
-            # ==================================================
-            # RECHERCHER LE CYCLE CONCERNÉ PAR LE PAIEMENT
-            # ==================================================
+            # ======================================================
+            # CYCLE EXPLICITEMENT LIÉ AU PAIEMENT
+            # ======================================================
 
-            periods = subscription.period_ids.filtered(
-                lambda period:
-                    period.state
-                    in (
-                        "running",
-                        "closed",
-                    )
-                    and period.period_start_date
-                    and period.period_end_date
-                    and period.period_start_date
-                    <= payment_date
-                    <= period.period_end_date
+            period = (
+                record.payment_id.subscription_period_id
             )
 
-            # ==================================================
-            # SI AUCUN CYCLE PAR DATE :
-            # PRENDRE LE CYCLE EN COURS
-            # ==================================================
+            # ======================================================
+            # COMPATIBILITÉ AVEC LES ANCIENS PAIEMENTS
+            # ======================================================
 
-            if not periods:
+            if not period:
 
-                periods = (
-                    subscription.period_ids.filtered(
-                        lambda period:
-                            period.state == "running"
+                periods = subscription.period_ids.filtered(
+                    lambda item: (
+                        item.state in (
+                            "running",
+                            "closed",
+                        )
+                        and item.period_start_date
+                        and item.period_end_date
+                        and item.period_start_date
+                        <= payment_date
+                        <= item.period_end_date
                     )
                 )
 
-            if not periods:
-                continue
+                # ==================================================
+                # SI AUCUN CYCLE PAR DATE
+                # PRENDRE LE CYCLE EN COURS
+                # ==================================================
 
-            period = periods.sorted(
-                key=lambda item: (
-                    item.sequence,
-                    item.id,
-                ),
-                reverse=True,
-            )[0]
+                if not periods:
+
+                    periods = (
+                        subscription.period_ids.filtered(
+                            lambda item:
+                                item.state == "running"
+                        )
+                    )
+
+                if not periods:
+                    continue
+
+                period = periods.sorted(
+                    key=lambda item: (
+                        item.sequence,
+                        item.id,
+                    ),
+                    reverse=True,
+                )[0]
+
+            # ======================================================
+            # DATE D'ÉCHÉANCE
+            # ======================================================
 
             due_date = period.due_date
 
             if not due_date:
                 continue
 
-            # ==================================================
-            # CONTRÔLE DU RETARD
-            # ==================================================
+            # ======================================================
+            # CALCUL DU NOMBRE DE JOURS DE RETARD
+            # ======================================================
+
+            late_days = max(
+                (
+                    payment_date - due_date
+                ).days,
+                0,
+            )
+
+            record.late_days = late_days
+
+            # ======================================================
+            # ÉTAT DU RETARD
+            # ======================================================
 
             record.is_late = bool(
-                payment_date > due_date
+                late_days > 0
             )
 
             if not record.is_late:
                 continue
 
-            # ==================================================
+            # ======================================================
             # CALCUL DE LA PÉNALITÉ
-            # ==================================================
-
-            subscription = (
-                subscription_line.subscription_id
-            )
+            # ======================================================
 
             penalty_amount = 0.0
 
-            # --------------------------------------------------
+            # ------------------------------------------------------
             # PÉNALITÉ FIXE
-            # --------------------------------------------------
+            # ------------------------------------------------------
 
             if (
-                hasattr(subscription, "penalty_type")
+                hasattr(
+                    subscription,
+                    "penalty_type",
+                )
                 and subscription.penalty_type == "fixed"
             ):
 
                 penalty_amount = (
-                    subscription.penalty_amount or 0.0
+                    subscription.penalty_amount
+                    or 0.0
                 )
 
-            # --------------------------------------------------
+            # ------------------------------------------------------
             # PÉNALITÉ EN POURCENTAGE
-            # --------------------------------------------------
+            # ------------------------------------------------------
 
             elif (
-                hasattr(subscription, "penalty_type")
-                and subscription.penalty_type == "percentage"
+                hasattr(
+                    subscription,
+                    "penalty_type",
+                )
+                and subscription.penalty_type
+                == "percentage"
             ):
 
                 penalty_rate = (
-                    subscription.penalty_rate or 0.0
+                    subscription.penalty_rate
+                    or 0.0
                 )
 
                 penalty_amount = (
@@ -415,7 +1046,13 @@ class AssociationPaymentLine(models.Model):
                     / 100.0
                 )
 
-            record.penalty_amount = penalty_amount
+            # ======================================================
+            # AFFECTATION DE LA PÉNALITÉ
+            # ======================================================
+
+            record.penalty_amount = (
+                penalty_amount
+            )
     
     # ==========================================================
     # TOTAL AVEC PÉNALITÉ
@@ -461,21 +1098,66 @@ class AssociationPaymentLine(models.Model):
                 record.allocation_state = "confirmed"
 
     # ==========================================================
-    # ONCHANGE
+    # ONCHANGE - COTISATION À RÉGLER
     # ==========================================================
 
     @api.onchange("subscription_line_id")
     def _onchange_subscription_line_id(self):
+
         for record in self:
+
+            # ======================================================
+            # RÉINITIALISATION
+            # ======================================================
+
+            record.amount_paid = 0.0
 
             if not record.subscription_line_id:
                 continue
 
-            if record.balance_before_payment > 0:
-                record.amount_paid = (
-                    record.balance_before_payment
-                )
+            # ======================================================
+            # RESTE À PAYER SUR LA COTISATION
+            # ======================================================
 
+            balance = (
+                record.balance_before_payment
+                or record.subscription_line_id.balance
+                or 0.0
+            )
+
+            # ======================================================
+            # MONTANT ENCORE DISPONIBLE SUR LE PAIEMENT
+            # ======================================================
+
+            payment = record.payment_id
+
+            if not payment:
+                continue
+
+            other_allocations = sum(
+                payment.line_ids
+                .filtered(
+                    lambda line:
+                        line != record
+                )
+                .mapped("amount_paid")
+            )
+
+            available_amount = max(
+                (payment.amount or 0.0)
+                - other_allocations,
+                0.0,
+            )
+
+            # ======================================================
+            # AFFECTATION AUTOMATIQUE
+            # ======================================================
+
+            record.amount_paid = min(
+                balance,
+                available_amount,
+            )
+    
     # ==========================================================
     # CONTRAINTES
     # ==========================================================
