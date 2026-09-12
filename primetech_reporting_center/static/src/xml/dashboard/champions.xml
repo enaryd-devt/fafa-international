@@ -1,18 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t
-    t-name="primetech_reporting_center.Champions"
-    owl="1">
+<t t-name="primetech_reporting_center.Champions" owl="1">
 
     <div class="pt-champions-grid">
 
         <!-- CLIENT -->
 
-        <div
-            class="pt-champion-card pt-clickable-card pt-client-card"
-            t-on-click="() => this.openCustomer()">
+        <div class="pt-champion-card pt-clickable-card pt-client-card" t-on-click="() =&gt; this.openCustomer()">
 
             <div class="pt-champion-header">
 
@@ -34,23 +29,13 @@
 
             <div class="pt-champion-name">
 
-                <t t-esc="
-                    state.customer
-                    ? state.customer.name
-                    : '-'
-                "/>
+                <t t-esc="state.customer ? state.customer.name : '-'"/>
 
             </div>
 
             <div class="pt-champion-amount">
 
-                <t t-esc="
-                    formatCurrency(
-                        state.customer
-                        ? state.customer.amount
-                        : 0
-                    )
-                "/>
+                <t t-esc="formatCurrency( state.customer ? state.customer.amount : 0 )"/>
 
             </div>
 
@@ -58,11 +43,7 @@
 
                 <span>
 
-                    <t t-esc="
-                        state.customer
-                        ? state.customer.count
-                        : 0
-                    "/>
+                    <t t-esc="state.customer ? state.customer.count : 0"/>
 
                     Factures
 
@@ -74,9 +55,7 @@
 
         <!-- PRODUIT -->
 
-        <div
-            class="pt-champion-card pt-clickable-card pt-product-card"
-            t-on-click="() => this.openProduct()">
+        <div class="pt-champion-card pt-clickable-card pt-product-card" t-on-click="() =&gt; this.openProduct()">
 
             <div class="pt-champion-header">
 
@@ -100,23 +79,13 @@
 
             <div class="pt-champion-name">
 
-                <t t-esc="
-                    state.product
-                    ? state.product.name
-                    : '-'
-                "/>
+                <t t-esc="state.product ? state.product.name : '-'"/>
 
             </div>
 
             <div class="pt-champion-amount">
 
-                <t t-esc="
-                    formatCurrency(
-                        state.product
-                        ? state.product.amount
-                        : 0
-                    )
-                "/>
+                <t t-esc="formatCurrency( state.product ? state.product.amount : 0 )"/>
 
             </div>
 
@@ -124,11 +93,7 @@
 
                 <span>
 
-                    <t t-esc="
-                        state.product
-                        ? state.product.qty
-                        : 0
-                    "/>
+                    <t t-esc="state.product ? state.product.qty : 0"/>
 
                     Unités vendues
 
@@ -140,9 +105,7 @@
 
         <!-- COMMERCIAL -->
 
-        <div
-            class="pt-champion-card pt-clickable-card pt-sales-card"
-            t-on-click="() => this.openSalesperson()">
+        <div class="pt-champion-card pt-clickable-card pt-sales-card" t-on-click="() =&gt; this.openSalesperson()">
 
             <div class="pt-champion-header">
 
@@ -166,23 +129,13 @@
 
             <div class="pt-champion-name">
 
-                <t t-esc="
-                    state.salesperson
-                    ? state.salesperson.name
-                    : '-'
-                "/>
+                <t t-esc="state.salesperson ? state.salesperson.name : '-'"/>
 
             </div>
 
             <div class="pt-champion-amount">
 
-                <t t-esc="
-                    formatCurrency(
-                        state.salesperson
-                        ? state.salesperson.amount
-                        : 0
-                    )
-                "/>
+                <t t-esc="formatCurrency( state.salesperson ? state.salesperson.amount : 0 )"/>
 
             </div>
 
@@ -190,11 +143,7 @@
 
                 <span>
 
-                    <t t-esc="
-                        state.salesperson
-                        ? state.salesperson.orders
-                        : 0
-                    "/>
+                    <t t-esc="state.salesperson ? state.salesperson.orders : 0"/>
 
                     Commandes
 

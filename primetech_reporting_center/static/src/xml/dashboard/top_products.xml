@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t t-name="primetech_reporting_center.TopProducts"
-   owl="1">
+<t t-name="primetech_reporting_center.TopProducts" owl="1">
 
     <div class="pt-card pt-products-card">
 
@@ -55,15 +53,7 @@
 
                     <tbody>
 
-                        <tr
-                            t-foreach="state.products"
-                            t-as="product"
-                            t-key="product.id"
-                            class="pt-clickable-row"
-                            t-on-click="
-                                () => this.openProduct(
-                                    product.id
-                                )">
+                        <tr t-foreach="state.products" t-as="product" t-key="product.id" class="pt-clickable-row" t-on-click="() =&gt; this.openProduct( product.id )">
 
                             <td>
 
@@ -75,11 +65,7 @@
 
                                 <strong>
 
-                                    <t t-esc="
-                                        formatCurrency(
-                                            product.amount
-                                        )
-                                    "/>
+                                    <t t-esc="formatCurrency( product.amount )"/>
 
                                 </strong>
 
@@ -89,9 +75,7 @@
 
                                 <span class="pt-badge">
 
-                                    <t t-esc="
-                                        product.qty
-                                    "/>
+                                    <t t-esc="product.qty"/>
 
                                 </span>
 
@@ -99,14 +83,9 @@
 
                         </tr>
 
-                        <tr
-                            t-if="
-                                !state.products.length
-                            ">
+                        <tr t-if="!state.products.length">
 
-                            <td
-                                colspan="3"
-                                class="text-center">
+                            <td colspan="3" class="text-center">
 
                                 Aucun produit trouvé
 

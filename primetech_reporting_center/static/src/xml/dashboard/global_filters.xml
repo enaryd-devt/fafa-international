@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-    <t t-name="primetech_reporting_center.GlobalFilters"
-       owl="1">
+    <t t-name="primetech_reporting_center.GlobalFilters" owl="1">
 
         <div class="pt-filters-card">
 
@@ -47,9 +45,7 @@
 
                         <i class="fa fa-calendar"/>
 
-                        <select
-                            class="pt-input"
-                            t-on-change="onPeriodChange">
+                        <select class="pt-input" t-on-change="onPeriodChange">
 
                             <option value="today">
                                 Aujourd'hui
@@ -59,8 +55,7 @@
                                 Cette semaine
                             </option>
 
-                            <option value="month"
-                                    selected="selected">
+                            <option value="month" selected="selected">
                                 Ce mois
                             </option>
 
@@ -94,9 +89,7 @@
 
                         <i class="fa fa-calendar"/>
 
-                        <input
-                            type="date"
-                            class="pt-input"/>
+                        <input type="date" class="pt-input"/>
 
                     </div>
 
@@ -114,9 +107,7 @@
 
                         <i class="fa fa-calendar"/>
 
-                        <input
-                            type="date"
-                            class="pt-input"/>
+                        <input type="date" class="pt-input"/>
 
                     </div>
 

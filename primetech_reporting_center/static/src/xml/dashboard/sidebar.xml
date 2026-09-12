@@ -1,22 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-    <t t-name="primetech_reporting_center.Sidebar"
-       owl="1">
+    <t t-name="primetech_reporting_center.Sidebar" owl="1">
 
-        <aside
-            t-att-class="
-                props.collapsed
-                ? 'pt-sidebar collapsed'
-                : 'pt-sidebar'
-            ">
+        <aside t-att-class="props.collapsed ? 'pt-sidebar collapsed' : 'pt-sidebar'">
 
             <div class="pt-sidebar-header">
 
-                <div
-                    class="pt-sidebar-brand"
-                    t-if="!props.collapsed">
+                <div class="pt-sidebar-brand" t-if="!props.collapsed">
 
                     <div class="pt-sidebar-title">
                         PrimeTech Reporting
@@ -28,9 +19,7 @@
 
                 </div>
 
-                <button
-                    class="btn btn-light pt-toggle-btn"
-                    t-on-click="props.onToggle">
+                <button class="btn btn-light pt-toggle-btn" t-on-click="props.onToggle">
 
                     <i class="fa fa-bars"/>
 

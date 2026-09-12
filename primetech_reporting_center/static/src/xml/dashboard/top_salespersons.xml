@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t t-name="primetech_reporting_center.TopSalespersons"
-   owl="1">
+<t t-name="primetech_reporting_center.TopSalespersons" owl="1">
 
     <div class="pt-card pt-salespersons-card">
 
@@ -55,15 +53,7 @@
 
                     <tbody>
 
-                        <tr
-                            t-foreach="state.salespersons"
-                            t-as="person"
-                            t-key="person.id"
-                            class="pt-clickable-row"
-                            t-on-click="
-                                () => this.openSalesperson(
-                                    person.id
-                                )">
+                        <tr t-foreach="state.salespersons" t-as="person" t-key="person.id" class="pt-clickable-row" t-on-click="() =&gt; this.openSalesperson( person.id )">
 
                             <td>
 
@@ -75,11 +65,7 @@
 
                                 <strong>
 
-                                    <t t-esc="
-                                        formatCurrency(
-                                            person.amount
-                                        )
-                                    "/>
+                                    <t t-esc="formatCurrency( person.amount )"/>
 
                                 </strong>
 
@@ -89,9 +75,7 @@
 
                                 <span class="pt-badge">
 
-                                    <t t-esc="
-                                        person.orders
-                                    "/>
+                                    <t t-esc="person.orders"/>
 
                                 </span>
 
@@ -99,14 +83,9 @@
 
                         </tr>
 
-                        <tr
-                            t-if="
-                                !state.salespersons.length
-                            ">
+                        <tr t-if="!state.salespersons.length">
 
-                            <td
-                                colspan="3"
-                                class="text-center">
+                            <td colspan="3" class="text-center">
 
                                 Aucun commercial
 

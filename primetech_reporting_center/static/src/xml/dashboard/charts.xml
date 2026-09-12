@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-    <t t-name="primetech_reporting_center.ChartContainer"
-       owl="1">
+    <t t-name="primetech_reporting_center.ChartContainer" owl="1">
 
         <div class="pt-charts-grid">
 
@@ -13,9 +11,7 @@
                     Évolution du Chiffre d'Affaires et créances
                 </div>
 
-                <canvas
-                    id="ptRevenueChart"
-                    height="120">
+                <canvas id="ptRevenueChart" height="120">
                 </canvas>
 
             </div>
@@ -26,9 +22,7 @@
                     Répartition des Activités
                 </div>
 
-                <canvas
-                    id="ptActivityChart"
-                    height="120">
+                <canvas id="ptActivityChart" height="120">
                 </canvas>
 
             </div>

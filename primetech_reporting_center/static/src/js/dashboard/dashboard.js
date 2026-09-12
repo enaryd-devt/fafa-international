@@ -15,7 +15,7 @@ import { ChartContainer } from "./charts";
 import { RecentActivities } from "./recent_activities";
 import { FavoriteReports } from "./favorite_reports";
 import { QuickActions } from "./quick_actions";
-import { GlobalFilters } from "./global_filters";
+import { ExecutiveOverview } from "./executive_overview";
 import { TopCustomers } from "./top_customers";
 import { TopProducts } from "./top_products";
 import { RiskCenter } from "./risk_center";
@@ -30,8 +30,12 @@ import { Champions } from "./champions";
 import { TargetsProgress } from "./targets_progress";
 import { SalesForecast } from "./sales_forecast";
 import { SmartAlerts } from "./smart_alerts";
+import { ExecutiveDetails } from "./executive_details";
+import { ExecutiveBoard } from "./executive_board";
 
 export class PrimetechReportingDashboard extends Component {
+
+    static props = { "*": true };
 
 
 static template =
@@ -57,7 +61,9 @@ static components = {
     RecentActivities,
     FavoriteReports,
     QuickActions,
-    GlobalFilters,
+    ExecutiveOverview,
+    ExecutiveDetails,
+    ExecutiveBoard,
     TopCustomers,
     TopProducts,
     RiskCenter,

@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t t-name="primetech_reporting_center.RiskCenter"
-owl="1">
+<t t-name="primetech_reporting_center.RiskCenter" owl="1">
 
 <div class="pt-risk-grid">
 
@@ -50,17 +48,9 @@ owl="1">
 
            <div class="pt-risk-body">
 
-                <t
-                    t-foreach="state.invoices"
-                    t-as="customer"
-                    t-key="customer.id">
+                <t t-foreach="state.invoices" t-as="customer" t-key="customer.id">
 
-                    <div class="pt-risk-row clickable"
-                        t-on-click="
-                            () => this.openCustomerInvoices(
-                                customer.id
-                            )
-                        ">
+                    <div class="pt-risk-row clickable" t-on-click="() =&gt; this.openCustomerInvoices( customer.id )">
 
                         <div class="pt-risk-left">
 
@@ -86,11 +76,7 @@ owl="1">
 
                             <div class="pt-risk-value">
 
-                                <t t-esc="
-                                    this.formatCurrency(
-                                        customer.residual
-                                    )
-                                "/>
+                                <t t-esc="this.formatCurrency( customer.residual )"/>
 
                             </div>
 
@@ -154,15 +140,9 @@ owl="1">
 
                  <div class="pt-risk-body">
 
-                <t
-                    t-foreach="state.products"
-                    t-as="product"
-                    t-key="product.id">
+                <t t-foreach="state.products" t-as="product" t-key="product.id">
 
-                    <div class="pt-risk-row clickable"
-                        t-on-click="
-                            () => this.openDeliveryOrders(product)
-                        ">
+                    <div class="pt-risk-row clickable" t-on-click="() =&gt; this.openDeliveryOrders(product)">
 
                         <div class="pt-risk-left">
 

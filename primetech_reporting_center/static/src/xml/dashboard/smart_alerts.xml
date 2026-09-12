@@ -1,10 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t
-    t-name="primetech_reporting_center.SmartAlerts"
-    owl="1">
+<t t-name="primetech_reporting_center.SmartAlerts" owl="1">
 
     <div class="pt-alerts-card">
 
@@ -24,9 +21,7 @@
 
             <div class="pt-alert-count">
 
-                <t t-esc="
-                    state.alerts.length
-                "/>
+                <t t-esc="state.alerts.length"/>
 
             </div>
 
@@ -44,9 +39,7 @@
 
         <t t-else="">
 
-            <div
-                t-if="!state.alerts.length"
-                class="pt-no-alert">
+            <div t-if="!state.alerts.length" class="pt-no-alert">
 
                 <i class="fa fa-check-circle"/>
 
@@ -58,45 +51,21 @@
 
             </div>
 
-            <div
-                t-else=""
-                class="pt-alerts-list">
+            <div t-else="" class="pt-alerts-list">
 
-                <div
+                <div t-foreach="state.alerts" t-as="alert" t-key="alert.message" t-att-class="'pt-alert-item pt-alert-' + alert.type" t-on-click="() =&gt; this.openAlert(alert)">
 
-                    t-foreach="state.alerts"
+                    <div class="pt-alert-icon">
 
-                    t-as="alert"
-
-                    t-key="alert.message"
-
-                    t-att-class="
-                        'pt-alert-item pt-alert-' +
-                        alert.type
-                    "
-
-                    t-on-click="
-                        () => this.openAlert(alert)
-                    ">
-
-                    <div
-                        class="pt-alert-icon">
-
-                        <t t-esc="
-                            alert.icon
-                        "/>
+                        <t t-esc="alert.icon"/>
 
                     </div>
 
-                    <div
-                        class="pt-alert-content">
+                    <div class="pt-alert-content">
 
-                        <div
-                            class="pt-alert-message">
+                        <div class="pt-alert-message">
 
-                            <t t-esc="
-                                alert.message
-                            "/>
+                            <t t-esc="alert.message"/>
 
                         </div>
 

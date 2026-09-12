@@ -1,1807 +1,289 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
+  <template id="sales_periodic_pdf">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <t t-set="summary" t-value="report_data.get('summary', {})"/>
+        <t t-set="sales_lines" t-value="report_data.get('sales_lines', [])"/>
+        <t t-set="seller_summary" t-value="report_data.get('seller_summary', [])"/>
+        <t t-set="customer_summary" t-value="report_data.get('customer_summary', [])"/>
+        <t t-set="product_summary" t-value="report_data.get('product_summary', [])"/>
+        <div style="font-family:Arial,Helvetica,sans-serif; font-size:12px; color:#000;">
+          <!-- ===================================== -->
+          <!-- ENTETE RAPPORT -->
+          <!-- ===================================== -->
+          <table style="width:100%; border-collapse:collapse; margin-bottom:15px; border-bottom:1px solid #000; padding-bottom:8px;">
+            <tr>
+              <td colspan="2" style="text-align:center; font-size:22px; font-weight:bold; text-transform:uppercase; padding-bottom:15px;">
 
-    <template id="sales_periodic_pdf">
-
-        <t t-call="web.html_container">
-
-            <t t-call="web.external_layout">
-
-                <t t-set="summary"
-                   t-value="report_data.get('summary', {})"/>
-
-                <t t-set="sales_lines"
-                   t-value="report_data.get('sales_lines', [])"/>
-
-                <t t-set="seller_summary"
-                   t-value="report_data.get('seller_summary', [])"/>
-
-                <t t-set="customer_summary"
-                   t-value="report_data.get('customer_summary', [])"/>
-
-                <t t-set="product_summary"
-                   t-value="report_data.get('product_summary', [])"/>
-
-                <t t-set="warehouse_summary"
-                   t-value="report_data.get('warehouse_summary', [])"/>
-
-                <div style="font-family:Arial,sans-serif;font-size:12px;">
-
-                    <!-- =============================================== -->
-                    <!-- TITRE -->
-                    <!-- =============================================== -->
-
-                    <table style="
-                        width:100%;
-                        margin-bottom:20px;
-                        border-collapse:collapse;
-                    ">
-
-                        <tr>
-
-                            <td style="width:80%;">
-
-                                <div style="
-                                    font-size:24px;
-                                    font-weight:bold;
-                                    color:#1F4E79;
-                                    text-transform:uppercase;
-                                ">
-
-                                    RAPPORT PÉRIODIQUE DES VENTES
-
-                                </div>
-
-                                <div style="
-                                    margin-top:8px;
-                                    font-size:13px;
-                                    color:#666;
-                                ">
-
-                                    Période :
-
-                                    <strong>
-
-                                        <t t-esc="wizard.date_from"/>
-
-                                    </strong>
-
-                                    au
-
-                                    <strong>
-
-                                        <t t-esc="wizard.date_to"/>
-
-                                    </strong>
-
-                                </div>
+                                RAPPORT PÉRIODIQUE DES VENTES
 
                             </td>
+            </tr>
+            <tr>
+              <td style="width:50%; text-align:left; font-size:14px;"><strong>Période :</strong><t t-esc="wizard.date_from"/>
 
+                                au
 
-                        </tr>
-
-                    </table>
-
-                    <!-- =============================================== -->
-                    <!-- INFORMATIONS -->
-                    <!-- =============================================== -->
-
-                    <table style="
-                        width:100%;
-                        margin-bottom:20px;
-                        border-collapse:collapse;
-                        background:#F7F9FB;
-                        border:1px solid #D9E2EC;
-                    ">
-
-                        <tr>
-
-                            <td style="padding:10px;">
-
-                                Société :
-
-                                <strong>
-
-                                    <t t-esc="wizard.company_id.name"/>
-
-                                </strong>
+                                <t t-esc="wizard.date_to"/>
 
                             </td>
-
-                            <td style="padding:10px;">
-
-                                Généré par :
-
-                                <strong>
-
-                                    <t t-esc="generated_by.name"/>
-
-                                </strong>
-
-                            </td>
-
-                            <td style="
-                                padding:10px;
-                                text-align:right;
-                            ">
-
-                                <strong>
-
-                                    <t t-esc="generated_at.strftime('%d/%m/%Y %H:%M')"/>
-
-                                </strong>
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-
-                    <!-- =============================================== -->
-                    <!-- KPI -->
-                    <!-- =============================================== -->
-
-                    <table style="
-                        width:100%;
-                        margin-bottom:25px;
-                        border-collapse:separate;
-                        border-spacing:8px;
-                    ">
-
-                        <tr>
-
-                            <td style="
-                                width:25%;
-                                background:#1F4E79;
-                                color:white;
-                                padding:15px;
-                                text-align:center;
-                                border-radius:6px;
-                            ">
-
-                                <div style="
-                                    font-size:11px;
-                                    text-transform:uppercase;
-                                ">
-
-                                    CHIFFRE D'AFFAIRES HT
-
-                                </div>
-
-                                <div style="
-                                    font-size:22px;
-                                    font-weight:bold;
-                                    margin-top:8px;
-                                ">
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ht',0)).replace(',', ' ')"/>
-
-                                </div>
-
-                            </td>
-
-                            <td style="
-                                width:25%;
-                                background:#198754;
-                                color:white;
-                                padding:15px;
-                                text-align:center;
-                                border-radius:6px;
-                            ">
-
-                                <div style="font-size:11px;">
-
-                                    CHIFFRE D'AFFAIRES TTC
-
-                                </div>
-
-                                <div style="
-                                    font-size:22px;
-                                    font-weight:bold;
-                                    margin-top:8px;
-                                ">
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ttc',0)).replace(',', ' ')"/>
-
-                                </div>
-
-                            </td>
-
-                            <td style="
-                                width:25%;
-                                background:#F39C12;
-                                color:white;
-                                padding:15px;
-                                text-align:center;
-                                border-radius:6px;
-                            ">
-
-                                <div style="font-size:11px;">
-
-                                    QUANTITÉ VENDUE
-
-                                </div>
-
-                                <div style="
-                                    font-size:22px;
-                                    font-weight:bold;
-                                    margin-top:8px;
-                                ">
-
-                                    <t t-esc="'{:,.2f}'.format(summary.get('qty_sold',0)).rstrip('0').rstrip('.')"/>
-
-                                </div>
-
-                            </td>
-
-                            <td style="
-                                width:25%;
-                                background:#6F42C1;
-                                color:white;
-                                padding:15px;
-                                text-align:center;
-                                border-radius:6px;
-                            ">
-
-                                <div style="font-size:11px;">
-
-                                    NOMBRE DE VENTES
-
-                                </div>
-
-                                <div style="
-                                    font-size:22px;
-                                    font-weight:bold;
-                                    margin-top:8px;
-                                ">
-
-                                    <t t-esc="summary.get('sale_count',0)"/>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-
-                    <!-- =============================================== -->
-                    <!-- DÉTAIL DES VENTES -->
-                    <!-- =============================================== -->
-                                         <table style="
-                        width:100%;
-                        border-collapse:collapse;
-                        table-layout:fixed;
-                        font-size:11px;
-                        margin-bottom:25px;
-                    ">
-
-                        <thead>
-
-                            <tr style="
-                                background:#1F4E79;
-                                color:white;
-                            ">
-
-                                <th style="width:8%;padding:7px;border:1px solid #DDD;">
-                                    Document
+              <td style="width:50%; text-align:right; font-size:14px;">
+                <strong>Imprimé le :</strong>
+                <t t-esc="generated_at.strftime('%d/%m/%Y %H:%M:%S')"/>
+              </td>
+            </tr>
+          </table>
+          <!-- ===================================== -->
+          <!-- DETAIL VENTES -->
+          <!-- ===================================== -->
+          <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            <thead>
+              <tr>
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
+                                    Facture
                                 </th>
-
-                                <th style="width:7%;padding:7px;border:1px solid #DDD;">
-                                    Type
-                                </th>
-
-                                <th style="width:8%;padding:7px;border:1px solid #DDD;">
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
                                     Date
                                 </th>
-
-                                <th style="width:10%;padding:7px;border:1px solid #DDD;">
-                                    Magasin
-                                </th>
-
-                                <th style="width:12%;padding:7px;border:1px solid #DDD;">
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
                                     Client
                                 </th>
-
-                                <th style="width:10%;padding:7px;border:1px solid #DDD;">
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
                                     Vendeur
                                 </th>
-
-                                <th style="width:18%;padding:7px;border:1px solid #DDD;">
-                                    Produit
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
+                                    Article
                                 </th>
-
-                                <th style="width:6%;padding:7px;border:1px solid #DDD;text-align:center;">
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
                                     Qté
                                 </th>
-
-                                <th style="width:6%;padding:7px;border:1px solid #DDD;text-align:center;">
-                                    Livrée
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
+                                    PU HT
                                 </th>
-
-                                <th style="width:6%;padding:7px;border:1px solid #DDD;text-align:center;">
-                                    Facturée
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
+                                    Total HT
                                 </th>
-
-                                <th style="width:9%;padding:7px;border:1px solid #DDD;text-align:right;">
-                                    HT
+                <th style="background:#3a3a3a; color:#fff; border:1px solid #999; padding:5px;">
+                                    Total TTC
                                 </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <t t-foreach="sales_lines"
-                               t-as="line">
-
-                                <tr style="border-bottom:1px solid #EAEAEA;">
-
-                                    <!-- Document -->
-
-                                    <td style="padding:6px;border:1px solid #DDD;">
-
-                                        <strong>
-
-                                            <t t-esc="line['document']"/>
-
-                                        </strong>
-
-                                    </td>
-
-                                    <!-- Type -->
-
-                                    <td style="
-                                        padding:6px;
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <span
-                                            t-if="line['sale_type']=='Point de Vente'"
-                                            style="
-                                                background:#198754;
-                                                color:white;
-                                                padding:2px 6px;
-                                                border-radius:10px;
-                                                font-size:10px;
-                                            ">
-
-                                            POS
-
-                                        </span>
-
-                                        <span
-                                            t-if="line['sale_type']!='Point de Vente'"
-                                            style="
-                                                background:#0D6EFD;
-                                                color:white;
-                                                padding:2px 6px;
-                                                border-radius:10px;
-                                                font-size:10px;
-                                            ">
-
-                                            Vente
-
-                                        </span>
-
-                                    </td>
-
-                                    <!-- Date -->
-
-                                    <td style="
-                                        padding:6px;
-                                        border:1px solid #DDD;
-                                        text-align:center;
-                                    ">
-
-                                        <t t-esc="line['date'].strftime('%d/%m/%Y') if line['date'] else ''"/>
-
-                                    </td>
-
-                                    <!-- Magasin -->
-
-                                    <td style="
-                                        padding:6px;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-esc="line['warehouse']"/>
-
-                                    </td>
-
-                                    <!-- Client -->
-
-                                    <td style="
-                                        padding:6px;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-esc="line['customer']"/>
-
-                                    </td>
-
-                                    <!-- Commercial -->
-
-                                    <td style="
-                                        padding:6px;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-esc="line['seller']"/>
-
-                                    </td>
-
-                                    <!-- Produit -->
-
-                                    <td style="
-                                        padding:6px;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <strong>
-
-                                            <t t-esc="line['product']"/>
-
-                                        </strong>
-
-                                    </td>
-
-                                    <!-- Qté -->
-
-                                    <td style="
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-esc="'{:,.2f}'.format(line['qty']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                    </td>
-
-                                    <!-- Livrée -->
-
-                                    <td style="
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                        color:#198754;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="'{:,.2f}'.format(line['qty_delivered']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                    </td>
-
-                                    <!-- Facturée -->
-
-                                    <td style="
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                        color:#6F42C1;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="'{:,.2f}'.format(line['qty_invoiced']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                    </td>
-
-                                    <!-- CA HT -->
-
-                                    <td style="
-                                        text-align:right;
-                                        border:1px solid #DDD;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="'{:,.0f}'.format(line['ht']).replace(',',' ')"/>
-
-                                    </td>
-
-                                </tr>
-
-                            </t>
-                                                        <!-- ============================================ -->
-                            <!-- TOTAUX -->
-                            <!-- ============================================ -->
-
-                            <tr style="
-                                background:#F4F6F9;
-                                border-top:2px solid #1F4E79;
-                                font-weight:bold;
-                            ">
-
-                                <td colspan="7"
-                                    style="
-                                        padding:8px;
-                                        text-align:right;
-                                        border:1px solid #DDD;
-                                        color:#1F4E79;
-                                    ">
-
-                                    TOTAUX GÉNÉRAUX
-
-                                </td>
-
-                                <!-- Quantité -->
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:center;
-                                    border:1px solid #DDD;
-                                    color:#1F4E79;
-                                ">
-
-                                    <t t-esc="'{:,.2f}'.format(summary.get('qty_sold',0)).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                </td>
-
-                                <!-- Livrée -->
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:center;
-                                    border:1px solid #DDD;
-                                    color:#198754;
-                                ">
-
-                                    <t t-esc="'{:,.2f}'.format(sum(l['qty_delivered'] for l in sales_lines)).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                </td>
-
-                                <!-- Facturée -->
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:center;
-                                    border:1px solid #DDD;
-                                    color:#6F42C1;
-                                ">
-
-                                    <t t-esc="'{:,.2f}'.format(sum(l['qty_invoiced'] for l in sales_lines)).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                </td>
-
-                                <!-- HT -->
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:right;
-                                    border:1px solid #DDD;
-                                    color:#DC3545;
-                                    font-size:13px;
-                                ">
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ht',0)).replace(',',' ')"/>
-
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                    <!-- ===================================================== -->
-                    <!-- RÉSUMÉ GÉNÉRAL -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        margin-top:25px;
-                        margin-bottom:10px;
-                        font-size:16px;
-                        font-weight:bold;
-                        color:#1F4E79;
-                        border-left:5px solid #1F4E79;
-                        padding-left:10px;
-                    ">
-
-                        SYNTHÈSE GÉNÉRALE
-
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="sales_lines" t-as="line">
+                <tr>
+                  <td style="border:1px solid #ccc; padding:4px;">
+                    <t t-esc="line['invoice']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px;">
+                    <t t-esc="line['date']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px;">
+                    <t t-esc="line['customer']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px;">
+                    <t t-esc="line['seller']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px;">
+                    <t t-esc="line['product']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px; text-align:center;">
+                    <t t-esc="line['qty']"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px; text-align:right;">
+                    <t t-esc="'{:,.0f}'.format(line['unit_price'])"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px; text-align:right; font-weight:bold;">
+                    <t t-esc="'{:,.0f}'.format(line['ht'])"/>
+                  </td>
+                  <td style="border:1px solid #ccc; padding:4px; text-align:right; font-weight:bold;">
+                    <t t-esc="'{:,.0f}'.format(line['ttc'])"/>
+                  </td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+          <!-- ===================================== -->
+          <!-- RESUME GENERAL -->
+          <!-- ===================================== -->
+          <div style="background:#2f2f2f; color:white; padding:8px; font-weight:bold; margin-top:15px; margin-bottom:5px;">
+                        RÉSUMÉ GÉNÉRAL
                     </div>
-
-                    <table style="
-                        width:100%;
-                        border-collapse:collapse;
-                        margin-bottom:25px;
-                    ">
-
-                        <tr>
-
-                            <td style="
-                                width:25%;
-                                border:1px solid #DDD;
-                                padding:10px;
-                            ">
-
-                                <strong>Nombre de ventes</strong>
-
-                                <br/>
-
-                                <span style="
-                                    font-size:22px;
-                                    color:#1F4E79;
-                                ">
-
-                                    <t t-esc="summary.get('sale_count',0)"/>
-
-                                </span>
-
+          <table style="width:55%; border-collapse:collapse; margin-bottom:15px;">
+            <tr>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold;">
+                                Nombre de factures
                             </td>
-
-                            <td style="
-                                width:25%;
-                                border:1px solid #DDD;
-                                padding:10px;
-                            ">
-
-                                <strong>Clients</strong>
-
-                                <br/>
-
-                                <span style="
-                                    font-size:22px;
-                                    color:#198754;
-                                ">
-
-                                    <t t-esc="summary.get('customer_count',0)"/>
-
-                                </span>
-
+              <td style="border:1px solid #ccc; padding:6px;">
+                <t t-esc="summary.get('invoice_count', 0)"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold;">
+                                Nombre de clients
                             </td>
-
-                            <td style="
-                                width:25%;
-                                border:1px solid #DDD;
-                                padding:10px;
-                            ">
-
-                                <strong>Vendeurs</strong>
-
-                                <br/>
-
-                                <span style="
-                                    font-size:22px;
-                                    color:#F39C12;
-                                ">
-
-                                    <t t-esc="summary.get('seller_count',0)"/>
-
-                                </span>
-
+              <td style="border:1px solid #ccc; padding:6px;">
+                <t t-esc="report_data['summary']['customer_count']"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold;">
+                                Nombre de vendeurs
                             </td>
-
-                            <td style="
-                                width:25%;
-                                border:1px solid #DDD;
-                                padding:10px;
-                            ">
-
-                                <strong>Magasins</strong>
-
-                                <br/>
-
-                                <span style="
-                                    font-size:22px;
-                                    color:#6F42C1;
-                                ">
-
-                                    <t t-esc="summary.get('warehouse_count',0)"/>
-
-                                </span>
-
+              <td style="border:1px solid #ccc; padding:6px;">
+                <t t-esc="report_data['summary']['seller_count']"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold;">
+                                Chiffre d'Affaire Hors Taxes
                             </td>
-
-                        </tr>
-
-                    </table>
-                    <!-- ===================================================== -->
-                    <!-- SYNTHÈSE PAR COMMERCIAL -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        margin-top:30px;
-                        margin-bottom:10px;
-                        font-size:16px;
-                        font-weight:bold;
-                        color:#1F4E79;
-                        border-left:5px solid #198754;
-                        padding-left:10px;
-                    ">
-
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold; text-align:right;"><t t-esc="'{:,.0f}'.format( report_data['summary']['turnover_ht'] )"/>
+                                FCFA
+                            </td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold;">
+                                Chiffre d'Affaire TTC
+                            </td>
+              <td style="border:1px solid #ccc; padding:6px; font-weight:bold; text-align:right;"><t t-esc="'{:,.0f}'.format( report_data['summary']['turnover_ttc'] )"/>
+                                FCFA
+                            </td>
+            </tr>
+          </table>
+          <!-- ===================================== -->
+          <!-- SYNTHESE VENDEUR -->
+          <!-- ===================================== -->
+          <div style="background:#2f2f2f; color:white; padding:8px; font-weight:bold; margin-bottom:5px;">
                         SYNTHÈSE PAR VENDEUR
-
                     </div>
-
-                    <table style="
-                        width:100%;
-                        border-collapse:collapse;
-                        font-size:11px;
-                        margin-bottom:30px;
-                    ">
-
-                        <thead>
-
-                            <tr style="
-                                background:#198754;
-                                color:white;
-                            ">
-
-                                <th style="
-                                    width:6%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                ">
-
-                                    #
-
-                                </th>
-
-                                <th style="
-                                    width:34%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                ">
-
+          <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
+            <thead>
+              <tr>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
                                     Vendeur
-
                                 </th>
-
-                                <th style="
-                                    width:15%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                    text-align:center;
-                                ">
-
-                                    Qté
-
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    Quantité Vendue
                                 </th>
-
-                                <th style="
-                                    width:20%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                    text-align:right;
-                                ">
-
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
                                     CA HT
-
                                 </th>
-
-                                <th style="
-                                    width:20%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                    text-align:right;
-                                ">
-
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
                                     CA TTC
-
                                 </th>
-
-                                <th style="
-                                    width:15%;
-                                    padding:8px;
-                                    border:1px solid #DDD;
-                                    text-align:center;
-                                ">
-
-                                    %
-
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="report_data['seller_summary']" t-as="seller">
+                <tr>
+                  <td style="border:1px solid #ccc;padding:5px;">
+                    <t t-esc="seller['seller']"/>
+                  </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:center;">
+                    <t t-esc="seller['qty']"/>
+                  </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:right;"><t t-esc="'{:,.0f}'.format(seller['ht'])"/>
+                                        FCFA
+                                    </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:right;"><t t-esc="'{:,.0f}'.format(seller['ttc'])"/>
+                                        FCFA
+                                    </td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+          <!-- ===================================== -->
+          <!-- SYNTHESE CLIENT -->
+          <!-- ===================================== -->
+          <div style="background:#2f2f2f; color:white; padding:8px; font-weight:bold; margin-bottom:5px;">
+                        SYNTHÈSE PAR CLIENT
+                    </div>
+          <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
+            <thead>
+              <tr>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    Client
                                 </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <t t-set="total_ht"
-                               t-value="summary.get('turnover_ht',0)"/>
-
-                            <t t-foreach="seller_summary"
-                               t-as="seller">
-
-                                <tr style="border-bottom:1px solid #ECECEC;">
-
-                                    <td style="
-                                        padding:7px;
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="seller_index + 1"/>
-
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    CA HT
+                                </th>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    CA TTC
+                                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="report_data['customer_summary']" t-as="customer">
+                <tr>
+                  <td style="border:1px solid #ccc;padding:5px;">
+                    <t t-esc="customer['customer']"/>
+                  </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:right;"><t t-esc="'{:,.0f}'.format(customer['ht'])"/>
+                                        FCFA
                                     </td>
-
-                                    <td style="
-                                        padding:7px;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <strong>
-
-                                            <t t-esc="seller['seller']"/>
-
-                                        </strong>
-
+                  <td style="border:1px solid #ccc;padding:5px;text-align:right;"><t t-esc="'{:,.0f}'.format(customer['ttc'])"/>
+                                        FCFA
                                     </td>
-
-                                    <td style="
-                                        padding:7px;
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-esc="'{:,.2f}'.format(seller['qty']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                    </td>
-
-                                    <td style="
-                                        padding:7px;
-                                        text-align:right;
-                                        border:1px solid #DDD;
-                                        color:#1F4E79;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="'{:,.0f}'.format(seller['ht']).replace(',',' ')"/>
-
-                                    </td>
-
-                                    <td style="
-                                        padding:7px;
-                                        text-align:right;
-                                        border:1px solid #DDD;
-                                        color:#198754;
-                                        font-weight:bold;
-                                    ">
-
-                                        <t t-esc="'{:,.0f}'.format(seller['ttc']).replace(',',' ')"/>
-
-                                    </td>
-
-                                    <td style="
-                                        padding:7px;
-                                        text-align:center;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                        <t t-if="total_ht">
-
-                                            <t t-esc="'{:.1f}'.format((seller['ht']*100)/total_ht)"/>
-
-                                            %
-
-                                        </t>
-
-                                        <t t-else="">
-
-                                            -
-
-                                        </t>
-
-                                    </td>
-
-                                </tr>
-
-                            </t>
-
-                            <!-- TOTAL -->
-
-                            <tr style="
-                                background:#F8F9FA;
-                                font-weight:bold;
-                                border-top:2px solid #198754;
-                            ">
-
-                                <td colspan="2"
-                                    style="
-                                        padding:8px;
-                                        text-align:right;
-                                        border:1px solid #DDD;
-                                    ">
-
-                                    TOTAL
-
-                                </td>
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:center;
-                                    border:1px solid #DDD;
-                                ">
-
-                                    <t t-esc="'{:,.2f}'.format(summary.get('qty_sold',0)).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                </td>
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:right;
-                                    border:1px solid #DDD;
-                                ">
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ht',0)).replace(',',' ')"/>
-
-                                </td>
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:right;
-                                    border:1px solid #DDD;
-                                ">
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ttc',0)).replace(',',' ')"/>
-
-                                </td>
-
-                                <td style="
-                                    padding:8px;
-                                    text-align:center;
-                                    border:1px solid #DDD;
-                                ">
-
-                                    100 %
-
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-                                        <!-- ===================================================== -->
-                    <!-- SYNTHÈSE CLIENTS / MAGASINS -->
-                    <!-- ===================================================== -->
-
-                    <table style="
-                        width:100%;
-                        border-collapse:separate;
-                        border-spacing:15px 0;
-                        margin-bottom:30px;
-                    ">
-
-                        <tr>
-
-                            <!-- ========================================= -->
-                            <!-- CLIENTS -->
-                            <!-- ========================================= -->
-
-                            <td style="
-                                width:50%;
-                                vertical-align:top;
-                            ">
-
-                                <div style="
-                                    font-size:16px;
-                                    font-weight:bold;
-                                    color:#1F4E79;
-                                    border-left:5px solid #0D6EFD;
-                                    padding-left:10px;
-                                    margin-bottom:10px;
-                                ">
-
-                                    SYNTHÈSE PAR CLIENT
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <thead>
-
-                                        <tr style="
-                                            background:#0D6EFD;
-                                            color:white;
-                                        ">
-
-                                            <th style="
-                                                padding:8px;
-                                                border:1px solid #DDD;
-                                            ">
-                                                Client
-                                            </th>
-
-                                            <th style="
-                                                padding:8px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                            ">
-                                                HT
-                                            </th>
-
-                                            <th style="
-                                                padding:8px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                            ">
-                                                TTC
-                                            </th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        <t t-foreach="customer_summary"
-                                           t-as="customer">
-
-                                            <tr>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    border:1px solid #DDD;
-                                                ">
-
-                                                    <t t-esc="customer['customer']"/>
-
-                                                </td>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    text-align:right;
-                                                    border:1px solid #DDD;
-                                                    color:#1F4E79;
-                                                    font-weight:bold;
-                                                ">
-
-                                                    <t t-esc="'{:,.0f}'.format(customer['ht']).replace(',',' ')"/>
-
-                                                </td>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    text-align:right;
-                                                    border:1px solid #DDD;
-                                                    color:#198754;
-                                                    font-weight:bold;
-                                                ">
-
-                                                    <t t-esc="'{:,.0f}'.format(customer['ttc']).replace(',',' ')"/>
-
-                                                </td>
-
-                                            </tr>
-
-                                        </t>
-
-                                    </tbody>
-
-                                </table>
-
-                            </td>
-
-                            <!-- ========================================= -->
-                            <!-- MAGASINS -->
-                            <!-- ========================================= -->
-
-                            <td style="
-                                width:50%;
-                                vertical-align:top;
-                            ">
-
-                                <div style="
-                                    font-size:16px;
-                                    font-weight:bold;
-                                    color:#1F4E79;
-                                    border-left:5px solid #6F42C1;
-                                    padding-left:10px;
-                                    margin-bottom:10px;
-                                ">
-
-                                    SYNTHÈSE PAR MAGASIN
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <thead>
-
-                                        <tr style="
-                                            background:#6F42C1;
-                                            color:white;
-                                        ">
-
-                                            <th style="
-                                                padding:8px;
-                                                border:1px solid #DDD;
-                                            ">
-                                                Magasin
-                                            </th>
-
-                                            <th style="
-                                                padding:8px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                            ">
-                                                Qté
-                                            </th>
-
-                                            <th style="
-                                                padding:8px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                            ">
-                                                HT
-                                            </th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody>
-
-                                        <t t-foreach="warehouse_summary"
-                                           t-as="warehouse">
-
-                                            <tr>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    border:1px solid #DDD;
-                                                ">
-
-                                                    <t t-esc="warehouse['warehouse']"/>
-
-                                                </td>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    text-align:center;
-                                                    border:1px solid #DDD;
-                                                ">
-
-                                                    <t t-esc="'{:,.2f}'.format(warehouse['qty']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                                </td>
-
-                                                <td style="
-                                                    padding:6px;
-                                                    text-align:right;
-                                                    border:1px solid #DDD;
-                                                    color:#6F42C1;
-                                                    font-weight:bold;
-                                                ">
-
-                                                    <t t-esc="'{:,.0f}'.format(warehouse['ht']).replace(',',' ')"/>
-
-                                                </td>
-
-                                            </tr>
-
-                                        </t>
-
-                                    </tbody>
-
-                                </table>
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-                                        <!-- ===================================================== -->
-                    <!-- TOP 10 -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        margin-top:30px;
-                        margin-bottom:15px;
-                        font-size:16px;
-                        font-weight:bold;
-                        color:#1F4E79;
-                        border-left:5px solid #DC3545;
-                        padding-left:10px;
-                    ">
-
-                        TOP 10 DES PERFORMANCES
-
+                </tr>
+              </t>
+            </tbody>
+          </table>
+          <!-- ===================================== -->
+          <!-- SYNTHESE ARTICLE -->
+          <!-- ===================================== -->
+          <div style="background:#2f2f2f; color:white; padding:8px; font-weight:bold; margin-bottom:5px;">
+                        SYNTHÈSE PAR ARTICLE
                     </div>
-
-                    <table style="
-                        width:100%;
-                        border-collapse:separate;
-                        border-spacing:15px 0;
-                    ">
-
-                        <tr>
-
-                            <!-- ========================================== -->
-                            <!-- TOP CLIENTS -->
-                            <!-- ========================================== -->
-
-                            <td style="width:50%;vertical-align:top;">
-
-                                <div style="
-                                    background:#0D6EFD;
-                                    color:white;
-                                    padding:8px;
-                                    font-weight:bold;
-                                    text-align:center;
-                                ">
-
-                                    TOP 10 CLIENTS
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <t t-foreach="top_customers"
-                                       t-as="customer">
-
-                                        <tr>
-
-                                            <td style="
-                                                width:8%;
-                                                padding:6px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="customer_index+1"/>
-
-                                            </td>
-
-                                            <td style="
-                                                padding:6px;
-                                                border:1px solid #DDD;
-                                            ">
-
-                                                <t t-esc="customer['customer']"/>
-
-                                            </td>
-
-                                            <td style="
-                                                width:30%;
-                                                padding:6px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                                color:#198754;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="'{:,.0f}'.format(customer['ht']).replace(',',' ')"/>
-
-                                            </td>
-
-                                        </tr>
-
-                                    </t>
-
-                                </table>
-
+          <table style="width:100%; border-collapse:collapse; margin-bottom:30px;">
+            <thead>
+              <tr>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    Article
+                                </th>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    Quantité Vendue
+                                </th>
+                <th style="background:#4a4a4a;color:white;padding:5px;border:1px solid #ccc;">
+                                    CA HT
+                                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="report_data['product_summary']" t-as="product">
+                <tr>
+                  <td style="border:1px solid #ccc;padding:5px;">
+                    <t t-esc="product['product']"/>
+                  </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:center;">
+                    <t t-esc="product['qty']"/>
+                  </td>
+                  <td style="border:1px solid #ccc;padding:5px;text-align:right;"><t t-esc="'{:,.0f}'.format(product['ht'])"/>
+                                        FCFA
+                                    </td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+          <!-- ===================================== -->
+          <!-- SIGNATURES -->
+          <!-- ===================================== -->
+          <hr style="margin-top:30px; margin-bottom:50px;"/>
+          <table style="width:100%; height: 150px;">
+            <tr>
+              <td style="width:33%; text-align:center; font-weight:bold;">
+                                Établi par
                             </td>
-
-                            <!-- ========================================== -->
-                            <!-- TOP PRODUITS -->
-                            <!-- ========================================== -->
-
-                            <td style="width:50%;vertical-align:top;">
-
-                                <div style="
-                                    background:#198754;
-                                    color:white;
-                                    padding:8px;
-                                    font-weight:bold;
-                                    text-align:center;
-                                ">
-
-                                    TOP 10 PRODUITS
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <t t-foreach="top_products"
-                                       t-as="product">
-
-                                        <tr>
-
-                                            <td style="
-                                                width:8%;
-                                                padding:6px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="product_index+1"/>
-
-                                            </td>
-
-                                            <td style="
-                                                padding:6px;
-                                                border:1px solid #DDD;
-                                            ">
-
-                                                <t t-esc="product['product']"/>
-
-                                            </td>
-
-                                            <td style="
-                                                width:25%;
-                                                padding:6px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                            ">
-
-                                                <t t-esc="'{:,.2f}'.format(product['qty']).rstrip('0').rstrip('.').replace(',',' ')"/>
-
-                                            </td>
-
-                                            <td style="
-                                                width:28%;
-                                                padding:6px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                                color:#198754;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="'{:,.0f}'.format(product['ht']).replace(',',' ')"/>
-
-                                            </td>
-
-                                        </tr>
-
-                                    </t>
-
-                                </table>
-
+              <td style="width:33%; text-align:center; font-weight:bold;">
+                                Vérifié par
                             </td>
-
-                        </tr>
-
-                    </table>
-
-                    <br/>
-
-                    <table style="
-                        width:100%;
-                        border-collapse:separate;
-                        border-spacing:15px 0;
-                    ">
-
-                        <tr>
-
-                            <!-- ========================================== -->
-                            <!-- TOP COMMERCIAUX -->
-                            <!-- ========================================== -->
-
-                            <td style="width:50%;vertical-align:top;">
-
-                                <div style="
-                                    background:#F39C12;
-                                    color:white;
-                                    padding:8px;
-                                    font-weight:bold;
-                                    text-align:center;
-                                ">
-
-                                    TOP 10 VENDEURS
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <t t-foreach="top_salespersons"
-                                       t-as="seller">
-
-                                        <tr>
-
-                                            <td style="
-                                                width:8%;
-                                                padding:6px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="seller_index+1"/>
-
-                                            </td>
-
-                                            <td style="
-                                                padding:6px;
-                                                border:1px solid #DDD;
-                                            ">
-
-                                                <t t-esc="seller['seller']"/>
-
-                                            </td>
-
-                                            <td style="
-                                                width:30%;
-                                                padding:6px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                                color:#198754;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="'{:,.0f}'.format(seller['ht']).replace(',',' ')"/>
-
-                                            </td>
-
-                                        </tr>
-
-                                    </t>
-
-                                </table>
-
+              <td style="width:33%; text-align:center; font-weight:bold;">
+                                Approuvé par
                             </td>
-
-                            <!-- ========================================== -->
-                            <!-- TOP MAGASINS -->
-                            <!-- ========================================== -->
-
-                            <td style="width:50%;vertical-align:top;">
-
-                                <div style="
-                                    background:#6F42C1;
-                                    color:white;
-                                    padding:8px;
-                                    font-weight:bold;
-                                    text-align:center;
-                                ">
-
-                                    TOP MAGASINS
-
-                                </div>
-
-                                <table style="
-                                    width:100%;
-                                    border-collapse:collapse;
-                                    font-size:11px;
-                                ">
-
-                                    <t t-foreach="top_warehouses"
-                                       t-as="warehouse">
-
-                                        <tr>
-
-                                            <td style="
-                                                width:8%;
-                                                padding:6px;
-                                                text-align:center;
-                                                border:1px solid #DDD;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="warehouse_index+1"/>
-
-                                            </td>
-
-                                            <td style="
-                                                padding:6px;
-                                                border:1px solid #DDD;
-                                            ">
-
-                                                <t t-esc="warehouse['warehouse']"/>
-
-                                            </td>
-
-                                            <td style="
-                                                width:30%;
-                                                padding:6px;
-                                                text-align:right;
-                                                border:1px solid #DDD;
-                                                color:#6F42C1;
-                                                font-weight:bold;
-                                            ">
-
-                                                <t t-esc="'{:,.0f}'.format(warehouse['ht']).replace(',',' ')"/>
-
-                                            </td>
-
-                                        </tr>
-
-                                    </t>
-
-                                </table>
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-                                        <!-- ===================================================== -->
-                    <!-- STATISTIQUES -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        margin-top:35px;
-                        margin-bottom:10px;
-                        font-size:16px;
-                        font-weight:bold;
-                        color:#1F4E79;
-                        border-left:5px solid #17A2B8;
-                        padding-left:10px;
-                    ">
-
-                        ANALYSE DE LA PÉRIODE
-
-                    </div>
-
-                    <table style="
-                        width:100%;
-                        border-collapse:collapse;
-                        margin-bottom:25px;
-                        font-size:12px;
-                    ">
-
-                        <tr>
-
-                            <td style="
-                                width:50%;
-                                border:1px solid #DDD;
-                                padding:12px;
-                                vertical-align:top;
-                            ">
-
-                                <strong>
-                                    Indicateurs
-                                </strong>
-
-                                <br/><br/>
-
-                                • Nombre de ventes :
-                                <strong>
-                                    <t t-esc="summary.get('sale_count',0)"/>
-                                </strong>
-
-                                <br/>
-
-                                • Nombre de clients :
-                                <strong>
-                                    <t t-esc="summary.get('customer_count',0)"/>
-                                </strong>
-
-                                <br/>
-
-                                • Nombre de vendeurs :
-                                <strong>
-                                    <t t-esc="summary.get('seller_count',0)"/>
-                                </strong>
-
-                                <br/>
-
-                                • Nombre de magasins :
-                                <strong>
-                                    <t t-esc="summary.get('warehouse_count',0)"/>
-                                </strong>
-
-                            </td>
-
-                            <td style="
-                                width:50%;
-                                border:1px solid #DDD;
-                                padding:12px;
-                                vertical-align:top;
-                            ">
-
-                                <strong>
-                                    Observations
-                                </strong>
-
-                                <br/><br/>
-
-                                • Chiffre d'affaires HT :
-                                <strong>
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ht',0)).replace(',',' ')"/>
-
-                                </strong>
-
-                                <br/>
-
-                                • Chiffre d'affaires TTC :
-                                <strong>
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('turnover_ttc',0)).replace(',',' ')"/>
-
-                                </strong>
-
-                                <br/>
-
-                                • Ticket moyen :
-                                <strong>
-
-                                    <t t-esc="'{:,.0f}'.format(summary.get('average_ticket',0)).replace(',',' ')"/>
-
-                                </strong>
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-
-                    <!-- ===================================================== -->
-                    <!-- OBSERVATIONS -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        border:1px solid #DDD;
-                        min-height:90px;
-                        padding:12px;
-                        margin-bottom:30px;
-                        font-size:12px;
-                    ">
-
-                        <strong>
-
-                            Observations
-
-                        </strong>
-
-                        <br/><br/>
-
-                    </div>
-
-                    <!-- ===================================================== -->
-                    <!-- SIGNATURES -->
-                    <!-- ===================================================== -->
-
-                    <table style="
-                        width:100%;
-                        margin-top:30px;
-                        border-collapse:collapse;
-                    ">
-
-                        <tr>
-
-                            <td style="
-                                width:33%;
-                                text-align:center;
-                            ">
-
-                                <strong>
-
-                                    Préparé par
-
-                                </strong>
-
-                                <br/><br/><br/><br/><br/>
-
-                                _______________________
-
-                                <br/>
-
-                                <t t-esc="generated_by.name"/>
-
-                            </td>
-
-                            <td style="
-                                width:33%;
-                                text-align:center;
-                            ">
-
-                                <strong>
-
-                                    Vérifié par
-
-                                </strong>
-
-                                <br/><br/><br/><br/><br/>
-
-                                _______________________
-
-                            </td>
-
-                            <td style="
-                                width:33%;
-                                text-align:center;
-                            ">
-
-                                <strong>
-
-                                    Approuvé par
-
-                                </strong>
-
-                                <br/><br/><br/><br/><br/>
-
-                                _______________________
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-
-                    <!-- ===================================================== -->
-                    <!-- PIED -->
-                    <!-- ===================================================== -->
-
-                    <div style="
-                        margin-top:40px;
-                        border-top:2px solid #1F4E79;
-                        padding-top:8px;
-                        font-size:10px;
-                        color:#777;
-                    ">
-
-                        <table style="width:100%;">
-
-                            <tr>
-
-                                <td>
-
-                                    Rapport généré automatiquement par
-
-                                    <strong>
-
-                                        PrimeTech Reporting Center
-
-                                    </strong>
-
-                                </td>
-
-                                <td style="text-align:center;">
-
-                                    Généré le
-
-                                    <strong>
-
-                                        <t t-esc="generated_at.strftime('%d/%m/%Y à %H:%M')"/>
-
-                                    </strong>
-
-                                </td>
-
-                                <td style="text-align:right;">
-
-                                    Page
-
-                                    <span class="page"/>
-
-                                    /
-
-                                    <span class="topage"/>
-
-                                </td>
-
-                            </tr>
-
-                        </table>
-
-                    </div>
-                                        <!-- ===================================================== -->
-                    <!-- FIN DU RAPPORT -->
-                    <!-- ===================================================== -->
-
-                </div>
-
-            </t>
-
-        </t>
-
-    </template>
-
+            </tr>
+          </table>
+        </div>
+      </t>
+    </t>
+  </template>
 </odoo>

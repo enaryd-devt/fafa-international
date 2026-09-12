@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-    <templates xml:space="preserve">
-        <t
-        t-name="primetech_reporting_center.CashflowForecast"
-        owl="1">
+<?xml version='1.0' encoding='utf-8'?>
+<templates xml:space="preserve">
+        <t t-name="primetech_reporting_center.CashflowForecast" owl="1">
 
             <div class="pt-cashflow-card">
 
@@ -15,11 +12,7 @@
 
                     <strong class="positive">
 
-                        <t t-esc="
-                            formatCurrency(
-                                state.data.incoming
-                            )
-                        "/>
+                        <t t-esc="formatCurrency( state.data.incoming )"/>
 
                     </strong>
 
@@ -33,11 +26,7 @@
 
                     <strong class="negative">
 
-                        <t t-esc="
-                            formatCurrency(
-                                state.data.outgoing
-                            )
-                        "/>
+                        <t t-esc="formatCurrency( state.data.outgoing )"/>
 
                     </strong>
 
@@ -51,11 +40,7 @@
 
                     <strong>
 
-                        <t t-esc="
-                            formatCurrency(
-                                state.data.projected
-                            )
-                        "/>
+                        <t t-esc="formatCurrency( state.data.projected )"/>
 
                     </strong>
 

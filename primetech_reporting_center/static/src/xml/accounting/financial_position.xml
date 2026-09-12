@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t
-    t-name="primetech_reporting_center.FinancialPosition"
-    owl="1"
->
+<t t-name="primetech_reporting_center.FinancialPosition" owl="1">
 
     <div class="finance-position-container">
 
@@ -19,50 +15,23 @@
 
             <div class="col-md-4">
 
-                <div
-                    class="
-                        finance-position-card
-                        assets
-                    "
-                >
+                <div class="finance-position-card assets">
 
-                    <div
-                        class="
-                            finance-position-icon
-                        "
-                    >
+                    <div class="finance-position-icon">
 
-                        <i
-                            class="
-                                fa fa-building-columns
-                            "
-                        />
+                        <i class="fa fa-building-columns"/>
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-label
-                        "
-                    >
+                    <div class="finance-position-label">
 
                         Actifs
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-value
-                        "
-                    >
+                    <div class="finance-position-value">
 
-                        <t
-                            t-esc="
-                                formatCurrency(
-                                    state.data.assets
-                                )
-                            "
-                        />
+                        <t t-esc="formatCurrency( state.data.assets )"/>
 
                     </div>
 
@@ -74,50 +43,23 @@
 
             <div class="col-md-4">
 
-                <div
-                    class="
-                        finance-position-card
-                        liabilities
-                    "
-                >
+                <div class="finance-position-card liabilities">
 
-                    <div
-                        class="
-                            finance-position-icon
-                        "
-                    >
+                    <div class="finance-position-icon">
 
-                        <i
-                            class="
-                                fa fa-file-invoice-dollar
-                            "
-                        />
+                        <i class="fa fa-file-invoice-dollar"/>
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-label
-                        "
-                    >
+                    <div class="finance-position-label">
 
                         Passifs
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-value
-                        "
-                    >
+                    <div class="finance-position-value">
 
-                        <t
-                            t-esc="
-                                formatCurrency(
-                                    state.data.liabilities
-                                )
-                            "
-                        />
+                        <t t-esc="formatCurrency( state.data.liabilities )"/>
 
                     </div>
 
@@ -129,50 +71,23 @@
 
             <div class="col-md-4">
 
-                <div
-                    class="
-                        finance-position-card
-                        equity
-                    "
-                >
+                <div class="finance-position-card equity">
 
-                    <div
-                        class="
-                            finance-position-icon
-                        "
-                    >
+                    <div class="finance-position-icon">
 
-                        <i
-                            class="
-                                fa fa-coins
-                            "
-                        />
+                        <i class="fa fa-coins"/>
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-label
-                        "
-                    >
+                    <div class="finance-position-label">
 
                         Capitaux Propres
 
                     </div>
 
-                    <div
-                        class="
-                            finance-position-value
-                        "
-                    >
+                    <div class="finance-position-value">
 
-                        <t
-                            t-esc="
-                                formatCurrency(
-                                    state.data.equity
-                                )
-                            "
-                        />
+                        <t t-esc="formatCurrency( state.data.equity )"/>
 
                     </div>
 
@@ -198,11 +113,7 @@
 
                 <strong>
 
-                    <t
-                        t-esc="
-                            state.data.liquidity_ratio
-                        "
-                    />
+                    <t t-esc="state.data.liquidity_ratio"/>
 
                 </strong>
 
@@ -218,11 +129,7 @@
 
                 <strong>
 
-                    <t
-                        t-esc="
-                            state.data.debt_ratio
-                        "
-                    />
+                    <t t-esc="state.data.debt_ratio"/>
 
                 </strong>
 
@@ -236,29 +143,11 @@
 
         <div class="text-center mt-4">
 
-            <span
-                t-attf-class="
-                    finance-status-badge
-                    #{state.data.level === 'Excellent'
-                        ? 'excellent'
-                        : state.data.level === 'Bon'
-                            ? 'good'
-                            : 'warning'}
-                "
-            >
+            <span t-attf-class="finance-status-badge #{state.data.level === 'Excellent' ? 'excellent' : state.data.level === 'Bon' ? 'good' : 'warning'}">
 
-                <i
-                    class="
-                        fa fa-shield-halved
-                        me-2
-                    "
-                />
+                <i class="fa fa-shield-halved me-2"/>
 
-                <t
-                    t-esc="
-                        state.data.level
-                    "
-                />
+                <t t-esc="state.data.level"/>
 
             </span>
 

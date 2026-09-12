@@ -1,25 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t
-    t-name="primetech_reporting_center.FinancialHealth"
-    owl="1"
->
+<t t-name="primetech_reporting_center.FinancialHealth" owl="1">
 
     <div class="finance-health-container">
 
-        <div
-            t-att-class="
-                state.data.score >= 80
-                ? 'finance-health-circle excellent'
-                : state.data.score >= 60
-                    ? 'finance-health-circle good'
-                    : state.data.score >= 40
-                        ? 'finance-health-circle warning'
-                        : 'finance-health-circle danger'
-            "
-        >
+        <div t-att-class="state.data.score &gt;= 80 ? 'finance-health-circle excellent' : state.data.score &gt;= 60 ? 'finance-health-circle good' : state.data.score &gt;= 40 ? 'finance-health-circle warning' : 'finance-health-circle danger'">
 
             <div class="finance-health-score">
 
@@ -43,17 +29,7 @@
 
             </div>
 
-            <div
-                t-att-class="
-                    state.data.score >= 80
-                    ? 'finance-health-badge excellent'
-                    : state.data.score >= 60
-                        ? 'finance-health-badge good'
-                        : state.data.score >= 40
-                            ? 'finance-health-badge warning'
-                            : 'finance-health-badge danger'
-                "
-            >
+            <div t-att-class="state.data.score &gt;= 80 ? 'finance-health-badge excellent' : state.data.score &gt;= 60 ? 'finance-health-badge good' : state.data.score &gt;= 40 ? 'finance-health-badge warning' : 'finance-health-badge danger'">
 
                 <t t-esc="state.data.level"/>
 

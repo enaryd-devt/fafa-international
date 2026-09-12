@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <templates xml:space="preserve">
 
-<t t-name="primetech_reporting_center.KPICards"
-   owl="1">
+<t t-name="primetech_reporting_center.KPICards" owl="1">
 
     <div class="pt-kpi-grid">
 
@@ -11,9 +9,7 @@
         <!-- CA -->
         <!-- ===================================== -->
 
-        <div
-            class="pt-kpi-card revenue pt-clickable"
-            t-on-click="openRevenue">
+        <div class="pt-kpi-card revenue pt-clickable" t-on-click="openRevenue">
 
             <div class="pt-kpi-icon">
 
@@ -24,53 +20,28 @@
             <div class="pt-kpi-content">
 
                 <div class="pt-kpi-title">
-                    Chiffre d'affaires du mois courant
+                    Chiffre d'Affaires
                 </div>
 
-                <div
-                    class="pt-kpi-value"
-                    t-att-style="
-                        'font-size:' +
-                        getFontSize(
-                            formatCurrency(
-                                state.revenue
-                            )
-                        )
-                    ">
+                <div class="pt-kpi-value" t-att-style="'font-size:' + getFontSize( formatCurrency( state.revenue ) )">
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.revenue
-                        )
-                    "/>
+                    <t t-esc="formatCurrency( state.revenue )"/>
 
                 </div>
 
-                <div
-                    t-att-class="
-                        'pt-trend-pill ' +
-                        getTrendClass(
-                            state.revenue_trend
-                        )
-                    ">
+                <div t-att-class="'pt-trend-pill ' + getTrendClass( state.revenue_trend )">
 
                     <!-- Hausse -->
 
-                    <i
-                        t-if="state.revenue_trend &gt; 0"
-                        class="fa fa-arrow-up"/>
+                    <i t-if="state.revenue_trend &gt; 0" class="fa fa-arrow-up"/>
 
                     <!-- Baisse -->
 
-                    <i
-                        t-if="state.revenue_trend &lt; 0"
-                        class="fa fa-arrow-down"/>
+                    <i t-if="state.revenue_trend &lt; 0" class="fa fa-arrow-down"/>
 
                     <!-- Stable -->
 
-                    <i
-                        t-if="state.revenue_trend == 0"
-                        class="fa fa-circle"/>
+                    <i t-if="state.revenue_trend == 0" class="fa fa-circle"/>
 
                     <span>
 
@@ -80,11 +51,7 @@
 
                         <t t-if="state.revenue_trend != 0">
 
-                            <t t-esc="
-                                formatTrend(
-                                    state.revenue_trend
-                                )
-                            "/>
+                            <t t-esc="formatTrend( state.revenue_trend )"/>
 
                         </t>
 
@@ -115,53 +82,28 @@
             <div class="pt-kpi-content">
 
                 <div class="pt-kpi-title">
-                    Achats du Mois courant
+                    Achats du Mois
                 </div>
 
-                <div
-                    class="pt-kpi-value"
-                    t-att-style="
-                        'font-size:' +
-                        getFontSize(
-                            formatCurrency(
-                                state.purchases
-                            )
-                        )
-                    ">
+                <div class="pt-kpi-value" t-att-style="'font-size:' + getFontSize( formatCurrency( state.purchases ) )">
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.purchases
-                        )
-                    "/>
+                    <t t-esc="formatCurrency( state.purchases )"/>
 
                 </div>
 
-                <div
-                    t-att-class="
-                        'pt-trend-pill ' +
-                        getTrendClass(
-                            state.purchases_trend
-                        )
-                    ">
+                <div t-att-class="'pt-trend-pill ' + getTrendClass( state.purchases_trend )">
 
                     <!-- Hausse -->
 
-                    <i
-                        t-if="state.purchases_trend &gt; 0"
-                        class="fa fa-arrow-up"/>
+                    <i t-if="state.purchases_trend &gt; 0" class="fa fa-arrow-up"/>
 
                     <!-- Baisse -->
 
-                    <i
-                        t-if="state.purchases_trend &lt; 0"
-                        class="fa fa-arrow-down"/>
+                    <i t-if="state.purchases_trend &lt; 0" class="fa fa-arrow-down"/>
 
                     <!-- Stable -->
 
-                    <i
-                        t-if="state.purchases_trend == 0"
-                        class="fa fa-circle"/>
+                    <i t-if="state.purchases_trend == 0" class="fa fa-circle"/>
 
                     <span>
 
@@ -171,11 +113,7 @@
 
                         <t t-if="state.purchases_trend != 0">
 
-                            <t t-esc="
-                                formatTrend(
-                                    state.purchases_trend
-                                )
-                            "/>
+                            <t t-esc="formatTrend( state.purchases_trend )"/>
 
                         </t>
 
@@ -195,9 +133,7 @@
         <!-- CREANCES CLIENTS -->
         <!-- ===================================== -->
 
-        <div
-            class="pt-kpi-card receivable pt-clickable"
-            t-on-click="openReceivables">
+        <div class="pt-kpi-card receivable pt-clickable" t-on-click="openReceivables">
 
             <div class="pt-kpi-icon">
 
@@ -211,50 +147,25 @@
                     Créances Clients
                 </div>
 
-                <div
-                    class="pt-kpi-value"
-                    t-att-style="
-                        'font-size:' +
-                        getFontSize(
-                            formatCurrency(
-                                state.receivables
-                            )
-                        )
-                    ">
+                <div class="pt-kpi-value" t-att-style="'font-size:' + getFontSize( formatCurrency( state.receivables ) )">
 
-                    <t t-esc="
-                        formatCurrency(
-                            state.receivables
-                        )
-                    "/>
+                    <t t-esc="formatCurrency( state.receivables )"/>
 
                 </div>
 
-                <div
-                    t-att-class="
-                        'pt-trend-pill ' +
-                        getTrendClass(
-                            state.receivables_trend
-                        )
-                    ">
+                <div t-att-class="'pt-trend-pill ' + getTrendClass( state.receivables_trend )">
 
                     <!-- Hausse -->
 
-                    <i
-                        t-if="state.receivables_trend &gt; 0"
-                        class="fa fa-arrow-up"/>
+                    <i t-if="state.receivables_trend &gt; 0" class="fa fa-arrow-up"/>
 
                     <!-- Baisse -->
 
-                    <i
-                        t-if="state.receivables_trend &lt; 0"
-                        class="fa fa-arrow-down"/>
+                    <i t-if="state.receivables_trend &lt; 0" class="fa fa-arrow-down"/>
 
                     <!-- Stable -->
 
-                    <i
-                        t-if="state.receivables_trend == 0"
-                        class="fa fa-circle"/>
+                    <i t-if="state.receivables_trend == 0" class="fa fa-circle"/>
 
                     <span>
 
@@ -264,11 +175,7 @@
 
                         <t t-if="state.receivables_trend != 0">
 
-                            <t t-esc="
-                                formatTrend(
-                                    state.receivables_trend
-                                )
-                            "/>
+                            <t t-esc="formatTrend( state.receivables_trend )"/>
 
                         </t>
 
