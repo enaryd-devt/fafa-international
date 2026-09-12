@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 850">
+  <defs><linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="#eef4ff"/><stop offset="1" stop-color="#f8fbff"/></linearGradient><linearGradient id="pt" x1="0" x2="1"><stop offset="0" stop-color="#071038"/><stop offset="1" stop-color="#3217d9"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-opacity=".16"/></filter></defs>
+  <rect width="1400" height="850" rx="34" fill="url(#bg)"/>
+  <rect x="48" y="42" width="1304" height="120" rx="26" fill="url(#pt)" filter="url(#shadow)"/>
+  <circle cx="110" cy="102" r="38" fill="#fff" opacity=".95"/><text x="110" y="116" font-family="Arial" font-size="34" font-weight="800" text-anchor="middle" fill="#3217d9">PT</text>
+  <text x="176" y="92" font-family="Arial" font-size="34" font-weight="800" fill="#fff">Tableau de bord PrimeTech</text>
+  <text x="176" y="128" font-family="Arial" font-size="20" fill="#dfe7ff">Préparation • Expédition • Réception • Écarts • Retours</text>
+  <g transform="translate(48 202)">
+    <rect width="300" height="126" rx="22" fill="#fff" filter="url(#shadow)"/><text x="28" y="44" font-family="Arial" font-size="18" fill="#62728a">À préparer</text><text x="28" y="92" font-family="Arial" font-size="48" font-weight="800" fill="#071038">24</text><path d="M205 90h62" stroke="#3217d9" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(380 202)">
+    <rect width="300" height="126" rx="22" fill="#fff" filter="url(#shadow)"/><text x="28" y="44" font-family="Arial" font-size="18" fill="#62728a">À expédier</text><text x="28" y="92" font-family="Arial" font-size="48" font-weight="800" fill="#071038">12</text><path d="M205 90h62" stroke="#2e8bb8" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(712 202)">
+    <rect width="300" height="126" rx="22" fill="#fff" filter="url(#shadow)"/><text x="28" y="44" font-family="Arial" font-size="18" fill="#62728a">En transit</text><text x="28" y="92" font-family="Arial" font-size="48" font-weight="800" fill="#071038">8</text><path d="M205 90h62" stroke="#f59e0b" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(1044 202)">
+    <rect width="300" height="126" rx="22" fill="#fff" filter="url(#shadow)"/><text x="28" y="44" font-family="Arial" font-size="18" fill="#62728a">Avec écarts</text><text x="28" y="92" font-family="Arial" font-size="48" font-weight="800" fill="#b91c1c">3</text><path d="M205 90h62" stroke="#b91c1c" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(48 370)">
+    <rect width="620" height="420" rx="26" fill="#fff" filter="url(#shadow)"/><text x="30" y="48" font-family="Arial" font-size="24" font-weight="800" fill="#071038">Bons par statut</text>
+    <rect x="42" y="92" width="520" height="34" rx="17" fill="#eef2ff"/><rect x="42" y="92" width="360" height="34" rx="17" fill="#3217d9"/><text x="42" y="160" font-family="Arial" font-size="18" fill="#62728a">Progression préparation / expédition / réception</text>
+    <rect x="42" y="198" width="500" height="28" rx="14" fill="#e5e7eb"/><rect x="42" y="198" width="430" height="28" rx="14" fill="#2e8bb8"/>
+    <rect x="42" y="258" width="500" height="28" rx="14" fill="#e5e7eb"/><rect x="42" y="258" width="310" height="28" rx="14" fill="#3217d9"/>
+    <rect x="42" y="318" width="500" height="28" rx="14" fill="#e5e7eb"/><rect x="42" y="318" width="220" height="28" rx="14" fill="#3c9f7a"/>
+  </g>
+  <g transform="translate(720 370)">
+    <rect width="624" height="420" rx="26" fill="#fff" filter="url(#shadow)"/><text x="30" y="48" font-family="Arial" font-size="24" font-weight="800" fill="#071038">Documents qui me concernent</text>
+    <g font-family="Arial" font-size="18"><text x="34" y="100" fill="#071038">TIA/2026/00042 • BOUTIQUE PRINCIPALE → YAOUNDÉ</text><text x="34" y="152" fill="#071038">TIA/2026/00043 • AKWA → ANGE RAPHAEL</text><text x="34" y="204" fill="#071038">TIE/2026/00018 • Inter-entrepôt Douala</text></g>
+    <rect x="34" y="250" width="556" height="120" rx="18" fill="#f6f8ff"/><text x="60" y="300" font-family="Arial" font-size="20" font-weight="800" fill="#3217d9">Filtres rapides</text><text x="60" y="338" font-family="Arial" font-size="18" fill="#62728a">À préparer • À expédier • À réceptionner • Écarts</text>
+  </g>
+</svg>

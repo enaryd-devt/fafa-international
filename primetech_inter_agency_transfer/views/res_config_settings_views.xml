@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.primetech.inter.agency.transfer</field><field name="model">res.config.settings</field><field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml"><xpath expr="//form" position="inside"><app string="Transferts inter-agences" name="primetech_inter_agency_transfer"><block title="Disponibilité du stock"><setting string="Politique de stock insuffisant" help="Définit le comportement lorsque la quantité demandée dépasse le stock disponible."><field name="primetech_insufficient_stock_policy"/></setting></block></app></xpath></field>
+    </record>
+</odoo>

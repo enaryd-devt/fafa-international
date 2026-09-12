@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#070b28"/><stop offset="1" stop-color="#3b16d9"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity=".22"/></filter></defs>
+  <rect width="900" height="900" fill="#fff"/>
+  <path d="M146 176A390 390 0 0 1 795 565" fill="none" stroke="url(#g)" stroke-width="34"/>
+  <path d="M770 360l90 175-190-55z" fill="#3217c9" filter="url(#s)"/>
+  <path d="M756 724A390 390 0 0 1 96 357" fill="none" stroke="#070b28" stroke-width="34"/>
+  <path d="M105 333l-78 178 181-78z" fill="#070b28" filter="url(#s)"/>
+  <circle cx="455" cy="205" r="115" fill="none" stroke="#070b28" stroke-width="28"/>
+  <circle cx="455" cy="205" r="80" fill="none" stroke="#3217c9" stroke-width="18"/>
+  <text x="450" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="150" font-weight="800" fill="url(#g)">PT</text>
+  <text x="450" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="98" fill="#070b28">Prime<tspan fill="#3217d9" font-weight="800">Tech</tspan></text>
+  <text x="545" y="520" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="800" fill="#070b28">Services</text>
+  <g filter="url(#s)"><path d="M170 620h155v100H170z" fill="#f5f7fb" stroke="#070b28" stroke-width="10"/><path d="M150 620l98-62 98 62" fill="none" stroke="#070b28" stroke-width="16"/><rect x="205" y="655" width="92" height="65" fill="#2414c8"/></g>
+  <g filter="url(#s)"><path d="M575 620h155v100H575z" fill="#f5f7fb" stroke="#070b28" stroke-width="10"/><path d="M555 620l98-62 98 62" fill="none" stroke="#070b28" stroke-width="16"/><rect x="610" y="655" width="92" height="65" fill="#2414c8"/></g>
+  <path d="M335 623h190" stroke="#3217d9" stroke-width="22"/><path d="M500 583l60 40-60 40z" fill="#3217d9"/><path d="M525 740H335" stroke="#070b28" stroke-width="22"/><path d="M360 700l-60 40 60 40z" fill="#070b28"/>
+</svg>

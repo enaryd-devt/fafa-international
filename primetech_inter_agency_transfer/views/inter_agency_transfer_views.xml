@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_primetech_transfer_list" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.list</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'discrepancy'" decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="transfer_type"/>
+                <field name="source_agency_id"/>
+                <field name="destination_agency_id"/>
+                <field name="state" widget="badge"/>
+                <field name="planned_shipping_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_form" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.form</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <form class="o_primetech_transfer_form">
+                <header>
+                    <button name="action_confirm" string="Confirmer" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_prepare" string="Préparer" type="object" class="btn-primary" invisible="state not in ('confirmed', 'waiting_preparation', 'preparing')"/>
+                    <button name="action_ship" string="Valider le transfert" type="object" class="btn-primary" invisible="transfer_type != 'internal' or state != 'ready'"/>
+                    <button name="action_ship" string="Expédier" type="object" class="btn-primary" invisible="transfer_type != 'inter_agency' or state != 'ready'"/>
+                    <button name="action_mark_waiting_reception" string="À réceptionner" type="object" invisible="transfer_type != 'inter_agency' or state != 'in_transit'"/>
+                    <button name="action_receive" string="Réceptionner" type="object" class="btn-primary" invisible="transfer_type != 'inter_agency' or state not in ('in_transit', 'waiting_reception')"/>
+                    <button name="action_print_transfer" string="Imprimer" type="object" invisible="state in ('draft', 'cancelled')"/>
+                    <button name="action_return" string="Créer un retour" type="object" invisible="state not in ('done', 'discrepancy')"/>
+                    <button name="action_cancel" string="Annuler" type="object" invisible="state in ('done', 'cancelled', 'returned')"/>
+                    <button name="action_reset_to_draft" string="Remettre en brouillon" type="object" invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,waiting_preparation,ready" invisible="state not in ('draft', 'confirmed', 'waiting_preparation', 'preparing', 'ready')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="ready,in_transit" invisible="transfer_type != 'inter_agency' or state != 'in_transit'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="in_transit,waiting_reception" invisible="transfer_type != 'inter_agency' or state != 'waiting_reception'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="ready,done,returned" invisible="transfer_type != 'internal' or state not in ('done', 'returned')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="waiting_reception,discrepancy,done,returned" invisible="transfer_type != 'inter_agency' or state not in ('discrepancy', 'done', 'returned')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="cancelled" invisible="state != 'cancelled'"/>
+                </header>
+                <sheet>
+                    <field name="company_id" invisible="1"/>
+                    <field name="source_warehouse_location_id" invisible="1"/>
+                    <field name="destination_warehouse_location_id" invisible="1"/>
+                    <field name="source_allowed_location_ids" invisible="1"/>
+                    <field name="destination_allowed_location_ids" invisible="1"/>
+                    <div class="o_primetech_transfer_topbar">
+                        <div class="oe_title o_primetech_transfer_title">
+                            <span class="o_primetech_eyebrow">Transfert de stock</span>
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group class="o_primetech_transfer_overview">
+                            <field name="transfer_type" readonly="state != 'draft'"/>
+                            <field name="company_id" readonly="1" invisible="transfer_type != 'internal'"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="planned_shipping_date"/>
+                            <field name="planned_reception_date"/>
+                            <field name="reason" placeholder="Motif du transfert"/>
+                        </group>
+                    </div>
+                    <div class="o_primetech_transfer_route">
+                        <group string="Origine" class="o_primetech_transfer_card o_primetech_transfer_origin">
+                            <field name="source_agency_id" readonly="state != 'draft'" options="{'no_create': true}" invisible="transfer_type == 'internal'"/>
+                            <field name="source_warehouse_id" readonly="state != 'draft'" domain="[('company_id', '=', source_agency_id)]" options="{'no_create': true}"/>
+                            <field name="source_location_id" readonly="state != 'draft'" domain="[('id', 'in', source_allowed_location_ids)]" options="{'no_create': true}"/>
+                        </group>
+                        <group string="Destination" class="o_primetech_transfer_card o_primetech_transfer_destination">
+                            <field name="destination_agency_id" readonly="state != 'draft'" options="{'no_create': true}" invisible="transfer_type == 'internal'"/>
+                            <field name="destination_warehouse_id" readonly="state != 'draft'" domain="[('company_id', '=', destination_agency_id)]" options="{'no_create': true}"/>
+                            <field name="destination_location_id" readonly="state != 'draft'" domain="[('id', 'in', destination_allowed_location_ids)]" options="{'no_create': true}"/>
+                        </group>
+                    </div>
+                    <notebook>
+                        <page string="Produits">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom" create="true" delete="true">
+                                    <control>
+                                        <create string="Ajouter une ligne de produit"/>
+                                    </control>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_id" optional="hide"/>
+                                    <field name="physical_qty" optional="hide"/>
+                                    <field name="reserved_qty" optional="hide"/>
+                                    <field name="available_qty"/>
+                                    <field name="requested_qty"/>
+                                    <field name="prepared_qty" readonly="parent.state not in ('waiting_preparation', 'preparing', 'ready')"/>
+                                    <field name="shipped_qty" readonly="1" optional="hide"/>
+                                    <field name="received_qty" readonly="parent.state not in ('in_transit', 'waiting_reception', 'discrepancy')"/>
+                                    <field name="difference_qty" optional="hide"/>
+                                    <field name="line_state" widget="badge" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Transport" invisible="transfer_type != 'inter_agency'">
+                            <group>
+                                <field name="transport_mode"/>
+                                <field name="carrier_name"/>
+                                <field name="driver_name"/>
+                                <field name="driver_phone"/>
+                                <field name="vehicle_name"/>
+                                <field name="vehicle_registration"/>
+                                <field name="package_count"/>
+                                <field name="total_weight"/>
+                                <field name="transport_reference"/>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_calendar" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.calendar</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <calendar string="Transferts de stock" date_start="planned_shipping_date" date_stop="planned_reception_date" color="state" quick_create="false">
+                <field name="name"/>
+                <field name="source_agency_id"/>
+                <field name="destination_agency_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_search" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.search</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="source_agency_id"/>
+                <field name="destination_agency_id"/>
+                <filter string="Inter-agences" name="inter_agency" domain="[('transfer_type','=','inter_agency')]"/>
+                <filter string="Inter-entrepôts" name="internal" domain="[('transfer_type','=','internal')]"/>
+                <filter string="En transit" name="in_transit" domain="[('state','=','in_transit')]"/>
+                <filter string="Avec écarts" name="discrepancy" domain="[('state','=','discrepancy')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Statut" name="group_state" context="{'group_by':'state'}"/>
+                    <filter string="Agence émettrice" name="group_source_agency" context="{'group_by':'source_agency_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_primetech_transfer" model="ir.actions.act_window">
+        <field name="name">Tous les transferts</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form,pivot,graph,calendar</field>
+        <field name="search_view_id" ref="view_primetech_transfer_search"/>
+    </record>
+</odoo>

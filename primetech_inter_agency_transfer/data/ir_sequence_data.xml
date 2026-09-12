@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="sequence_inter_agency_transfer" model="ir.sequence">
+        <field name="name">PrimeTech Inter-Agency Transfer</field>
+        <field name="code">primetech.inter.agency.transfer.inter_agency</field>
+        <field name="prefix">TIA/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="sequence_internal_transfer" model="ir.sequence">
+        <field name="name">PrimeTech Internal Warehouse Transfer</field>
+        <field name="code">primetech.inter.agency.transfer.internal</field>
+        <field name="prefix">TIE/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_primetech_transfer_home_dashboard_form" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.home.dashboard.form</field>
+        <field name="model">primetech.inter.agency.transfer.dashboard</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false" class="o_primetech_transfer_home_form">
+                <sheet>
+                    <field name="dashboard_html" nolabel="1" readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="primetech_transfer_dashboard_home_record" model="primetech.inter.agency.transfer.dashboard">
+        <field name="name">Tableau de bord</field>
+    </record>
+
+    <record id="action_primetech_transfer_home_dashboard" model="ir.actions.act_window">
+        <field name="name">Accueil</field>
+        <field name="res_model">primetech.inter.agency.transfer.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_primetech_transfer_home_dashboard_form"/>
+        <field name="res_id" ref="primetech_transfer_dashboard_home_record"/>
+        <field name="target">current</field>
+    </record>
+
+    <record id="view_primetech_transfer_dashboard_kanban" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.dashboard.kanban</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <kanban class="o_primetech_transfer_dashboard" create="false" default_group_by="state" sample="1">
+                <progressbar field="state" colors="{&quot;draft&quot;: &quot;muted&quot;, &quot;waiting_preparation&quot;: &quot;warning&quot;, &quot;ready&quot;: &quot;success&quot;, &quot;in_transit&quot;: &quot;info&quot;, &quot;waiting_reception&quot;: &quot;primary&quot;, &quot;discrepancy&quot;: &quot;danger&quot;, &quot;done&quot;: &quot;success&quot;, &quot;returned&quot;: &quot;warning&quot;}"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="transfer_type"/>
+                <field name="source_agency_id"/>
+                <field name="destination_agency_id"/>
+                <field name="source_warehouse_id"/>
+                <field name="destination_warehouse_id"/>
+                <field name="request_date"/>
+                <field name="planned_shipping_date"/>
+                <field name="total_product_count"/>
+                <field name="total_requested_qty"/>
+                <field name="total_prepared_qty"/>
+                <field name="total_shipped_qty"/>
+                <field name="total_received_qty"/>
+                <field name="discrepancy_count"/>
+                <field name="preparation_progress"/>
+                <field name="shipment_progress"/>
+                <field name="reception_progress"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_primetech_dashboard_card oe_kanban_global_click">
+                            <div class="o_primetech_dashboard_card_header">
+                                <strong><field name="name"/></strong>
+                                <field name="state" widget="badge"/>
+                            </div>
+                            <div class="o_primetech_dashboard_route">
+                                <div>
+                                    <span class="o_primetech_dashboard_label">Origine</span>
+                                    <div><field name="source_agency_id"/></div>
+                                    <small><field name="source_warehouse_id"/></small>
+                                </div>
+                                <div>
+                                    <span class="o_primetech_dashboard_label">Destination</span>
+                                    <div><field name="destination_agency_id"/></div>
+                                    <small><field name="destination_warehouse_id"/></small>
+                                </div>
+                            </div>
+                            <div class="o_primetech_dashboard_metrics">
+                                <span><strong><field name="total_product_count"/></strong> articles</span>
+                                <span>Demandé : <strong><field name="total_requested_qty"/></strong></span>
+                                <span>Préparé : <strong><field name="total_prepared_qty"/></strong></span>
+                                <span>Expédié : <strong><field name="total_shipped_qty"/></strong></span>
+                                <span>Reçu : <strong><field name="total_received_qty"/></strong></span>
+                                <span t-if="record.discrepancy_count.raw_value" class="text-danger">Écarts : <strong><field name="discrepancy_count"/></strong></span>
+                            </div>
+                            <div class="o_primetech_dashboard_progress">
+                                <span>Préparation <strong><field name="preparation_progress" widget="percentage"/></strong></span>
+                                <span>Expédition <strong><field name="shipment_progress" widget="percentage"/></strong></span>
+                                <span>Réception <strong><field name="reception_progress" widget="percentage"/></strong></span>
+                            </div>
+                            <div class="o_primetech_dashboard_dates">
+                                <span>Demande : <field name="request_date"/></span>
+                                <span>Expédition prévue : <field name="planned_shipping_date"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_dashboard_list" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.dashboard.list</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'discrepancy'" decoration-success="state in ('done', 'returned')" decoration-info="state in ('in_transit', 'waiting_reception')" create="false">
+                <field name="name"/>
+                <field name="state" widget="badge"/>
+                <field name="transfer_type"/>
+                <field name="source_agency_id"/>
+                <field name="source_warehouse_id"/>
+                <field name="destination_agency_id"/>
+                <field name="destination_warehouse_id"/>
+                <field name="total_product_count" sum="Articles"/>
+                <field name="total_requested_qty" sum="Demandé"/>
+                <field name="total_prepared_qty" sum="Préparé"/>
+                <field name="total_shipped_qty" sum="Expédié"/>
+                <field name="total_received_qty" sum="Reçu"/>
+                <field name="discrepancy_count" sum="Écarts"/>
+                <field name="preparation_progress" widget="percentage"/>
+                <field name="shipment_progress" widget="percentage"/>
+                <field name="reception_progress" widget="percentage"/>
+                <field name="planned_shipping_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_dashboard_pivot" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.dashboard.pivot</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des transferts PrimeTech" sample="1">
+                <field name="state" type="row"/>
+                <field name="transfer_type" type="col"/>
+                <field name="total_product_count" type="measure"/>
+                <field name="total_requested_qty" type="measure"/>
+                <field name="total_prepared_qty" type="measure"/>
+                <field name="total_shipped_qty" type="measure"/>
+                <field name="total_received_qty" type="measure"/>
+                <field name="discrepancy_count" type="measure"/>
+                <field name="preparation_progress" type="measure"/>
+                <field name="shipment_progress" type="measure"/>
+                <field name="reception_progress" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_dashboard_graph" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.dashboard.graph</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <graph string="Volumes de transferts PrimeTech" type="bar" sample="1">
+                <field name="state"/>
+                <field name="total_requested_qty" type="measure"/>
+                <field name="total_prepared_qty" type="measure"/>
+                <field name="total_shipped_qty" type="measure"/>
+                <field name="total_received_qty" type="measure"/>
+                <field name="reception_progress" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_primetech_transfer_dashboard_search" model="ir.ui.view">
+        <field name="name">primetech.inter.agency.transfer.dashboard.search</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="arch" type="xml">
+            <search string="Tableau de bord des transferts">
+                <field name="name"/>
+                <field name="source_agency_id"/>
+                <field name="destination_agency_id"/>
+                <filter string="À préparer" name="to_prepare" domain="[('state', 'in', ['draft', 'waiting_preparation', 'preparing'])]"/>
+                <filter string="À expédier" name="to_ship" domain="[('state', '=', 'ready')]"/>
+                <filter string="En transit" name="in_transit" domain="[('state', '=', 'in_transit')]"/>
+                <filter string="À réceptionner" name="to_receive" domain="[('state', '=', 'waiting_reception')]"/>
+                <filter string="Avec écarts" name="with_discrepancy" domain="[('state', '=', 'discrepancy')]"/>
+                <filter string="Terminés" name="done" domain="[('state', 'in', ['done', 'returned'])]"/>
+                <group expand="0" string="Analyser par">
+                    <filter string="Statut" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'transfer_type'}"/>
+                    <filter string="Société émettrice" name="group_source_company" context="{'group_by': 'source_agency_id'}"/>
+                    <filter string="Société réceptrice" name="group_destination_company" context="{'group_by': 'destination_agency_id'}"/>
+                    <filter string="Entrepôt émetteur" name="group_source_warehouse" context="{'group_by': 'source_warehouse_id'}"/>
+                    <filter string="Entrepôt récepteur" name="group_destination_warehouse" context="{'group_by': 'destination_warehouse_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_primetech_transfer_dashboard" model="ir.actions.act_window">
+        <field name="name">Tableau de bord</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,pivot,graph,list,form</field>
+        <field name="views" eval="[(ref('view_primetech_transfer_dashboard_kanban'), 'kanban'), (ref('view_primetech_transfer_dashboard_pivot'), 'pivot'), (ref('view_primetech_transfer_dashboard_graph'), 'graph'), (ref('view_primetech_transfer_dashboard_list'), 'list'), (False, 'form')]"/>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+        <field name="context">{'search_default_group_state': 1}</field>
+    </record>
+
+    <record id="action_primetech_transfer_to_prepare" model="ir.actions.act_window">
+        <field name="name">Actions rapides — À préparer</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', 'in', ['draft', 'waiting_preparation', 'preparing'])]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+    <record id="action_primetech_transfer_to_ship" model="ir.actions.act_window">
+        <field name="name">Actions rapides — À expédier / valider</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', '=', 'ready')]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+    <record id="action_primetech_transfer_in_transit" model="ir.actions.act_window">
+        <field name="name">Actions rapides — En transit</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', '=', 'in_transit')]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+    <record id="action_primetech_transfer_to_receive" model="ir.actions.act_window">
+        <field name="name">Actions rapides — À réceptionner</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', 'in', ['in_transit', 'waiting_reception'])]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+    <record id="action_primetech_transfer_discrepancies" model="ir.actions.act_window">
+        <field name="name">Actions rapides — Écarts à traiter</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', '=', 'discrepancy')]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+    <record id="action_primetech_transfer_returns" model="ir.actions.act_window">
+        <field name="name">Actions rapides — Retours</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', '=', 'returned')]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+
+    <record id="action_primetech_transfer_done" model="ir.actions.act_window">
+        <field name="name">Actions rapides — Terminés / faits</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state', 'in', ['done', 'returned'])]</field>
+        <field name="search_view_id" ref="view_primetech_transfer_dashboard_search"/>
+    </record>
+
+</odoo>

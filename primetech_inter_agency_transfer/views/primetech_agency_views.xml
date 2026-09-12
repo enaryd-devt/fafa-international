@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_primetech_agency_list" model="ir.ui.view">
+        <field name="name">primetech.agency.list</field>
+        <field name="model">primetech.agency</field>
+        <field name="arch" type="xml"><list><field name="name"/><field name="code"/><field name="company_id"/><field name="phone"/><field name="active"/></list></field>
+    </record>
+    <record id="view_primetech_agency_form" model="ir.ui.view">
+        <field name="name">primetech.agency.form</field>
+        <field name="model">primetech.agency</field>
+        <field name="arch" type="xml"><form><sheet><div class="oe_title"><h1><field name="name"/></h1></div><group><group><field name="code"/><field name="company_id"/><field name="active"/></group><group><field name="phone"/><field name="email"/><field name="address"/></group></group><notebook><page string="Entrepôts"><field name="warehouse_ids"/></page><page string="Emplacements"><field name="location_ids"/></page><page string="Utilisateurs"><group><field name="manager_ids" widget="many2many_tags"/><field name="warehouseman_ids" widget="many2many_tags"/></group></page></notebook></sheet></form></field>
+    </record>
+    <record id="action_primetech_agency" model="ir.actions.act_window"><field name="name">Agences</field><field name="res_model">primetech.agency</field><field name="view_mode">list,form</field></record>
+</odoo>

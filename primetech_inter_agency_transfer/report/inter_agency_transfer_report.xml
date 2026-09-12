@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_primetech_transfer" model="ir.actions.report">
+        <field name="name">Bon de transfert PrimeTech</field>
+        <field name="model">primetech.inter.agency.transfer</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">primetech_inter_agency_transfer.report_primetech_transfer_document</field>
+        <field name="report_file">primetech_inter_agency_transfer.report_primetech_transfer_document</field>
+        <field name="print_report_name">'Bon de transfert - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_primetech_inter_agency_transfer"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_primetech_transfer_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <style>
+                        .pt-header {background: linear-gradient(135deg,#071038,#3316d9); color: #fff; padding: 22px; border-radius: 18px; margin-bottom: 18px;}
+                        .pt-logo {height: 86px; border-radius: 14px; background: #fff; padding: 6px;}
+                        .pt-title {font-size: 30px; font-weight: 800; margin: 0;}
+                        .pt-ref {font-size: 18px; opacity: .9; margin-top: 4px;}
+                        .pt-badge {display: inline-block; padding: 6px 12px; border-radius: 999px; background: #eef2ff; color: #2110a8; font-weight: 700;}
+                        .pt-card {border: 1px solid #dbe4f0; border-radius: 14px; padding: 14px; margin-bottom: 14px;}
+                        .pt-card h3 {font-size: 16px; color: #071038; border-bottom: 2px solid #3316d9; padding-bottom: 6px; margin-bottom: 10px;}
+                        .pt-table th {background: #071038; color: #fff; font-weight: 700;}
+                        .pt-table td, .pt-table th {padding: 7px; border: 1px solid #dbe4f0;}
+                    </style>
+                    <div class="page">
+                        <div class="pt-header row">
+                            <div class="col-2">
+                                <img class="pt-logo" t-att-src="'/primetech_inter_agency_transfer/static/src/img/primetech_transfer_logo.svg'"/>
+                            </div>
+                            <div class="col-7">
+                                <h1 class="pt-title">Bon de transfert PrimeTech</h1>
+                                <div class="pt-ref" t-field="doc.name"/>
+                            </div>
+                            <div class="col-3 text-end">
+                                <span class="pt-badge" t-field="doc.state"/>
+                                <div class="mt-2" t-field="doc.request_date"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="pt-card">
+                                    <h3>Origine</h3>
+                                    <p><strong>Société :</strong> <span t-field="doc.source_agency_id"/></p>
+                                    <p><strong>Entrepôt :</strong> <span t-field="doc.source_warehouse_id"/></p>
+                                    <p><strong>Emplacement :</strong> <span t-field="doc.source_location_id"/></p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="pt-card">
+                                    <h3>Destination</h3>
+                                    <p><strong>Société :</strong> <span t-field="doc.destination_agency_id"/></p>
+                                    <p><strong>Entrepôt :</strong> <span t-field="doc.destination_warehouse_id"/></p>
+                                    <p><strong>Emplacement :</strong> <span t-field="doc.destination_location_id"/></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-card">
+                            <h3>Articles transférés</h3>
+                            <table class="pt-table" style="width:100%; border-collapse:collapse;">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th><th>Disponible</th><th>Demandée</th><th>Préparée</th><th>Expédiée</th><th>Reçue</th><th>Écart</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.line_ids" t-as="line">
+                                        <td><span t-field="line.product_id"/></td>
+                                        <td class="text-end"><span t-field="line.available_qty"/></td>
+                                        <td class="text-end"><span t-field="line.requested_qty"/></td>
+                                        <td class="text-end"><span t-field="line.prepared_qty"/></td>
+                                        <td class="text-end"><span t-field="line.shipped_qty"/></td>
+                                        <td class="text-end"><span t-field="line.received_qty"/></td>
+                                        <td class="text-end"><span t-field="line.difference_qty"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-4"><div class="pt-card"><strong>Préparé par</strong><br/><br/><br/>Signature</div></div>
+                            <div class="col-4"><div class="pt-card"><strong>Transport</strong><br/><span t-field="doc.carrier_name"/><br/><span t-field="doc.transport_reference"/></div></div>
+                            <div class="col-4"><div class="pt-card"><strong>Réceptionné par</strong><br/><br/><br/>Signature</div></div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
