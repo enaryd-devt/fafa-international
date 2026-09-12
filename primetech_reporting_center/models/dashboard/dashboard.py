@@ -108,27 +108,11 @@ class PrimetechDashboard(models.AbstractModel):
             period_filters['period'] = self._period_filter_value(filters, key, period_filters.get('period', 'month'))
         return self._get_date_domain(period_filters, field_name)
 
-    def _dashboard_open_model(self, name, model, domain=None, context=None, views=None):
-        """Create a standard drill-down action for a lightweight KPI payload."""
-        view_mode = views or 'list,form'
-        return {
-            'type': 'ir.actions.act_window',
-            'name': name,
-            'res_model': model,
-            'view_mode': view_mode,
-            'views': [[False, mode] for mode in view_mode.split(',')],
-            'domain': domain or [],
-            'context': context or {},
-        }
-
     def _get_pos_session_state(self, filters=None):
         filters = filters or {}
         if 'pos.session' not in self.env.registry:
             return {'opened': 0, 'closed': 0, 'opening_balance': 0.0, 'current_balance': 0.0, 'closing_balance': 0.0, 'sessions': []}
-        # Keep every session in the selected period: the client constrains the
-        # viewport to eight compact rows and lets the user scroll through the
-        # complete result set.
-        sessions = self.env['pos.session'].search(self._get_date_domain(filters, 'start_at'), order='start_at desc, id desc')
+        sessions = self.env['pos.session'].search(self._get_date_domain(filters, 'start_at'), order='start_at desc, id desc', limit=8)
         opened = sessions.filtered(lambda session: session.state not in ('closed', 'closing_control'))
         closed = sessions.filtered(lambda session: session.state in ('closed', 'closing_control'))
         session_lines = []
@@ -148,8 +132,7 @@ class PrimetechDashboard(models.AbstractModel):
                 'user': session.user_id.name or '-',
                 'cashier': session.user_id.name or '-',
                 'journal': journal.display_name if journal else '-',
-                'opening_date': session.start_at.strftime('%d/%m/%Y %H:%M') if session.start_at else '-',
-                'closing_date': session.stop_at.strftime('%d/%m/%Y %H:%M') if session.stop_at else '-',
+                'opening_date': fields.Datetime.to_string(session.start_at) if session.start_at else '-',
                 'opening_balance': opening_balance,
                 'current_balance': theoretical_balance,
                 'closing_balance': real_balance,
@@ -774,14 +757,15 @@ class PrimetechDashboard(models.AbstractModel):
             'primetech_reporting_center.action_executive_cashflow_pdf'
         ).report_action(self.env.company, data={'filters': dict(filters or {})})
 
-    def _get_dashboard_preview_action(self, title, report_xmlid, payload):
-        """Render the preview through the same QWeb pipeline as the PDF."""
+    def _get_dashboard_preview_action(self, title, template_xmlid, report_xmlid, report_data, payload):
+        """Open an HTML preview while retaining the exact PDF action payload."""
         company = self.env.company
-        report = self.env.ref(report_xmlid)
-        rendered = self.env['ir.actions.report']._render_qweb_html(
-            report.report_name, [company.id], data=payload
-        )
-        html = rendered[0] if isinstance(rendered, tuple) else rendered
+        html = self.env['ir.qweb']._render(template_xmlid, {
+            'doc_ids': [company.id],
+            'doc_model': 'res.company',
+            'docs': company,
+            'report_data': report_data,
+        })
         if isinstance(html, bytes):
             html = html.decode()
         preview = self.env['pt.dashboard.report.preview.wizard'].create({
@@ -811,9 +795,12 @@ class PrimetechDashboard(models.AbstractModel):
     def get_cashflow_preview_action(self, filters=None):
         """Build the treasury preview only when the user explicitly requests it."""
         filters = dict(filters or {})
+        report_data = self.get_cashflow_report_data(filters)
         return self._get_dashboard_preview_action(
             _('Aperçu — rapport de suivi de trésorerie'),
+            'primetech_reporting_center.executive_cashflow_pdf',
             'primetech_reporting_center.action_executive_cashflow_pdf',
+            report_data,
             {'filters': filters},
         )
 
@@ -886,9 +873,12 @@ class PrimetechDashboard(models.AbstractModel):
         """Open the stock-watch report preview from the KPI's current rows."""
         filters = dict(filters or {})
         prepared_rows = self._prepare_top_watch_report_rows(rows)
+        report_data = self.get_top_watch_report_data(filters, prepared_rows)
         return self._get_dashboard_preview_action(
             _('Aperçu — top produits à surveiller'),
+            'primetech_reporting_center.executive_top_watch_pdf',
             'primetech_reporting_center.action_executive_top_watch_pdf',
+            report_data,
             {'filters': filters, 'rows': prepared_rows},
         )
 
@@ -992,14 +982,14 @@ class PrimetechDashboard(models.AbstractModel):
         partner_type = 'suppliers' if partner_type == 'suppliers' else 'customers'
         prepared_rows = self._prepare_partner_balance_report_rows(rows)
         safe_summary = summary if isinstance(summary, dict) else {}
-        preview_title = (
-            _('Aperçu — rapport des créances fournisseurs')
-            if partner_type == 'suppliers'
-            else _('Aperçu — rapport des créances clients')
+        report_data = self.get_partner_balance_report_data(
+            partner_type, prepared_rows, safe_summary
         )
         return self._get_dashboard_preview_action(
-            preview_title,
+            _('Aperçu — %s') % report_data['title'].lower(),
+            'primetech_reporting_center.executive_partner_balance_pdf',
             'primetech_reporting_center.action_executive_partner_balance_pdf',
+            report_data,
             {
                 'partner_type': partner_type,
                 'rows': prepared_rows,
@@ -1042,8 +1032,7 @@ class PrimetechDashboard(models.AbstractModel):
             ('date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1)),
         ]
         store_start, store_end = self._get_period_bounds(self._scoped_period_filters(filters, 'store_period', selected_period))
-        revenue_period_filters = self._scoped_period_filters(filters, 'revenue_period', selected_period)
-        revenue_start, revenue_end = self._get_period_bounds(revenue_period_filters)
+        revenue_start, revenue_end = self._get_period_bounds(self._scoped_period_filters(filters, 'revenue_period', selected_period))
         top_watch_start, top_watch_end = self._get_period_bounds(
             self._scoped_period_filters(filters, 'top_watch_period', top_watch_period)
         )
@@ -1179,7 +1168,7 @@ class PrimetechDashboard(models.AbstractModel):
         supplier_action = open_model('Fournisseurs actifs sur la période', 'res.partner', supplier_action_domain)
         supplier_bills_action = open_model('Factures fournisseurs', 'account.move', supplier_bill_domain, {'search_default_posted': 1})
         supplier_payments_action = open_model('Paiements fournisseurs', 'account.payment', supplier_payment_domain)
-        cash_lines = overview['cash_registers']['sessions']
+        cash_lines = overview['cash_registers']['sessions'][:5]
         if not cash_lines:
             cash_lines = [{'name': 'Aucune caisse', 'state': '-', 'user': '-', 'cashier': '-', 'balance': 0, 'current_balance': 0, 'closing_balance': 0, 'orders_total': 0, 'status_class': 'muted', 'action': actions['pos_sessions']}]
         else:
@@ -1243,7 +1232,44 @@ class PrimetechDashboard(models.AbstractModel):
         out_action = open_model('Produits en rupture', 'product.template', out_domain)
         min_action = open_model('Produits sous stock minimum', 'product.template', min_domain)
         over_action = open_model('Produits en surstock', 'product.template', over_domain)
-        categories_payload = self._get_revenue_categories_payload(revenue_period_filters, open_model)
+        category_revenue = defaultdict(float)
+        category_ids = {}
+        category_invoice_domain = [('move_id.move_type', '=', 'out_invoice'), ('move_id.state', '=', 'posted'), ('product_id', '!=', False)] + self._get_date_domain(filters, 'move_id.invoice_date')
+        for line in self.env['account.move.line'].search(category_invoice_domain):
+            category = line.product_id.categ_id
+            category_name = category.display_name or 'Sans catégorie'
+            category_revenue[category_name] += line.price_total
+            category_ids[category_name] = category.id
+        if 'pos.order.line' in self.env.registry:
+            for line in self.env['pos.order.line'].search([('product_id', '!=', False)] + self._get_date_domain(filters, 'order_id.date_order')):
+                category = line.product_id.categ_id
+                category_name = category.display_name or 'Sans catégorie'
+                category_revenue[category_name] += line.price_subtotal_incl
+                category_ids[category_name] = category.id
+        category_total = sum(category_revenue.values())
+        categories = [
+            {
+                'name': name,
+                'value': value,
+                'percent': (value / category_total * 100 if category_total else 0),
+                'action': open_model('Produits catégorie ' + name, 'product.product', [('categ_id', 'child_of', category_ids[name])] if category_ids.get(name) else []),
+            }
+            for name, value in sorted(category_revenue.items(), key=lambda kv: kv[1], reverse=True)[:6]
+        ]
+        category_action = open_model(
+            'Analyse détaillée des ventes par catégorie',
+            'account.move.line',
+            category_invoice_domain,
+            {'group_by': ['product_id']},
+            'pivot,graph,list',
+        )
+        category_products_action = open_model(
+            'Catalogue des produits par catégorie',
+            'product.product',
+            [('categ_id', '!=', False)],
+            {'group_by': ['categ_id']},
+            'list,kanban',
+        )
 
         warehouse_values = defaultdict(float)
         warehouse_actions = {}
@@ -1309,11 +1335,30 @@ class PrimetechDashboard(models.AbstractModel):
                 'action': warehouse_actions.get(warehouse.id) or open_model('Opérations ' + warehouse.display_name, 'stock.picking', [('picking_type_id.warehouse_id', '=', warehouse.id)]),
             })
 
-        # Revenue and category data share one global-sales source (confirmed
-        # commercial sales plus completed POS sales), never cash movements.
-        revenue_payload = self._get_revenue_kpi_payload(filters)
-        revenue_chart = revenue_payload['revenue_chart']
-        categories_payload = revenue_payload['categories']
+        chart_group = 'month' if revenue_period == 'year' or (revenue_end - revenue_start).days > 90 else 'day'
+        chart_keys = []
+        current_key = revenue_start.replace(day=1) if chart_group == 'month' else revenue_start
+        while current_key <= revenue_end:
+            chart_keys.append(current_key)
+            current_key = current_key + relativedelta(months=1) if chart_group == 'month' else current_key + timedelta(days=1)
+        cashflow_by_key = self._get_cashflow_chart_by_date(revenue_start, revenue_end, chart_group)
+        max_receipt_key = max(
+            [values['income'] for values in cashflow_by_key.values()] or [0.0]
+        )
+        revenue_chart = {
+            'subtitle': _('Encaissements et décaissements — %s') % revenue_label,
+            'items': [
+                {
+                    'key': key.isoformat(),
+                    'label': key.strftime('%m/%Y') if chart_group == 'month' else key.strftime('%d/%m'),
+                    'income': cashflow_by_key[key]['income'],
+                    'expense': cashflow_by_key[key]['expense'],
+                    'value': cashflow_by_key[key]['income'],
+                    'height': (cashflow_by_key[key]['income'] / max_receipt_key * 100 if max_receipt_key else 0),
+                }
+                for key in chart_keys
+            ],
+        }
         vehicles = []
         if 'fleet.vehicle' in self.env.registry:
             for vehicle in self.env['fleet.vehicle'].search([], limit=10):
@@ -1787,7 +1832,12 @@ class PrimetechDashboard(models.AbstractModel):
             'cash': cash_lines,
             'banks': banks,
             'billing': billing,
-            'categories': categories_payload,
+            'categories': {
+                'total': category_total,
+                'items': categories,
+                'action': category_action,
+                'products_action': category_products_action,
+            },
             'current_user': {'name': self.env.user.name, 'status': 'En ligne'},
             'stock': {
                 'value': stock_value,
@@ -1825,313 +1875,6 @@ class PrimetechDashboard(models.AbstractModel):
             'activity_history_action': activity_history_action,
             'audit_history_action': audit_history_action,
         }
-
-    @api.model
-    def get_executive_kpi(self, kpi_key, filters=None):
-        """Return only the payload needed by one filtered executive KPI.
-
-        Individual card filters used to trigger the complete executive board,
-        including logistics, audit history and every unrelated accounting
-        calculation.  Keeping the response scoped makes the dashboard remain
-        responsive on larger databases.
-        """
-        filters = dict(filters or {})
-        handlers = {
-            'cash_period': self._get_cash_kpi_payload,
-            'billing_period': self._get_billing_kpi_payload,
-            'stock_scope': self._get_stock_kpi_payload,
-            'store_period': self._get_store_kpi_payload,
-            'revenue_period': self._get_revenue_kpi_payload,
-            'cashflow_period': self._get_cashflow_kpi_payload,
-            'top_watch_period': self._get_top_watch_kpi_payload,
-            'customer_receivable_filter': self._get_partner_kpi_payload,
-            'supplier_receivable_filter': self._get_partner_kpi_payload,
-        }
-        handler = handlers.get(kpi_key)
-        return handler(filters) if handler else {}
-
-    def _get_cash_kpi_payload(self, filters):
-        period_filters = self._scoped_period_filters(filters, 'cash_period', filters.get('period', 'today'))
-        cash_lines = self._get_pos_session_state(period_filters).get('sessions', [])
-        pos_action = self._dashboard_open_model('Sessions de caisse', 'pos.session', []) if 'pos.session' in self.env.registry else self._dashboard_open_model('Ventes PDV', 'pos.order', [])
-        if not cash_lines:
-            cash_lines = [{'name': 'Aucune caisse', 'state': '-', 'user': '-', 'cashier': '-', 'balance': 0, 'current_balance': 0, 'closing_balance': 0, 'orders_total': 0, 'status_class': 'muted', 'action': pos_action}]
-        else:
-            for line in cash_lines:
-                line['action'] = self._dashboard_open_model('Session de caisse', 'pos.session', [('id', '=', line['id'])])
-        return {'cash': cash_lines}
-
-    def _get_billing_kpi_payload(self, filters):
-        billing_period = self._period_filter_value(filters, 'billing_period', filters.get('period', 'month'))
-        billing_filters = self._scoped_period_filters(filters, 'billing_period', filters.get('period', 'month'))
-        invoice_domain = [('move_type', '=', 'out_invoice'), ('state', '=', 'posted')] + self._get_date_domain(billing_filters, 'invoice_date')
-        totals = self.env['account.move'].read_group(invoice_domain, ['amount_total:sum', 'amount_residual:sum'], [])
-        totals = totals[0] if totals else {}
-        billing_total = totals.get('amount_total', 0.0) or 0.0
-        billing_balance = totals.get('amount_residual', 0.0) or 0.0
-        unpaid_domain = invoice_domain + [('payment_state', 'in', ['not_paid', 'partial'])]
-        return {
-            'billing': {
-                'period': billing_period,
-                'total': billing_total,
-                'paid': billing_total - billing_balance,
-                'balance': billing_balance,
-                'count': self.env['account.move'].search_count(invoice_domain),
-                'unpaid_count': self.env['account.move'].search_count(unpaid_domain),
-                'unpaid_rate': billing_balance / billing_total * 100 if billing_total else 0.0,
-                'action': self._dashboard_open_model('Factures clients', 'account.move', invoice_domain, {'search_default_posted': 1}),
-                'payments_action': self._dashboard_open_model('Factures clients encaissées', 'account.move', invoice_domain + [('payment_state', 'in', ['paid', 'in_payment'])], {'search_default_posted': 1}),
-                'unpaid_action': self._dashboard_open_model('Factures clients impayées', 'account.move', unpaid_domain, {'search_default_posted': 1}),
-            },
-        }
-
-    def _get_stock_kpi_payload(self, filters):
-        Product = self.env['product.product']
-        ProductTemplate = self.env['product.template']
-        Quant = self.env['stock.quant']
-        stock_scope = self._period_filter_value(filters, 'stock_scope', 'all')
-        template_domain = []
-        if stock_scope == 'sale':
-            template_domain.append(('sale_ok', '=', True))
-        elif stock_scope == 'purchase':
-            template_domain.append(('purchase_ok', '=', True))
-        template_count = ProductTemplate.search_count(template_domain)
-        product_domain = []
-        if template_domain:
-            template_ids = ProductTemplate.search(template_domain).ids
-            if template_ids:
-                product_domain = [('product_tmpl_id', 'in', template_ids)]
-            else:
-                template_domain = []
-                template_count = ProductTemplate.search_count(template_domain)
-        quant_domain = [('location_id.usage', '=', 'internal')] + ([('product_id', 'in', Product.search(product_domain).ids)] if product_domain else [])
-        value_field = 'value' if 'value' in Quant._fields else 'inventory_value' if 'inventory_value' in Quant._fields else None
-        groups = Quant.read_group(quant_domain, ['quantity'] + ([value_field] if value_field else []), ['product_id'], lazy=False)
-        products = Product.browse([group['product_id'][0] for group in groups if group.get('product_id')])
-        product_by_id = {product.id: product for product in products}
-        quantities = defaultdict(float)
-        values = defaultdict(float)
-        for group in groups:
-            product_data = group.get('product_id')
-            product = product_by_id.get(product_data[0]) if product_data else False
-            if not product:
-                continue
-            quantity = group.get('quantity', 0.0) or 0.0
-            template = product.product_tmpl_id
-            quantities[template.id] += quantity
-            grouped_value = group.get(value_field, 0.0) if value_field else 0.0
-            values[template.id] += grouped_value or quantity * (product.standard_price or template.standard_price or template.list_price or 0.0)
-        settings = self.env['primetech.reporting.settings'].get_values()
-        minimum = settings['stock_min_alert_threshold']
-        overstock = settings['stock_overstock_threshold']
-        positive_templates = {template_id for template_id, quantity in quantities.items() if quantity > 0}
-        out_count = max(template_count - len(positive_templates), 0)
-        min_count = sum(1 for quantity in quantities.values() if 0 < quantity <= minimum)
-        over_count = sum(1 for quantity in quantities.values() if quantity >= overstock)
-        return {
-            'stock': {
-                'value': sum(values.values()),
-                'scope': stock_scope,
-                'products': template_count,
-                'ruptures': out_count,
-                'minimum': min_count,
-                'overstock': over_count,
-                'actions': {
-                    'products': self._dashboard_open_model('Produits stockables', 'product.template', template_domain),
-                    'ruptures': self._dashboard_open_model('Produits en rupture', 'product.template', template_domain + [('qty_available', '<=', 0)]),
-                    'minimum': self._dashboard_open_model('Produits sous stock minimum', 'product.template', template_domain + [('qty_available', '>', 0), ('qty_available', '<=', minimum)]),
-                    'overstock': self._dashboard_open_model('Produits en surstock', 'product.template', template_domain + [('qty_available', '>=', overstock)]),
-                },
-            },
-        }
-
-    def _get_store_kpi_payload(self, filters):
-        period = self._period_filter_value(filters, 'store_period', filters.get('period', 'month'))
-        period_filters = self._scoped_period_filters(filters, 'store_period', filters.get('period', 'month'))
-        start, end = self._get_period_bounds(period_filters)
-        sale_domain = [('state', 'in', ['sale', 'done']), ('date_order', '>=', start), ('date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1))]
-        warehouse_values = defaultdict(float)
-        for group in self.env['sale.order'].read_group(sale_domain, ['amount_total:sum'], ['warehouse_id'], lazy=False):
-            warehouse_data = group.get('warehouse_id')
-            if warehouse_data:
-                warehouse_values[warehouse_data[0]] += group.get('amount_total', 0.0) or 0.0
-        if 'pos.order' in self.env.registry:
-            pos_groups = self.env['pos.order'].read_group([('date_order', '>=', start), ('date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1))], ['amount_total:sum'], ['config_id'], lazy=False)
-            configs = self.env['pos.config'].browse([group['config_id'][0] for group in pos_groups if group.get('config_id')])
-            config_by_id = {config.id: config for config in configs}
-            for group in pos_groups:
-                config_data = group.get('config_id')
-                config = config_by_id.get(config_data[0]) if config_data else False
-                warehouse = config.picking_type_id.warehouse_id if config and config.picking_type_id else False
-                if warehouse:
-                    warehouse_values[warehouse.id] += group.get('amount_total', 0.0) or 0.0
-        maximum = max(warehouse_values.values(), default=0.0)
-        tones = ['green', 'orange', 'blue', 'purple', 'cyan', 'pink', 'slate']
-        warehouses = self.env['stock.warehouse'].search([])
-        stores = []
-        for index, warehouse in enumerate(sorted(warehouses, key=lambda item: warehouse_values.get(item.id, 0.0), reverse=True)[:7]):
-            value = warehouse_values.get(warehouse.id, 0.0)
-            stores.append({
-                'name': warehouse.display_name,
-                'value': value,
-                'percent': value / maximum * 100 if maximum else 0.0,
-                'tone': tones[index % len(tones)],
-                'action': self._dashboard_open_model('Ventes ' + warehouse.display_name, 'sale.order', sale_domain + [('warehouse_id', '=', warehouse.id)]),
-            })
-        labels = {'today': "Aujourd'hui", 'week': 'Cette semaine', 'month': 'Ce mois', 'quarter': 'Ce trimestre', 'year': 'Cette année', 'custom': 'Période sélectionnée'}
-        return {'stores': stores, 'store_period': period, 'store_period_label': labels.get(period, labels['month'])}
-
-    def _get_revenue_kpi_payload(self, filters):
-        period = self._period_filter_value(filters, 'revenue_period', filters.get('period', 'month'))
-        period_filters = self._scoped_period_filters(filters, 'revenue_period', filters.get('period', 'month'))
-        start, end = self._get_period_bounds(period_filters)
-        chart_group = 'month' if period == 'year' or (end - start).days > 90 else 'day'
-        keys = []
-        current = start.replace(day=1) if chart_group == 'month' else start
-        while current <= end:
-            keys.append(current)
-            current = current + relativedelta(months=1) if chart_group == 'month' else current + timedelta(days=1)
-        values = {key: {'sale': 0.0, 'pos': 0.0} for key in keys}
-
-        def bucket(record_date):
-            record_date = fields.Datetime.to_datetime(record_date)
-            day = record_date.date()
-            return day.replace(day=1) if chart_group == 'month' else day
-
-        sale_domain = [
-            ('state', 'in', ['sale', 'done']),
-            ('date_order', '>=', fields.Datetime.to_datetime(start)),
-            ('date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1)),
-        ]
-        for order in self.env['sale.order'].search(sale_domain):
-            key = bucket(order.date_order)
-            if key in values:
-                values[key]['sale'] += order.amount_total or 0.0
-
-        pos_domain = [
-            ('state', 'not in', ['draft', 'cancel']),
-            ('date_order', '>=', fields.Datetime.to_datetime(start)),
-            ('date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1)),
-        ]
-        if 'pos.order' in self.env.registry:
-            for order in self.env['pos.order'].search(pos_domain):
-                key = bucket(order.date_order)
-                if key in values:
-                    values[key]['pos'] += order.amount_total or 0.0
-        maximum = max((item['sale'] + item['pos'] for item in values.values()), default=0.0)
-        labels = {'today': "Aujourd'hui", 'week': 'Cette semaine', 'month': 'Ce mois', 'quarter': 'Ce trimestre', 'year': 'Cette année', 'custom': 'Période sélectionnée'}
-        return {
-            'revenue_period': period,
-            'revenue_chart': {
-                'subtitle': _('Ventes commerciales et points de vente — %s') % labels.get(period, labels['month']),
-                'items': [{
-                    'key': key.isoformat(),
-                    'label': key.strftime('%m/%Y') if chart_group == 'month' else key.strftime('%d/%m'),
-                    'income': values[key]['sale'],
-                    'expense': values[key]['pos'],
-                    'value': values[key]['sale'] + values[key]['pos'],
-                    'height': (values[key]['sale'] + values[key]['pos']) / maximum * 100 if maximum else 0.0,
-                } for key in keys],
-            },
-            'categories': self._get_revenue_categories_payload(period_filters, self._dashboard_open_model),
-        }
-
-    def _get_revenue_categories_payload(self, period_filters, open_model):
-        """Build category sales for the exact period selected on the revenue KPI."""
-        Product = self.env['product.product']
-        category_revenue = defaultdict(float)
-        category_ids = {}
-
-        def add_grouped_revenue(model, domain, amount_field):
-            groups = self.env[model].read_group(domain, [amount_field], ['product_id'], lazy=False)
-            products = Product.browse([group['product_id'][0] for group in groups if group.get('product_id')])
-            product_by_id = {product.id: product for product in products}
-            for group in groups:
-                product_data = group.get('product_id')
-                product = product_by_id.get(product_data[0]) if product_data else False
-                if not product:
-                    continue
-                category = product.categ_id
-                category_name = category.display_name or 'Sans catégorie'
-                category_revenue[category_name] += group.get(amount_field, 0.0) or 0.0
-                category_ids[category_name] = category.id
-
-        sale_domain = [
-            ('order_id.state', 'in', ['sale', 'done']),
-            ('product_id', '!=', False),
-        ] + self._get_date_domain(period_filters, 'order_id.date_order')
-        add_grouped_revenue('sale.order.line', sale_domain, 'price_total')
-        if 'pos.order.line' in self.env.registry:
-            pos_domain = [('order_id.state', 'not in', ['draft', 'cancel']), ('product_id', '!=', False)] + self._get_date_domain(period_filters, 'order_id.date_order')
-            add_grouped_revenue('pos.order.line', pos_domain, 'price_subtotal_incl')
-        total = sum(category_revenue.values())
-        return {
-            'total': total,
-            'items': [{
-                'name': name,
-                'value': value,
-                'percent': value / total * 100 if total else 0.0,
-                'action': open_model('Produits catégorie ' + name, 'product.product', [('categ_id', 'child_of', category_ids[name])] if category_ids.get(name) else []),
-            } for name, value in sorted(category_revenue.items(), key=lambda item: item[1], reverse=True)[:5]],
-            'action': open_model('Analyse détaillée des ventes par catégorie', 'sale.order.line', sale_domain, {'group_by': ['product_id']}, 'pivot,graph,list'),
-            'products_action': open_model('Catalogue des produits par catégorie', 'product.product', [('categ_id', '!=', False)], {'group_by': ['categ_id']}, 'list,kanban'),
-        }
-
-    def _get_cashflow_kpi_payload(self, filters):
-        return {'cashflow_analysis': self._get_cashflow_analysis(self._dashboard_open_model, filters)}
-
-    def _get_partner_kpi_payload(self, filters):
-        return {'partner_balance_kpis': self._get_partner_balance_kpis(self._dashboard_open_model, filters)}
-
-    def _get_top_watch_kpi_payload(self, filters):
-        Product = self.env['product.product']
-        ProductTemplate = self.env['product.template']
-        period_filters = self._scoped_period_filters(filters, 'top_watch_period', filters.get('period', 'month'))
-        start, end = self._get_period_bounds(period_filters)
-        order_domain = [('order_id.date_order', '>=', fields.Datetime.to_datetime(start)), ('order_id.date_order', '<', fields.Datetime.to_datetime(end) + timedelta(days=1)), ('product_id', '!=', False)]
-        quantities = defaultdict(float)
-
-        def add_groups(model, domain, field):
-            groups = self.env[model].read_group(domain, [field], ['product_id'], lazy=False)
-            products = Product.browse([group['product_id'][0] for group in groups if group.get('product_id')])
-            product_by_id = {product.id: product for product in products}
-            for group in groups:
-                product_data = group.get('product_id')
-                product = product_by_id.get(product_data[0]) if product_data else False
-                if product:
-                    quantities[product.product_tmpl_id.id] += group.get(field, 0.0) or 0.0
-
-        if 'sale.order.line' in self.env.registry:
-            add_groups('sale.order.line', [('order_id.state', 'in', ['sale', 'done'])] + order_domain, 'product_uom_qty')
-        add_groups('account.move.line', [('move_id.move_type', '=', 'out_invoice'), ('move_id.state', '=', 'posted'), ('move_id.invoice_date', '>=', start), ('move_id.invoice_date', '<=', end), ('product_id', '!=', False)], 'quantity')
-        if 'pos.order.line' in self.env.registry:
-            add_groups('pos.order.line', order_domain, 'qty')
-
-        minimum = self.env['primetech.reporting.settings'].get_values()['stock_min_alert_threshold']
-        templates = {template.id: template for template in ProductTemplate.browse(list(quantities))}
-        rows = []
-        for template_id, rotation in sorted(quantities.items(), key=lambda item: item[1], reverse=True):
-            template = templates.get(template_id)
-            if not template:
-                continue
-            stock = template.qty_available
-            if rotation <= 0 or stock > minimum:
-                continue
-            status, tone = ('Rupture', 'danger') if stock <= 0 else ('Stock critique', 'critical') if stock <= minimum * .5 else ('Seuil minimum', 'warning')
-            rows.append({
-                'id': template.id,
-                'product': template.display_name,
-                'rayon': template.categ_id.display_name or '-',
-                'status': status,
-                'status_tone': tone,
-                'stock': stock,
-                'rotation': rotation,
-                'action': self._dashboard_open_model('Produit — ' + template.display_name, 'product.template', [('id', '=', template.id)]),
-            })
-        maximum = max((row['rotation'] for row in rows), default=0.0)
-        for row in rows:
-            row['rotation_tone'] = 'high' if maximum and row['rotation'] >= maximum * .66 else 'medium' if maximum and row['rotation'] >= maximum * .33 else 'normal'
-        return {'top_watch': rows[:30]}
 
     def _get_partner_balance_kpis(self, open_model, filters=None):
         """Build customer and supplier balances directly from account.move.line.

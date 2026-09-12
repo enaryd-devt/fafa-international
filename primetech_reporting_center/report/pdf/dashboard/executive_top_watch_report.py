@@ -11,12 +11,9 @@ class ExecutiveTopWatchPdfReport(models.AbstractModel):
         report_data = self.env['primetech.dashboard'].get_top_watch_report_data(
             data.get('filters'), data.get('rows')
         )
-        company = self.env['res.company'].browse(docids[:1]).exists() if docids else self.env.company
-        company = company or self.env.company
         return {
             'doc_ids': docids,
             'doc_model': 'res.company',
-            'docs': company,
-            'company': company,
+            'docs': self.env.company,
             'report_data': report_data,
         }

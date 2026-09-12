@@ -17,7 +17,7 @@
 
         <xpath expr="//section[@data-scroll-key='secondary-analysis']/article[1]/table" position="replace">
             <div class="pt-eb-card-list-scroll pt-eb-cash-scroll">
-                <table><thead><tr><th>Date</th><th>Caissier</th><th>Solde</th><th>Caisse</th><th>Statut</th><th>Date de clôture</th></tr></thead><tbody><t t-foreach="state.cash" t-as="cash" t-key="cash.id or cash.name"><tr t-on-click="() => this.openAction(cash.action)"><td><t t-esc="cash.opening_date || '-'"/></td><td><t t-esc="cash.cashier"/></td><td class="pt-eb-cash-balance"><t t-esc="format(cash.balance, 'FCFA')"/></td><td><t t-esc="cash.name"/></td><td><span t-att-class="'pt-eb-status ' + (cash.status_class || 'muted')"><t t-esc="cash.state"/></span></td><td><t t-esc="cash.closing_date || '-'"/></td></tr></t></tbody></table>
+                <table><thead><tr><th>Caisse</th><th>Caissier</th><th>Solde</th><th>Statut</th></tr></thead><tbody><t t-foreach="state.cash" t-as="cash" t-key="cash.id or cash.name"><tr t-on-click="() => this.openAction(cash.action)"><td><t t-esc="cash.name"/></td><td><t t-esc="cash.cashier"/></td><td><t t-esc="format(cash.balance)"/></td><td><span t-att-class="'pt-eb-status ' + (cash.status_class || 'muted')"><t t-esc="cash.state"/></span></td></tr></t></tbody></table>
             </div>
         </xpath>
 
