@@ -12,11 +12,16 @@ export class ExecutiveBoard extends Component {
         this.boardRef = useRef("board");
         this.stateStorageKey = "primetechExecutiveBoardState";
         this.scrollStorageKey = "primetechExecutiveBoardScroll";
+        this.boardSnapshotStorageKey = "primetechExecutiveBoardSnapshot";
+        this.cacheTtlMs = 60 * 1000;
         const savedState = this.loadSavedState();
         const defaultKpiFilters = { cash_period: "today", billing_period: "month", stock_scope: "all", store_period: "week", revenue_period: "week", cashflow_period: "month", top_watch_period: "month", customer_receivable_filter: "all", supplier_receivable_filter: "all" };
         const defaultRevenueChartOptions = { income: true, expense: true, grid: true };
+        const defaultKpiLoading = Object.fromEntries(Object.keys(defaultKpiFilters).map((key) => [key, false]));
         this.boardCache = new Map();
+        this.kpiCache = new Map();
         this.currentRequestId = 0;
+        this.kpiLoadingRequestIds = {};
         this.cashflowLabels = {
             title: _t("Suivi de trésorerie"),
             subtitle: _t("Encaissements, décaissements, charges et comptes d'encaissement"),
@@ -72,14 +77,19 @@ export class ExecutiveBoard extends Component {
             sold: _t("vendus"),
             noWatchProduct: _t("Aucun produit à forte rotation n’a atteint le seuil minimum."),
         };
-        this.state = useState({ loading: true, period: savedState.period || "today", dateFrom: savedState.dateFrom || "", dateTo: savedState.dateTo || "", kpiCustomRanges: savedState.kpiCustomRanges || {}, clockTick: Date.now(), categoryMenuOpen: false, cashflowMenuOpen: false, topWatchMenuOpen: false, customerReceivableMenuOpen: false, supplierReceivableMenuOpen: false, revenueChartView: savedState.revenueChartView === "chart" ? "chart" : "overview", revenueChartOptions: { ...defaultRevenueChartOptions, ...(savedState.revenueChartOptions || {}) }, revenueChartHidden: Boolean(savedState.revenueChartHidden), kpiFilters: { ...defaultKpiFilters, ...(savedState.kpiFilters || {}) }, partnerSearch: { customers: savedState.partnerSearch?.customers || "", suppliers: savedState.partnerSearch?.suppliers || "" }, partnerSearchLoading: { customers: false, suppliers: false }, kpis: [], stores: [], revenue_chart: { subtitle: "Mois en cours", items: [] }, cash: [], banks: [], stock: {}, partner_balance_kpis: { customers: { rows: [] }, suppliers: { rows: [] } }, current_user: { name: "Directeur Général", status: "En ligne" }, alerts: [], quick_actions: [], activities: [], top_watch: [], history_items: [], performance: [] });
+        this.state = useState({ loading: true, period: savedState.period || "today", dateFrom: savedState.dateFrom || "", dateTo: savedState.dateTo || "", kpiCustomRanges: savedState.kpiCustomRanges || {}, kpiLoading: defaultKpiLoading, clockTick: Date.now(), categoryMenuOpen: false, categoryChartView: savedState.categoryChartView === "chart" ? "chart" : "overview", categoryChartType: ["pie", "bar", "line"].includes(savedState.categoryChartType) ? savedState.categoryChartType : "pie", cashflowMenuOpen: false, topWatchMenuOpen: false, customerReceivableMenuOpen: false, supplierReceivableMenuOpen: false, revenueChartView: savedState.revenueChartView === "chart" ? "chart" : "overview", revenueChartOptions: { ...defaultRevenueChartOptions, ...(savedState.revenueChartOptions || {}) }, revenueChartHidden: Boolean(savedState.revenueChartHidden), kpiFilters: { ...defaultKpiFilters, ...(savedState.kpiFilters || {}) }, partnerSearch: { customers: savedState.partnerSearch?.customers || "", suppliers: savedState.partnerSearch?.suppliers || "" }, partnerSearchLoading: { customers: false, suppliers: false }, kpis: [], stores: [], revenue_chart: { subtitle: "Mois en cours", items: [] }, categories: { total: 0, items: [] }, cash: [], banks: [], stock: {}, partner_balance_kpis: { customers: { rows: [] }, suppliers: { rows: [] } }, current_user: { name: "Directeur Général", status: "En ligne" }, alerts: [], quick_actions: [], activities: [], top_watch: [], history_items: [], performance: [] });
         this.state.cashflowChargeSearch = savedState.cashflowChargeSearch || "";
         this.state.cashflowReceiptSearch = savedState.cashflowReceiptSearch || "";
         this.state.cashflow_analysis = { period_label: _t("Ce mois"), receipts: 0, disbursements: 0, net_cashflow: 0, coverage_rate: 0, total_expenses: 0, expense_accounts: [], all_expense_accounts: [], receipt_accounts: [], all_receipt_accounts: [] };
         for (const key of ["cash_period", "billing_period", "store_period", "revenue_period", "cashflow_period", "top_watch_period"]) {
             if (this.state.kpiFilters[key] === "custom") this.ensureKpiCustomRange(key);
         }
-        onWillStart(async () => this.loadBoard({ force: true }));
+        onWillStart(() => {
+            if (this.restoreBoardSnapshot()) {
+                return;
+            }
+            return this.loadBoard({ force: true });
+        });
         onMounted(() => {
             this.scrollContainer = this.getScrollContainer();
             this.restoreScroll();
@@ -88,9 +98,16 @@ export class ExecutiveBoard extends Component {
             this.clockInterval = setInterval(() => {
                 this.state.clockTick = Date.now();
             }, 1000);
-            this.refreshInterval = setInterval(() => {
-                this.loadBoard({ silent: true, force: true });
-            }, 30000);
+            const refreshBoard = () => {
+                if (document.visibilityState === "visible") {
+                    this.loadBoard({ silent: true, force: true }).catch(() => {});
+                }
+            };
+            const nextRefreshAt = this.nextBoardRefreshAt || Date.now() + this.cacheTtlMs;
+            this.refreshTimeout = setTimeout(() => {
+                refreshBoard();
+                this.refreshInterval = setInterval(refreshBoard, this.cacheTtlMs);
+            }, Math.max(0, nextRefreshAt - Date.now()));
             if ("ResizeObserver" in window) {
                 this.kpiResizeObserver = new ResizeObserver(() => this.scheduleKpiValueFit());
                 this.kpiResizeObserver.observe(this.boardRef.el.querySelector(".pt-eb-kpis"));
@@ -107,6 +124,9 @@ export class ExecutiveBoard extends Component {
             }
             if (this.refreshInterval) {
                 clearInterval(this.refreshInterval);
+            }
+            if (this.refreshTimeout) {
+                clearTimeout(this.refreshTimeout);
             }
             if (this.scrollListener) {
                 this.scrollContainer?.removeEventListener("scroll", this.scrollListener);
@@ -146,15 +166,85 @@ export class ExecutiveBoard extends Component {
         return JSON.stringify(filters);
     }
 
-    rememberBoardData(key, data) {
-        this.boardCache.set(key, data);
+    isCacheFresh(entry) {
+        return Boolean(entry && Date.now() - entry.cachedAt < this.cacheTtlMs);
+    }
+
+    rememberBoardData(key, data, cachedAt = Date.now()) {
+        const entry = { data, cachedAt };
+        this.nextBoardRefreshAt = cachedAt + this.cacheTtlMs;
+        this.boardCache.set(key, entry);
         if (this.boardCache.size > 12) {
             this.boardCache.delete(this.boardCache.keys().next().value);
+        }
+        try {
+            sessionStorage.setItem(this.boardSnapshotStorageKey, JSON.stringify({ key, ...entry }));
+        } catch {
+            // The dashboard remains fully functional when browser storage is unavailable or full.
+        }
+    }
+
+    restoreBoardSnapshot() {
+        try {
+            const snapshot = JSON.parse(sessionStorage.getItem(this.boardSnapshotStorageKey) || "null");
+            const key = this.getBoardCacheKey();
+            if (!snapshot?.data || snapshot.key !== key || !snapshot.cachedAt) {
+                return false;
+            }
+            this.boardCache.set(key, snapshot);
+            this.nextBoardRefreshAt = snapshot.cachedAt + this.cacheTtlMs;
+            this.applyBoardData(snapshot.data);
+            if (!this.isCacheFresh(snapshot)) {
+                this.loadBoard({ silent: true, force: true }).catch(() => {});
+            }
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    getKpiCacheKey(key, filters = this.getBoardFilters()) {
+        return JSON.stringify({
+            key,
+            filters: this.props.filters || {},
+            globalPeriod: filters.period,
+            globalDateFrom: filters.date_from,
+            globalDateTo: filters.date_to,
+            value: filters.kpi_filters?.[key],
+            customRange: filters.kpi_custom_ranges?.[key] || {},
+        });
+    }
+
+    rememberKpiData(key, data) {
+        this.kpiCache.set(key, { data, cachedAt: Date.now() });
+        if (this.kpiCache.size > 32) {
+            this.kpiCache.delete(this.kpiCache.keys().next().value);
+        }
+    }
+
+    applyKpiData(data) {
+        Object.assign(this.state, data || {});
+        if (data?.partner_balance_kpis) {
+            for (const type of ["customers", "suppliers"]) {
+                this.filterPartnerRows(type);
+            }
+        }
+        if (data?.cashflow_analysis) {
+            this.filterCashflowExpenseAccounts();
+            this.filterCashflowReceiptAccounts();
+        }
+        if (this.latestBoardData && data) {
+            Object.assign(this.latestBoardData, data);
+            this.rememberBoardData(this.getBoardCacheKey(), this.latestBoardData);
         }
     }
 
     applyBoardData(data, options = {}) {
+        this.latestBoardData = data;
         Object.assign(this.state, data, { loading: false });
+        if (options.force) {
+            this.kpiCache.clear();
+        }
         for (const type of ["customers", "suppliers"]) {
             this.filterPartnerRows(type);
         }
@@ -168,9 +258,9 @@ export class ExecutiveBoard extends Component {
     async loadBoard(options = {}) {
         const filters = this.getBoardFilters();
         const cacheKey = this.getBoardCacheKey(filters);
-        const cachedData = this.boardCache.get(cacheKey);
-        if (cachedData && !options.force) {
-            this.applyBoardData(cachedData, options);
+        const cachedEntry = this.boardCache.get(cacheKey);
+        if (this.isCacheFresh(cachedEntry) && !options.force) {
+            this.applyBoardData(cachedEntry.data, options);
             return;
         }
         if (!options.silent && !this.state.kpis.length) {
@@ -228,7 +318,7 @@ export class ExecutiveBoard extends Component {
             this.ensureKpiCustomRange(key);
         }
         this.saveDashboardState();
-        await this.loadBoard({ silent: true });
+        await this.loadKpiBoard(key);
     }
 
     ensureKpiCustomRange(key) {
@@ -252,7 +342,42 @@ export class ExecutiveBoard extends Component {
         this.state.kpiCustomRanges[key] = range;
         this.saveDashboardState();
         if (range.dateFrom && range.dateTo && range.dateFrom <= range.dateTo) {
-            await this.loadBoard({ silent: true });
+            await this.loadKpiBoard(key);
+        }
+    }
+
+    isKpiLoading(key) {
+        return Boolean(this.state.kpiLoading[key]);
+    }
+
+    async loadKpiBoard(key, options = {}) {
+        const requestId = (this.kpiLoadingRequestIds[key] || 0) + 1;
+        this.kpiLoadingRequestIds[key] = requestId;
+        this.state.kpiLoading[key] = true;
+        try {
+            const filters = this.getBoardFilters();
+            const cacheKey = this.getKpiCacheKey(key, filters);
+            const cachedEntry = this.kpiCache.get(cacheKey);
+            if (cachedEntry) {
+                this.applyKpiData(cachedEntry.data);
+                if (this.isCacheFresh(cachedEntry) && !options.force) {
+                    return;
+                }
+            }
+            const data = await rpc("/web/dataset/call_kw", {
+                model: "primetech.dashboard",
+                method: "get_executive_kpi",
+                args: [key, filters],
+                kwargs: {},
+            });
+            this.rememberKpiData(cacheKey, data);
+            if (this.kpiLoadingRequestIds[key] === requestId) {
+                this.applyKpiData(data);
+            }
+        } finally {
+            if (this.kpiLoadingRequestIds[key] === requestId) {
+                this.state.kpiLoading[key] = false;
+            }
         }
     }
 
@@ -456,6 +581,8 @@ export class ExecutiveBoard extends Component {
             dateTo: this.state.dateTo,
             kpiCustomRanges: this.state.kpiCustomRanges,
             kpiFilters: this.state.kpiFilters,
+            categoryChartView: this.state.categoryChartView,
+            categoryChartType: this.state.categoryChartType,
             revenueChartView: this.state.revenueChartView,
             revenueChartOptions: { ...this.state.revenueChartOptions },
             revenueChartHidden: this.state.revenueChartHidden,
@@ -563,7 +690,7 @@ export class ExecutiveBoard extends Component {
     }
 
     revenueSummary() {
-        const values = this.revenueCashflowSeries().map((item) => item.income);
+        const values = this.revenueCashflowSeries().map((item) => item.income + item.expense);
         const total = values.reduce((sum, value) => sum + value, 0);
         const nonZero = values.filter((value) => value > 0);
         const first = values[0] || 0;
@@ -581,12 +708,12 @@ export class ExecutiveBoard extends Component {
     revenueCashflowAnalysis() {
         const summary = this.revenueSummary();
         const totals = this.revenueCashflowTotals();
-        const net = totals.income - totals.expense;
+        const net = totals.income + totals.expense;
         return {
             peak: summary.max,
             average: summary.average,
             minimum: summary.min,
-            coverage: totals.expense ? (totals.income / totals.expense) * 100 : (totals.income ? 100 : 0),
+            coverage: net ? (totals.expense / net) * 100 : 0,
             net,
         };
     }
@@ -635,6 +762,8 @@ export class ExecutiveBoard extends Component {
             const value = Math.max(0, Number(item[type]) || 0);
             return {
                 key: `${type}-${item.key}`,
+                label: item.label || `Période ${index + 1}`,
+                value,
                 x: series.length === 1 ? 50 : 8 + (index / last) * 84,
                 y: 88 - Math.min(value / maximum, 1) * 80,
             };
@@ -675,13 +804,18 @@ export class ExecutiveBoard extends Component {
     }
 
     revenueGridLines() {
-        const items = this.state.revenue_chart.items || [];
-        const last = Math.max(items.length - 1, 1);
         return [0, 1, 2, 3, 4].map((index) => ({
             key: `grid-${index}`,
             y: 8 + index * 20,
-            x: items.length ? (index / Math.max(4, last)) * 100 : index * 25,
         }));
+    }
+
+    revenueGridVerticalLines() {
+        const points = this.revenueSeriesPoints("income");
+        if (!points.length) {
+            return [8, 29, 50, 71, 92].map((x, index) => ({ key: `grid-v-${index}`, x }));
+        }
+        return points.map((point) => ({ key: `grid-v-${point.key}`, x: point.x }));
     }
     revenueScaleLabels() {
         const maximum = this.revenueChartMaximum();
@@ -735,17 +869,125 @@ export class ExecutiveBoard extends Component {
     }
 
     categoryDonutStyle() {
-        const items = this.state.categories?.items || [];
+        const items = this.categoryChartItems();
         if (!items.length) return "background: conic-gradient(#e2e8f0 0 100%)";
-        const colors = ["#2f80ed", "#16a34a", "#fb923c", "#8b5cf6", "#ef4444", "#64748b"];
         let cursor = 0;
         const segments = items.map((item, index) => {
             const end = Math.min(cursor + (Number(item.percent) || 0), 100);
-            const segment = `${colors[index % colors.length]} ${cursor}% ${end}%`;
+            const segment = `${this.categoryColor(index)} ${cursor}% ${end}%`;
             cursor = end;
             return segment;
         });
+        if (cursor < 100) {
+            segments.push(`#e2e8f0 ${cursor}% 100%`);
+        }
         return `background: conic-gradient(${segments.join(", ")})`;
+    }
+
+    categoryChartItems() {
+        const categories = this.state.categories || {};
+        const rawItems = categories.items || [];
+        const listedTotal = rawItems.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+        const total = Math.max(Number(categories.total) || 0, listedTotal);
+        const items = rawItems.map((item, index) => {
+            const value = Math.max(0, Number(item.value) || 0);
+            return {
+                ...item,
+                index,
+                key: item.name || `category-${index}`,
+                value,
+                percent: total ? value / total * 100 : Number(item.percent) || 0,
+            };
+        });
+        const otherValue = Math.max(total - listedTotal, 0);
+        if (otherValue > .005) {
+            items.push({
+                index: items.length,
+                key: "other-categories",
+                name: _t("Autres catégories"),
+                value: otherValue,
+                percent: total ? otherValue / total * 100 : 0,
+                action: null,
+            });
+        }
+        return items;
+    }
+
+    categoryChartMaximum() {
+        const maximum = Math.max(...this.categoryChartItems().map((item) => item.value), 0);
+        if (!maximum) return 1;
+        const magnitude = 10 ** Math.max(Math.floor(Math.log10(maximum)) - 1, 0);
+        return Math.ceil(maximum / magnitude) * magnitude;
+    }
+
+    categoryChartPoints() {
+        const items = this.categoryChartItems();
+        const maximum = this.categoryChartMaximum();
+        const last = Math.max(items.length - 1, 1);
+        return items.map((item, index) => ({
+            ...item,
+            index,
+            x: items.length === 1 ? 50 : 8 + (index / last) * 84,
+            y: 88 - Math.min(item.value / maximum, 1) * 80,
+        }));
+    }
+
+    categoryChartBars() {
+        const points = this.categoryChartPoints();
+        const width = Math.min(13, 68 / Math.max(points.length, 1));
+        return points.map((point, index) => ({
+            ...point,
+            index,
+            x: point.x - width / 2,
+            width,
+            height: 88 - point.y,
+        }));
+    }
+
+    categoryChartLinePath() {
+        const points = this.categoryChartPoints();
+        if (!points.length) return "M 0 88 L 100 88";
+        if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+        return points.reduce((path, point, index) => {
+            if (!index) return `M ${point.x} ${point.y}`;
+            const previous = points[index - 1];
+            const controlOffset = (point.x - previous.x) * .45;
+            return `${path} C ${previous.x + controlOffset} ${previous.y}, ${point.x - controlOffset} ${point.y}, ${point.x} ${point.y}`;
+        }, "");
+    }
+
+    categoryChartGridLines() {
+        return [0, 1, 2, 3, 4].map((index) => ({ key: `category-grid-${index}`, y: 8 + index * 20 }));
+    }
+
+    categoryChartGridVerticalLines() {
+        const points = this.categoryChartPoints();
+        return points.length
+            ? points.map((point) => ({ key: `category-grid-v-${point.key}`, x: point.x }))
+            : [8, 29, 50, 71, 92].map((x, index) => ({ key: `category-grid-v-${index}`, x }));
+    }
+
+    categoryScaleLabels() {
+        const maximum = this.categoryChartMaximum();
+        return [maximum, maximum * .75, maximum * .5, maximum * .25, 0]
+            .map((value, index) => ({ key: `category-scale-${index}`, label: this.formatCompactAmount(value) }));
+    }
+
+    openCategoryChartWorkspace() {
+        this.state.categoryMenuOpen = false;
+        this.state.categoryChartView = "chart";
+        this.saveDashboardState();
+    }
+
+    closeCategoryChartWorkspace() {
+        this.state.categoryChartView = "overview";
+        this.saveDashboardState();
+    }
+
+    setCategoryChartType(type) {
+        if (!["pie", "bar", "line"].includes(type)) return;
+        this.state.categoryChartType = type;
+        this.saveDashboardState();
     }
 
     toggleRevenueChart() {
@@ -803,7 +1045,7 @@ export class ExecutiveBoard extends Component {
 
     async refreshCategoryKpi() {
         this.state.categoryMenuOpen = false;
-        await this.loadBoard({ silent: true, force: true });
+        await this.loadKpiBoard("revenue_period", { force: true });
     }
 
     userInitials() {

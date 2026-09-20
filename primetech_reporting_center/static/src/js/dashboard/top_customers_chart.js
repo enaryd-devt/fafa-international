@@ -23,7 +23,7 @@ export class TopCustomersChart extends Component {
             loading: true,
 
         });
-        
+
 
         onWillUpdateProps(async () => {
 
@@ -36,7 +36,7 @@ export class TopCustomersChart extends Component {
     async loadChart() {
 
         this.state.loading = true;
-        
+
 
         try {
 

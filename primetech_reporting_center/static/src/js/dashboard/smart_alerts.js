@@ -40,7 +40,7 @@ export class SmartAlerts extends Component {
     async loadAlerts() {
 
         this.state.loading = true;
-        
+
 
         try {
 

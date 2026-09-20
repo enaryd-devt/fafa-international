@@ -39,7 +39,7 @@ setup() {
 
 
         });
-    
+
 
         onWillUpdateProps(async (nextProps) => {
 

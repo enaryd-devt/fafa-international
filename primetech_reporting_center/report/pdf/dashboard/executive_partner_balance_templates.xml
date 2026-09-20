@@ -2,16 +2,16 @@
 <odoo>
     <template id="executive_partner_balance_pdf">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="company" t-value="o"/>
                 <t t-set="currency_name" t-value="report_data['company'].currency_id.name or 'FCFA'"/>
                 <div class="page pt-partner-balance-pdf">
                     <style>
                         .pt-partner-balance-pdf { color: #24324a; font-family: Arial, sans-serif; font-size: 9px; }
-                        .pt-partner-balance-pdf .report-title { margin-bottom: 16px; padding: 15px 18px; border-radius: 8px; background: #1e3a5f; color: #fff; }
+                        .pt-partner-balance-pdf .report-title { margin-bottom: 16px; padding: 15px 18px; border-radius: 8px; background: #7c2d12; color: #fff; }
                         .pt-partner-balance-pdf .report-title h1 { margin: 0; color: #fff; font-size: 21px; letter-spacing: .3px; }
-                        .pt-partner-balance-pdf .report-title p { margin: 5px 0 0; color: #dbeafe; font-size: 10px; }
-                        .pt-partner-balance-pdf .report-meta { width: 100%; margin-top: 12px; border-collapse: collapse; }
-                        .pt-partner-balance-pdf .report-meta td { width: 50%; padding: 7px 9px; border: 1px solid #dbe4f0; background: #f8fafc; }
+                        .pt-partner-balance-pdf .report-print-date { margin: 5px 0 0; color: #ffedd5; font-size: 10px; }
                         .pt-partner-balance-pdf .metrics { width: 100%; margin: 14px 0 18px; border-collapse: separate; border-spacing: 7px 0; }
                         .pt-partner-balance-pdf .metrics td { width: 25%; padding: 12px; border: 1px solid #dbe4f0; border-radius: 6px; background: #fff; vertical-align: top; }
                         .pt-partner-balance-pdf .metric-label { display: block; color: #64748b; font-size: 8px; font-weight: bold; text-transform: uppercase; }
@@ -29,6 +29,7 @@
                         .pt-partner-balance-pdf .muted { color: #64748b; }
                         .pt-partner-balance-pdf .summary-box { margin-top: 14px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; }
                         .pt-partner-balance-pdf .summary-box p { margin: 3px 0; }
+                        .pt-partner-balance-pdf .report-title, .pt-partner-balance-pdf .metrics, .pt-partner-balance-pdf .summary-box, .pt-partner-balance-pdf .signatures { page-break-inside: avoid; }
                         .pt-partner-balance-pdf .signatures { width: 100%; margin-top: 34px; border-collapse: collapse; text-align: center; }
                         .pt-partner-balance-pdf .signatures td { width: 33.33%; padding-top: 26px; }
                         .pt-partner-balance-pdf thead { display: table-header-group; }
@@ -37,17 +38,7 @@
 
                     <section class="report-title">
                         <h1><t t-esc="report_data['title']"/></h1>
-                        <p>Édition limitée à la liste actuellement affichée sur le tableau de bord.</p>
-                        <table class="report-meta">
-                            <tr>
-                                <td><strong>Société :</strong> <t t-esc="report_data['company'].name"/></td>
-                                <td><strong>Édition :</strong> <t t-esc="report_data['generated_at']"/></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Critère :</strong> <t t-esc="report_data['criteria_label']"/></td>
-                                <td><strong>Recherche :</strong> <t t-esc="report_data['search_term'] or 'Aucune'"/></td>
-                            </tr>
-                        </table>
+                        <p class="report-print-date">Imprimé le <t t-esc="report_data['generated_at']"/></p>
                     </section>
 
                     <table class="metrics">
@@ -83,6 +74,7 @@
 
                     <table class="signatures"><tr><td><strong>Comptable</strong><br/><br/>______________________</td><td><strong>Responsable recouvrement</strong><br/><br/>______________________</td><td><strong>Direction financière</strong><br/><br/>______________________</td></tr></table>
                 </div>
+            </t>
             </t>
         </t>
     </template>

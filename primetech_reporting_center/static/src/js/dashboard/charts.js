@@ -63,7 +63,7 @@ export class ChartContainer extends Component {
                 "Erreur Graphique",
                 error
             );
-            
+
 
         }
 
@@ -305,7 +305,7 @@ export class ChartContainer extends Component {
 
                 labels:
                     data.labels,
-                    
+
                     datasets: [{
 
                         data: data.values,

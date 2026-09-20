@@ -2,7 +2,9 @@
 <odoo>
     <template id="executive_cashflow_pdf">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="company" t-value="o"/>
                 <t t-set="analysis" t-value="report_data['analysis']"/>
                 <t t-set="operating" t-value="report_data['operating_result']"/>
                 <t t-set="currency_name" t-value="report_data['company'].currency_id.name or 'FCFA'"/>
@@ -11,9 +13,7 @@
                         .pt-cashflow-pdf { color: #24324a; font-family: Arial, sans-serif; font-size: 9px; }
                         .pt-cashflow-pdf .report-title { margin-bottom: 16px; padding: 15px 18px; border-radius: 8px; background: #172554; color: #fff; }
                         .pt-cashflow-pdf .report-title h1 { margin: 0; color: #fff; font-size: 21px; letter-spacing: .4px; }
-                        .pt-cashflow-pdf .report-title p { margin: 5px 0 0; color: #dbeafe; font-size: 10px; }
-                        .pt-cashflow-pdf .report-meta { width: 100%; margin-top: 12px; border-collapse: collapse; }
-                        .pt-cashflow-pdf .report-meta td { width: 50%; padding: 7px 9px; border: 1px solid #dbe4f0; background: #f8fafc; }
+                        .pt-cashflow-pdf .report-print-date { margin: 5px 0 0; color: #dbeafe; font-size: 10px; }
                         .pt-cashflow-pdf .metrics { width: 100%; margin: 14px 0 18px; border-collapse: separate; border-spacing: 7px 0; }
                         .pt-cashflow-pdf .metrics td { width: 25%; padding: 12px; border: 1px solid #dbe4f0; border-radius: 6px; background: #fff; vertical-align: top; }
                         .pt-cashflow-pdf .metric-label { display: block; color: #64748b; font-size: 8px; font-weight: bold; text-transform: uppercase; }
@@ -37,6 +37,7 @@
                         .pt-cashflow-pdf .result-panel strong { display: block; margin-top: 5px; font-size: 13px; }
                         .pt-cashflow-pdf .summary-box { margin-top: 14px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; }
                         .pt-cashflow-pdf .summary-box p { margin: 3px 0; }
+                        .pt-cashflow-pdf .report-title, .pt-cashflow-pdf .metrics, .pt-cashflow-pdf .result-panel, .pt-cashflow-pdf .summary-box, .pt-cashflow-pdf .signatures { page-break-inside: avoid; }
                         .pt-cashflow-pdf .signatures { width: 100%; margin-top: 34px; border-collapse: collapse; text-align: center; }
                         .pt-cashflow-pdf .signatures td { width: 33.33%; padding-top: 26px; }
                         .pt-cashflow-pdf thead { display: table-header-group; }
@@ -45,17 +46,7 @@
 
                     <section class="report-title">
                         <h1>Rapport de suivi de trésorerie</h1>
-                        <p>Encaissements, décaissements, flux de trésorerie et résultat d'exploitation</p>
-                        <table class="report-meta">
-                            <tr>
-                                <td><strong>Période analysée :</strong> <t t-esc="analysis['date_from']"/> au <t t-esc="analysis['date_to']"/></td>
-                                <td><strong>Édition :</strong> <t t-esc="report_data['generated_at']"/></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Société :</strong> <t t-esc="report_data['company'].name"/></td>
-                                <td><strong>Écritures de trésorerie :</strong> <t t-esc="report_data['cashflow_move_count']"/></td>
-                            </tr>
-                        </table>
+                        <p class="report-print-date">Imprimé le <t t-esc="report_data['generated_at']"/></p>
                     </section>
 
                     <table class="metrics">
@@ -119,6 +110,7 @@
 
                     <table class="signatures"><tr><td><strong>Comptable</strong><br/><br/>______________________</td><td><strong>Chef comptable</strong><br/><br/>______________________</td><td><strong>Direction financière</strong><br/><br/>______________________</td></tr></table>
                 </div>
+            </t>
             </t>
         </t>
     </template>
