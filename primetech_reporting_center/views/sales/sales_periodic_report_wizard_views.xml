@@ -39,6 +39,15 @@
               <field name="partner_id" options="{'no_create': True}"/>
             </group>
           </group>
+          <separator string="Fournisseurs des articles vendus"/>
+          <group col="2">
+            <group>
+              <field name="supplier_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+            </group>
+            <group>
+              <field name="group_by_supplier"/>
+            </group>
+          </group>
           <separator string="État des Documents"/>
           <group>
             <field name="state_filter" widget="radio"/>

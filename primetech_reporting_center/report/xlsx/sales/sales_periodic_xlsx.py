@@ -12,7 +12,10 @@ class SalesPeriodicXlsx(models.AbstractModel):
         header = workbook.add_format({'bold': True, 'border': 1, 'align': 'center'})
         cell = workbook.add_format({'border': 1})
         money = workbook.add_format({'border': 1, 'num_format': '#,##0.00'})
-        report_data = self.env['primetech.sales.periodic.report'].get_report_data(date_from=wizard.date_from, date_to=wizard.date_to, company_id=wizard.company_id.id, user_id=wizard.user_id.id if wizard.user_id else False, partner_id=wizard.partner_id.id if wizard.partner_id else False, state_filter=wizard.state_filter)
+        subtotal = workbook.add_format({'bold': True, 'border': 1, 'bg_color': '#E8EDF3', 'align': 'right'})
+        subtotal_qty = workbook.add_format({'bold': True, 'border': 1, 'bg_color': '#E8EDF3', 'align': 'center'})
+        subtotal_money = workbook.add_format({'bold': True, 'border': 1, 'bg_color': '#E8EDF3', 'num_format': '#,##0.00'})
+        report_data = self.env['primetech.sales.periodic.report'].get_report_data(date_from=wizard.date_from, date_to=wizard.date_to, company_id=wizard.company_id.id, user_id=wizard.user_id.id if wizard.user_id else False, partner_id=wizard.partner_id.id if wizard.partner_id else False, supplier_ids=wizard.supplier_ids.ids, group_by_supplier=wizard.group_by_supplier, state_filter=wizard.state_filter)
         summary = report_data['summary']
         row = 0
         sheet.merge_range(row, 0, row, 8, 'RAPPORT PERIODIQUE DES VENTES', title)
@@ -43,19 +46,34 @@ class SalesPeriodicXlsx(models.AbstractModel):
         sheet.write(row, 0, 'DETAIL DES VENTES', header)
         row += 1
         columns = ['Facture', 'Date', 'Client', 'Commercial', 'Produit', 'Qté', 'PU', 'HT', 'TTC']
+        if wizard.group_by_supplier:
+            columns.insert(4, 'Fournisseur')
         for col, name in enumerate(columns):
             sheet.write(row, col, name, header)
         row += 1
         for line in report_data['sales_lines']:
+            if line.get('is_supplier_subtotal'):
+                last_column = 9 if wizard.group_by_supplier else 8
+                sheet.merge_range(row, 0, row, last_column - 4, 'Sous-total %s' % line['supplier'], subtotal)
+                sheet.write(row, last_column - 3, line['qty'], subtotal_qty)
+                sheet.write_blank(row, last_column - 2, None, subtotal)
+                sheet.write(row, last_column - 1, line['ht'], subtotal_money)
+                sheet.write(row, last_column, line['ttc'], subtotal_money)
+                row += 1
+                continue
             sheet.write(row, 0, line['invoice'], cell)
             sheet.write(row, 1, str(line['date']), cell)
             sheet.write(row, 2, line['customer'], cell)
             sheet.write(row, 3, line['seller'], cell)
-            sheet.write(row, 4, line['product'], cell)
-            sheet.write(row, 5, line['qty'], cell)
-            sheet.write(row, 6, line['unit_price'], money)
-            sheet.write(row, 7, line['ht'], money)
-            sheet.write(row, 8, line['ttc'], money)
+            col = 4
+            if wizard.group_by_supplier:
+                sheet.write(row, col, line['supplier'], cell)
+                col += 1
+            sheet.write(row, col, line['product'], cell)
+            sheet.write(row, col + 1, line['qty'], cell)
+            sheet.write(row, col + 2, line['unit_price'], money)
+            sheet.write(row, col + 3, line['ht'], money)
+            sheet.write(row, col + 4, line['ttc'], money)
             row += 1
         sheet.set_column('A:A', 18)
         sheet.set_column('B:B', 15)

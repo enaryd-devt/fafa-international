@@ -70,8 +70,26 @@
               </tr>
             </thead>
             <tbody>
+              <t t-set="current_supplier" t-value="False"/>
               <t t-foreach="sales_lines" t-as="line">
-                <tr>
+                <t t-if="wizard.group_by_supplier and current_supplier != line['supplier']">
+                  <tr>
+                    <td colspan="9" style="background:#e8edf3; border:1px solid #999; padding:6px; font-weight:bold;">
+                      Fournisseur : <t t-esc="line['supplier']"/>
+                    </td>
+                  </tr>
+                  <t t-set="current_supplier" t-value="line['supplier']"/>
+                </t>
+                <tr t-if="line.get('is_supplier_subtotal')" style="background:#f2f5f8; font-weight:bold;">
+                  <td colspan="5" style="border:1px solid #999; padding:5px; text-align:right;">
+                    Sous-total <t t-esc="line['supplier']"/>
+                  </td>
+                  <td style="border:1px solid #999; padding:5px; text-align:center;"><t t-esc="line['qty']"/></td>
+                  <td style="border:1px solid #999; padding:5px;"> </td>
+                  <td style="border:1px solid #999; padding:5px; text-align:right;"><t t-esc="'{:,.0f}'.format(line['ht'])"/></td>
+                  <td style="border:1px solid #999; padding:5px; text-align:right;"><t t-esc="'{:,.0f}'.format(line['ttc'])"/></td>
+                </tr>
+                <tr t-if="not line.get('is_supplier_subtotal')">
                   <td style="border:1px solid #ccc; padding:4px;">
                     <t t-esc="line['invoice']"/>
                   </td>
