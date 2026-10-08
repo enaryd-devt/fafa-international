@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="primetech_inter_agency_transfer.Dashboard" owl="1">
+        <main class="o_pt_dashboard_client">
+            <div t-if="state.loading" class="o_pt_dashboard_loading">Chargement du tableau de bord…</div>
+            <div t-else="" t-ref="content"/>
+        </main>
+    </t>
+</templates>

@@ -1,7 +1,7 @@
 {
     "name": "PrimeTech — Transferts inter-agences",
     "summary": "Transferts de stock contrôlés entre agences et entrepôts PrimeTech",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.1",
     "category": "Inventory/Inventory",
     "author": "PrimeTech",
     "license": "LGPL-3",
@@ -17,10 +17,13 @@
         "views/menu_views.xml",
         "report/inter_agency_transfer_report.xml",
     ],
-    "images": ["static/description/banner.svg"],
+    "icon": "/primetech_inter_agency_transfer/static/description/icon.png",
+    "images": ["static/description/icon.png", "static/description/banner.svg"],
     "assets": {
         "web.assets_backend": [
+            "primetech_inter_agency_transfer/static/src/js/inter_agency_transfer_dashboard.js",
             "primetech_inter_agency_transfer/static/src/scss/inter_agency_transfer.scss",
+            "primetech_inter_agency_transfer/static/src/xml/inter_agency_transfer_dashboard.xml",
         ],
     },
     "application": True,

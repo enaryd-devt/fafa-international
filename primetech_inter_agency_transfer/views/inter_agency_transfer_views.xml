@@ -153,4 +153,13 @@
         <field name="view_mode">kanban,list,form,pivot,graph,calendar</field>
         <field name="search_view_id" ref="view_primetech_transfer_search"/>
     </record>
+
+    <record id="action_primetech_transfer_new" model="ir.actions.act_window">
+        <field name="name">Nouveau transfert</field>
+        <field name="res_model">primetech.inter.agency.transfer</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_primetech_transfer_form"/>
+        <field name="context">{'default_transfer_type': 'inter_agency'}</field>
+        <field name="target">current</field>
+    </record>
 </odoo>

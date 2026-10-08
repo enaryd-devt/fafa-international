@@ -1,3 +1,5 @@
+from datetime import datetime, time, timedelta
+
 from markupsafe import Markup, escape
 
 from odoo import api, fields, models
@@ -23,6 +25,32 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
             return "#"
         return f"/web#action={action.id}"
 
+    def _weekly_activity_chart(self):
+        """Build a seven-day chart, scoped by the user's record rules."""
+        today = fields.Date.context_today(self)
+        first_day = today - timedelta(days=6)
+        start = datetime.combine(first_day, time.min)
+        transfers = self.env["primetech.inter.agency.transfer"].search(
+            [("request_date", ">=", fields.Datetime.to_string(start))]
+        )
+        counts = {first_day + timedelta(days=offset): 0 for offset in range(7)}
+        for transfer in transfers:
+            request_day = fields.Datetime.context_timestamp(self, transfer.request_date).date()
+            if request_day in counts:
+                counts[request_day] += 1
+
+        values = list(counts.values())
+        peak = max(values) or 1
+        points = []
+        labels = []
+        for index, (day, value) in enumerate(counts.items()):
+            x = index * (640 / 6)
+            y = 178 - (value / peak * 130)
+            points.append(f"{x:.0f},{y:.0f}")
+            plural = "s" if value != 1 else ""
+            labels.append(f'<span><strong>{day.strftime("%d/%m")}</strong><small>{value} transfert{plural}</small></span>')
+        return " ".join(points), "".join(labels), sum(values)
+
     def _role_label(self):
         user = self.env.user
         if user.has_group("primetech_inter_agency_transfer.group_primetech_transfer_administrator"):
@@ -34,6 +62,12 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
         if user.has_group("primetech_inter_agency_transfer.group_primetech_transfer_warehouseman"):
             return "Magasinier"
         return "Utilisateur"
+
+    @api.model
+    def get_dashboard_html(self):
+        """Payload consumed by the client-action dashboard."""
+        dashboard = self.search([], limit=1)
+        return str(dashboard.dashboard_html or "")
 
     @api.depends_context("uid", "allowed_company_ids")
     def _compute_dashboard_html(self):
@@ -67,6 +101,7 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
             internal_rate = internal / total * 100.0 if total else 0.0
             high_priority_rate = high_priority / total * 100.0 if total else 0.0
             normal_priority_rate = normal_priority / total * 100.0 if total else 0.0
+            weekly_points, weekly_labels, weekly_total = dashboard._weekly_activity_chart()
 
             company_tags = "".join(
                 f'<span class="o_pt_tag">{escape(company.name)}</span>' for company in user.company_ids[:5]
@@ -74,6 +109,7 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
             role_label = escape(dashboard._role_label())
             user_name = escape(user.name)
             url_all = dashboard._action_url("primetech_inter_agency_transfer.action_primetech_transfer")
+            url_new = dashboard._action_url("primetech_inter_agency_transfer.action_primetech_transfer_new")
             url_prepare = dashboard._action_url("primetech_inter_agency_transfer.action_primetech_transfer_to_prepare")
             url_ship = dashboard._action_url("primetech_inter_agency_transfer.action_primetech_transfer_to_ship")
             url_receive = dashboard._action_url("primetech_inter_agency_transfer.action_primetech_transfer_to_receive")
@@ -91,7 +127,7 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
                     <li><a href="{url_receive}"><span class="o_pt_notice_icon o_pt_notice_orange">↘</span><div><strong>{to_receive} réceptions en attente</strong><small>Actions attendues à destination</small></div><em>{to_receive}</em></a></li>
                 """
                 quick_cards += f"""
-                    <a class="o_pt_quick_card" href="{url_all}&amp;view_type=form"><span>＋</span><strong>Nouveau transfert</strong><small>Créer un bon</small></a>
+                    <a class="o_pt_quick_card" href="{url_new}"><span>＋</span><strong>Nouveau transfert</strong><small>Créer un bon</small></a>
                     <a class="o_pt_quick_card" href="{url_prepare}"><span>✓</span><strong>À préparer</strong><small>Voir la liste</small></a>
                     <a class="o_pt_quick_card" href="{url_ship}"><span>🚚</span><strong>À expédier</strong><small>Voir la liste</small></a>
                     <a class="o_pt_quick_card" href="{url_receive}"><span>↘</span><strong>À réceptionner</strong><small>Voir la liste</small></a>
@@ -118,11 +154,11 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
             if can_manage or can_analyze:
                 analysis_panels = f"""
                     <a class="o_pt_panel o_pt_chart_panel o_pt_span_2 o_pt_clickable_panel" href="{url_analysis}">
-                        <div class="o_pt_panel_head"><h2>Évolution des transferts</h2><span>Journalier</span></div>
+                        <div class="o_pt_panel_head"><h2>Évolution des transferts</h2><span>{weekly_total} sur 7 jours</span></div>
                         <svg class="o_pt_line_chart" viewBox="0 0 640 220" preserveAspectRatio="none">
-                            <polyline points="0,155 55,120 110,135 165,92 220,130 275,105 330,145 385,88 440,112 495,70 550,95 640,62"/>
-                            <polyline class="o_pt_line_chart_secondary" points="0,180 55,148 110,160 165,125 220,152 275,135 330,168 385,122 440,140 495,105 550,130 640,118"/>
+                            <polyline points="{weekly_points}"/>
                         </svg>
+                        <div class="o_pt_chart_labels">{weekly_labels}</div>
                     </a>
                     <a class="o_pt_panel o_pt_clickable_panel" href="{url_analysis}">
                         <h2>Transferts par type</h2>
@@ -140,14 +176,6 @@ class PrimetechInterAgencyTransferDashboard(models.Model):
 
             html = f"""
                 <div class="o_pt_home_dashboard o_pt_home_dashboard_modern">
-                    <div class="o_pt_modern_header">
-                        <div>
-                            <div class="o_pt_home_eyebrow">PrimeTech Services</div>
-                            <h1>Tableau de bord Transferts</h1>
-                            <p>Vue d'ensemble des transferts inter-agences et inter-entrepôts — informations filtrées selon vos droits d'accès.</p>
-                        </div>
-                        <div class="o_pt_user_box"><span>🔔</span><div><strong>{user_name}</strong><small>{role_label}</small></div></div>
-                    </div>
                     <div class="o_pt_panel o_pt_span_full o_pt_quick_top">
                         <div class="o_pt_panel_head"><h2>Actions rapides</h2><span>Accès direct</span></div>
                         <div class="o_pt_quick_grid">{quick_cards}</div>

@@ -1,51 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_primetech_transfer_root" name="Transferts de stock" action="action_primetech_transfer_home_dashboard" sequence="55" groups="primetech_inter_agency_transfer.group_primetech_transfer_warehouseman,primetech_inter_agency_transfer.group_primetech_transfer_manager,primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager,primetech_inter_agency_transfer.group_primetech_transfer_administrator"/>
-    <menuitem id="menu_primetech_transfer_dashboard" name="Tableau de bord" parent="menu_primetech_transfer_root" action="action_primetech_transfer_home_dashboard" sequence="1"/>
-    <record id="menu_primetech_transfer_dashboard" model="ir.ui.menu">
-        <field name="active" eval="True"/>
-    </record>
-    <record id="menu_primetech_transfer_quick_actions" model="ir.ui.menu">
-        <field name="name">Actions rapides</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_to_prepare" model="ir.ui.menu">
-        <field name="name">À préparer</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_to_ship" model="ir.ui.menu">
-        <field name="name">À expédier / valider</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_to_receive" model="ir.ui.menu">
-        <field name="name">À réceptionner</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_discrepancies" model="ir.ui.menu">
-        <field name="name">Écarts à traiter</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_returns" model="ir.ui.menu">
-        <field name="name">Retours</field>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_primetech_transfer_done" model="ir.ui.menu">
-        <field name="name">Terminés / faits</field>
-        <field name="active" eval="False"/>
-    </record>
+    <menuitem id="menu_primetech_transfer_root" name="Transferts de stock" action="action_primetech_transfer_home_dashboard_client" sequence="55" web_icon="primetech_inter_agency_transfer,static/description/icon.png" groups="primetech_inter_agency_transfer.group_primetech_transfer_warehouseman,primetech_inter_agency_transfer.group_primetech_transfer_manager,primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager,primetech_inter_agency_transfer.group_primetech_transfer_administrator"/>
+    <menuitem id="menu_primetech_transfer_dashboard" name="Accueil" parent="menu_primetech_transfer_root" action="action_primetech_transfer_home_dashboard_client" sequence="1"/>
+
     <menuitem id="menu_primetech_transfer_operations" name="Opérations" parent="menu_primetech_transfer_root" sequence="10"/>
-    <menuitem id="menu_primetech_transfer_dashboard" name="Tableau de bord" parent="menu_primetech_transfer_operations" action="action_primetech_transfer_dashboard" sequence="1"/>
-    <menuitem id="menu_primetech_transfer_quick_actions" name="Actions rapides" parent="menu_primetech_transfer_operations" sequence="2"/>
-    <menuitem id="menu_primetech_transfer_to_prepare" name="À préparer" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_to_prepare" sequence="10"/>
-    <menuitem id="menu_primetech_transfer_to_ship" name="À expédier / valider" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_to_ship" sequence="20"/>
-    <menuitem id="menu_primetech_transfer_to_receive" name="À réceptionner" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_to_receive" sequence="30"/>
-    <menuitem id="menu_primetech_transfer_discrepancies" name="Écarts à traiter" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_discrepancies" sequence="40"/>
-    <menuitem id="menu_primetech_transfer_returns" name="Retours" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_returns" sequence="50"/>
-    <menuitem id="menu_primetech_transfer_done" name="Terminés / faits" parent="menu_primetech_transfer_quick_actions" action="action_primetech_transfer_done" sequence="60"/>
     <menuitem id="menu_primetech_transfer_all" name="Tous les transferts" parent="menu_primetech_transfer_operations" action="action_primetech_transfer" sequence="10"/>
-    <menuitem id="menu_primetech_transfer_inter_agency" name="Transferts inter-agences" parent="menu_primetech_transfer_operations" action="action_primetech_transfer" sequence="20"/>
-    <menuitem id="menu_primetech_transfer_internal" name="Transferts inter-entrepôts" parent="menu_primetech_transfer_operations" action="action_primetech_transfer" sequence="30"/>
-    <menuitem id="menu_primetech_transfer_configuration" name="Configuration" parent="menu_primetech_transfer_root" sequence="90" groups="primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager"/>
+    <menuitem id="menu_primetech_transfer_to_prepare" name="À préparer" parent="menu_primetech_transfer_operations" action="action_primetech_transfer_to_prepare" sequence="20"/>
+    <menuitem id="menu_primetech_transfer_to_ship" name="À expédier" parent="menu_primetech_transfer_operations" action="action_primetech_transfer_to_ship" sequence="30"/>
+    <menuitem id="menu_primetech_transfer_to_receive" name="À réceptionner" parent="menu_primetech_transfer_operations" action="action_primetech_transfer_to_receive" sequence="40"/>
+    <menuitem id="menu_primetech_transfer_discrepancies" name="Écarts à traiter" parent="menu_primetech_transfer_operations" action="action_primetech_transfer_discrepancies" sequence="50" groups="primetech_inter_agency_transfer.group_primetech_transfer_manager,primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager,primetech_inter_agency_transfer.group_primetech_transfer_administrator"/>
+
+    <menuitem id="menu_primetech_transfer_analysis" name="Analyse" parent="menu_primetech_transfer_root" action="action_primetech_transfer_dashboard" sequence="40" groups="primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager,primetech_inter_agency_transfer.group_primetech_transfer_administrator"/>
+    <menuitem id="menu_primetech_transfer_configuration" name="Configuration" parent="menu_primetech_transfer_root" sequence="90" groups="primetech_inter_agency_transfer.group_primetech_transfer_logistics_manager,primetech_inter_agency_transfer.group_primetech_transfer_administrator"/>
     <menuitem id="menu_primetech_transfer_agencies" name="Agences" parent="menu_primetech_transfer_configuration" action="action_primetech_agency" sequence="10"/>
     <menuitem id="menu_primetech_transfer_settings" name="Paramètres" parent="menu_primetech_transfer_configuration" action="stock.action_stock_config_settings" sequence="90"/>
+
+    <!-- Removed menus are explicitly deactivated so existing databases are cleaned on module update. -->
+    <record id="menu_primetech_transfer_operations" model="ir.ui.menu"><field name="active" eval="True"/></record>
+    <record id="menu_primetech_transfer_new" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_quick_actions" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_to_process" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_returns" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_done" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_inter_agency" model="ir.ui.menu"><field name="active" eval="False"/></record>
+    <record id="menu_primetech_transfer_internal" model="ir.ui.menu"><field name="active" eval="False"/></record>
 </odoo>
