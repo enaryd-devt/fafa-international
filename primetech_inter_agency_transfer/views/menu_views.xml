@@ -17,9 +17,7 @@
 
     <!-- Removed menus are explicitly deactivated so existing databases are cleaned on module update. -->
     <record id="menu_primetech_transfer_operations" model="ir.ui.menu"><field name="active" eval="True"/></record>
-    <record id="menu_primetech_transfer_new" model="ir.ui.menu"><field name="active" eval="False"/></record>
     <record id="menu_primetech_transfer_quick_actions" model="ir.ui.menu"><field name="active" eval="False"/></record>
-    <record id="menu_primetech_transfer_to_process" model="ir.ui.menu"><field name="active" eval="False"/></record>
     <record id="menu_primetech_transfer_returns" model="ir.ui.menu"><field name="active" eval="False"/></record>
     <record id="menu_primetech_transfer_done" model="ir.ui.menu"><field name="active" eval="False"/></record>
     <record id="menu_primetech_transfer_inter_agency" model="ir.ui.menu"><field name="active" eval="False"/></record>
