@@ -1,9 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-  <!-- Keep the existing XML identifier but hide the obsolete menu on upgrade. -->
-  <record id="menu_logistics_command_center" model="ir.ui.menu">
-    <field name="active">False</field>
-  </record>
   <!-- ===================================================== -->
   <!-- VUE D'ENSEMBLE -->
   <!-- ===================================================== -->
