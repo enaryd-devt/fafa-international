@@ -15,11 +15,4 @@
     <menuitem id="menu_primetech_transfer_agencies" name="Agences" parent="menu_primetech_transfer_configuration" action="action_primetech_agency" sequence="10"/>
     <menuitem id="menu_primetech_transfer_settings" name="Paramètres" parent="menu_primetech_transfer_configuration" action="stock.action_stock_config_settings" sequence="90"/>
 
-    <!-- Removed menus are explicitly deactivated so existing databases are cleaned on module update. -->
-    <record id="menu_primetech_transfer_operations" model="ir.ui.menu"><field name="active" eval="True"/></record>
-    <record id="menu_primetech_transfer_quick_actions" model="ir.ui.menu"><field name="active" eval="False"/></record>
-    <record id="menu_primetech_transfer_returns" model="ir.ui.menu"><field name="active" eval="False"/></record>
-    <record id="menu_primetech_transfer_done" model="ir.ui.menu"><field name="active" eval="False"/></record>
-    <record id="menu_primetech_transfer_inter_agency" model="ir.ui.menu"><field name="active" eval="False"/></record>
-    <record id="menu_primetech_transfer_internal" model="ir.ui.menu"><field name="active" eval="False"/></record>
 </odoo>
