@@ -8,6 +8,18 @@ from odoo.tools import float_is_zero
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
+    def _primetech_notify_light_order_sync(self):
+        """Broadcast only this changed order to the devices of its POS."""
+        self.ensure_one()
+        self.config_id._notify(
+            "PRIMETECH_ORDER_SYNC",
+            {
+                "origin_session_id": self.session_id.id,
+                "login_number": self.env.context.get("login_number"),
+                "records": self.read_pos_data([], self.config_id.id),
+            },
+        )
+
     def _primetech_get_source_locations(self, lines, picking_type):
         """Allocate each POS line to an internal location of the POS warehouse."""
         warehouse_root = (
@@ -125,4 +137,6 @@ class PosOrder(models.Model):
             if sequence:
                 number = sequence.with_company(pos_order.company_id).next_by_id()
                 pos_order.write({"name": number, "pos_reference": number})
+        if self.env.context.get("primetech_light_order_sync"):
+            self.browse(pos_order_id)._primetech_notify_light_order_sync()
         return pos_order_id
