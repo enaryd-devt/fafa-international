@@ -22,6 +22,10 @@ patch(ProductCard.prototype, {
         return Number(this.product.primetech_pos_qty || 0);
     },
 
+    get totalWarehouseQty() {
+        return Number(this.product.primetech_pos_total_qty || 0);
+    },
+
     get productQtyInCurrentOrder() {
         // `productCartQty` is calculated by Odoo per product template.  Stock,
         // however, is loaded per product variant.  Use the exact product here
@@ -32,7 +36,7 @@ patch(ProductCard.prototype, {
     },
 
     get remainingQty() {
-        return this.warehouseQty - this.productQtyInCurrentOrder;
+        return this.totalWarehouseQty - this.productQtyInCurrentOrder;
     },
 
     get isOutOfStock() {
@@ -68,7 +72,7 @@ patch(ProductCard.prototype, {
     },
 
     get formattedWarehouseQty() {
-        return this.env.utils.formatProductQty(this.remainingQty, false);
+        return this.env.utils.formatProductQty(Math.max(0, this.remainingQty), false);
     },
 
     get formattedSalesPrice() {

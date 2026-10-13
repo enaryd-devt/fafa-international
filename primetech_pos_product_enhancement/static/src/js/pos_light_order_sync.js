@@ -6,8 +6,8 @@ import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { patch } from "@web/core/utils/patch";
 
 let activePos;
-// Merge rapid local changes into one small request, while keeping updates
-// visible to the other devices of the POS within a fraction of a second.
+// Group rapid changes (quantity button presses, barcode scans, etc.) in one
+// request while keeping the update perceptibly instantaneous for other POSes.
 const SYNC_DELAY = 350;
 const RETRY_DELAY = 100;
 
@@ -39,6 +39,10 @@ patch(PosStore.prototype, {
             key,
             window.setTimeout(async () => {
                 this._primetechOrderSyncTimers.delete(key);
+                // A change made while its previous request is in flight must
+                // be sent afterwards.  Without this guard, syncAllOrders()
+                // ignores the second request because the order is already
+                // being synchronised and that last change can be lost.
                 if (state.syncing) {
                     this._primetechOrderSyncTimers.set(
                         key,
@@ -92,7 +96,8 @@ patch(PosOrderline.prototype, {
 patch(PosOrder.prototype, {
     setDirty() {
         const result = super.setDirty(...arguments);
-        // Also covers customer, note, pricelist and other order-level edits.
+        // Covers order-level edits such as customer, fiscal position, note,
+        // pricelist or global discount, which do not always dirty a line.
         activePos?._primetechScheduleLightOrderSync(this);
         return result;
     },
