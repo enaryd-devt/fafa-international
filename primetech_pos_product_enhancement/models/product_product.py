@@ -20,25 +20,36 @@ class ProductProduct(models.Model):
 
     def _process_pos_ui_product_product(self, products, config):
         super()._process_pos_ui_product_product(products, config)
-        # Use strictly the source location of the POS operation type.  The
-        # warehouse view location would include all internal locations of that
-        # warehouse, including locations not used by this POS operation.
-        source_location = config.picking_type_id.default_location_src_id
         ids = [product["id"] for product in products]
         quantities = dict.fromkeys(ids, 0.0)
-        if source_location and ids:
+        picking_type = config.picking_type_id
+        warehouse = picking_type.warehouse_id
+        # The stock shown by this POS is deliberately based on the direct
+        # parent location name.  In this database the parent contains the
+        # warehouse short name (warehouse.code), which identifies the physical
+        # locations used for the POS destocking warehouse.
+        warehouse_short_name = warehouse.code if warehouse else False
+        locations = self.env["stock.location"]
+        if warehouse_short_name:
+            locations = locations.search([
+                ("usage", "=", "internal"),
+                ("location_id.name", "ilike", warehouse_short_name),
+                "|", ("company_id", "=", False), ("company_id", "=", config.company_id.id),
+            ])
+        if locations and ids:
             groups = self.env["stock.quant"].read_group(
                 [
                     ("product_id", "in", ids),
-                    ("location_id", "child_of", source_location.id),
-                    ("location_id.usage", "=", "internal"),
+                    ("location_id", "in", locations.ids),
                 ],
-                ["product_id", "quantity:sum", "reserved_quantity:sum"], ["product_id"], lazy=False,
+                ["product_id", "quantity:sum"], ["product_id"], lazy=False,
             )
             for group in groups:
                 product_id = group.get("product_id") and group["product_id"][0]
                 if product_id:
-                    quantities[product_id] = (group.get("quantity", 0.0) or 0.0) - (group.get("reserved_quantity", 0.0) or 0.0)
+                    # Quantité physique exacte dans les emplacements retenus.
+                    # Les réservations ne modifient pas la quantité affichée.
+                    quantities[product_id] = group.get("quantity", 0.0) or 0.0
         for product in products:
             product["primetech_pos_qty"] = quantities.get(product["id"], 0.0)
             # Legacy field kept in sync for any older POS asset still reading it.
