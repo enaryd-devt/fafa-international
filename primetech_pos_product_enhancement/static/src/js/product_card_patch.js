@@ -36,7 +36,7 @@ patch(ProductCard.prototype, {
     },
 
     get remainingQty() {
-        return this.totalWarehouseQty - this.productQtyInCurrentOrder;
+        return this.warehouseQty - this.productQtyInCurrentOrder;
     },
 
     get isOutOfStock() {

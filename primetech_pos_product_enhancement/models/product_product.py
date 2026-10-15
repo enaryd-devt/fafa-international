@@ -20,15 +20,12 @@ class ProductProduct(models.Model):
 
     def _process_pos_ui_product_product(self, products, config):
         super()._process_pos_ui_product_product(products, config)
-        # Sum every internal sub-location of the warehouse associated with the
-        # POS operation type. Their complete name includes the warehouse short
-        # name (for example WH/Stock/Shelf A), so all its locations are taken
-        # into account rather than only the main Stock location.
-        warehouse = config.picking_type_id.warehouse_id
-        source_location = warehouse.view_location_id or config.picking_type_id.default_location_src_id
+        # Use strictly the source location of the POS operation type.  The
+        # warehouse view location would include all internal locations of that
+        # warehouse, including locations not used by this POS operation.
+        source_location = config.picking_type_id.default_location_src_id
         ids = [product["id"] for product in products]
         quantities = dict.fromkeys(ids, 0.0)
-        total_quantities = dict.fromkeys(ids, 0.0)
         if source_location and ids:
             groups = self.env["stock.quant"].read_group(
                 [
@@ -42,25 +39,10 @@ class ProductProduct(models.Model):
                 product_id = group.get("product_id") and group["product_id"][0]
                 if product_id:
                     quantities[product_id] = (group.get("quantity", 0.0) or 0.0) - (group.get("reserved_quantity", 0.0) or 0.0)
-        if ids:
-            total_groups = self.env["stock.quant"].read_group(
-                [
-                    ("product_id", "in", ids),
-                    ("company_id", "=", config.company_id.id),
-                    ("location_id.usage", "=", "internal"),
-                ],
-                ["product_id", "quantity:sum", "reserved_quantity:sum"], ["product_id"], lazy=False,
-            )
-            for group in total_groups:
-                product_id = group.get("product_id") and group["product_id"][0]
-                if product_id:
-                    total_quantities[product_id] = (
-                        (group.get("quantity", 0.0) or 0.0)
-                        - (group.get("reserved_quantity", 0.0) or 0.0)
-                    )
         for product in products:
             product["primetech_pos_qty"] = quantities.get(product["id"], 0.0)
-            product["primetech_pos_total_qty"] = total_quantities.get(product["id"], 0.0)
+            # Legacy field kept in sync for any older POS asset still reading it.
+            product["primetech_pos_total_qty"] = quantities.get(product["id"], 0.0)
 
     def get_product_info_pos(self, price, quantity, pos_config_id):
         """Expose stock only for companies the current user may access."""
